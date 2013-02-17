@@ -1,4 +1,22 @@
 *.class
+*.classpath
+*.project
+**/*.settings
+**/bin/*
+**/lib/*
+*.ipr
+*.iws
+*.iml
+**/*.iml
+
+target
+**/target
+.settings
+.idea
+.idea/*
+*/.idea/*
+classes
+.metadata
 
 # Package Files #
 *.jar
