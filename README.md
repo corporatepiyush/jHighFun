@@ -1,4 +1,4 @@
 jHighFun
 ========
 
-Multithreaded Higher Order Function Library for Java
+Multhreaded Higher Order Function Library for Java
