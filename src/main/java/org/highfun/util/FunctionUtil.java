@@ -1,7 +1,12 @@
 package org.highfun.util;
 
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import org.highfun.*;
 
+import java.lang.ref.SoftReference;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -445,4 +450,95 @@ public class FunctionUtil {
     }
 
 
+    public static <I, O> Converter<I, O> memoize(final Converter<I, O> converter) {
+
+        final Map<I, SoftReference<O>> memo = new ConcurrentHashMap<I, SoftReference<O>>();
+        return new Converter<I, O>() {
+            public O convert(I input) {
+                SoftReference<O> memoizedOutput = memo.get(input);
+                if (memoizedOutput != null) {
+                    return memoizedOutput.get();
+                } else {
+                    O output = converter.convert(input);
+                    memo.put(input, new SoftReference<O>(output));
+                    return output;
+                }
+            }
+        };
+
+    }
+
+    public static <T> Condition<T> memoize(final Condition<T> condition) {
+
+        final Map<T, Boolean> memo = new ConcurrentHashMap<T, Boolean>();
+        return new Condition<T>() {
+            public boolean evaluate(T input) {
+                Boolean memoizedOutput = memo.get(input);
+                if (memoizedOutput != null) {
+                    return memoizedOutput;
+                } else {
+                    boolean output = condition.evaluate(input);
+                    memo.put(input, output);
+                    return output;
+                }
+            }
+        };
+    }
+
+    public static <I,O> Function<I,O> memoize(final Function<I,O> function) {
+        final Map<List<I>, SoftReference<O>> memo = new ConcurrentHashMap<List<I>, SoftReference<O>>();
+        return new Function<I, O>() {
+            public O apply(List<I> input) {
+                SoftReference<O> memoizedOutput = memo.get(input);
+                if (memoizedOutput != null) {
+                    return memoizedOutput.get();
+                } else {
+                    O output = function.apply(input);
+                    memo.put(input, new SoftReference<O>(output));
+                    return output;
+                }
+            }
+        };
+    }
+
+    public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(Accumulator<ACCUM, EL> accumulator) {
+        return null;
+    }
+
+//    public static <T> T memoize(T t) {
+//
+//        // TODO revisit the logic for anonymous inner class
+//
+//        Class targetClass = t.getClass();
+//        Enhancer enhancer = new Enhancer();
+//        enhancer.setSuperclass(targetClass);
+//
+//        final Map<Method, Map<List<Object>, Object>> memo = new ConcurrentHashMap<Method, Map<List<Object>, Object>>();
+//
+//        enhancer.setCallback(new MethodInterceptor() {
+//            public Object intercept(Object object, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+//
+//                Map<List<Object>, Object> inputOutput = memo.get(method);
+//                List<Object> argList = Arrays.asList(args);
+//
+//                if (inputOutput == null) {
+//                    Object output = method.invoke(object, args);
+//                    inputOutput = new ConcurrentHashMap<List<Object>, Object>();
+//                    inputOutput.put(argList, output);
+//                    memo.put(method, inputOutput);
+//                    return output;
+//                } else {
+//                    Object memoizedOutput = inputOutput.get(argList);
+//                    if (memoizedOutput != null) {
+//                        return memoizedOutput;
+//                    } else {
+//                        Object output = method.invoke(object, args);
+//                        inputOutput.put(argList, output);
+//                        return output;
+//                    }
+//                }
+//            }
+//        });
+//        return (T) enhancer.create();
+//    }
 }

@@ -396,7 +396,9 @@ public class SingleThreadedFunctionSpec {
         }, List(5));
 
         assertTrue(addToFive.call(List(10))==15);
-        assertTrue(addToFive.call(List(15))==20);
+        assertTrue(addToFive.call(List(10,15))==30);
+        assertTrue(addToFive.call(10)==15);
+        assertTrue(addToFive.call(10,15)==30);
 
         CurriedFunction<Integer,Integer> addToZero = FunctionUtil.curry(new Function<Integer,Integer>(){
             public Integer apply(List<Integer> integers){
@@ -414,4 +416,99 @@ public class SingleThreadedFunctionSpec {
         assertTrue(addToZero.call(5)==5);
         assertTrue(addToZero.call(5,10)==15);
     }
+
+    @Test
+    public void testMemoizeForConverter(){
+
+        final List<String> spyInjection = new LinkedList<String>();
+        final String inputCheckValue = "today";
+        final Date outputCheckValue = new Date();
+
+        Converter<String, Date> memoizedFunction = FunctionUtil.memoize(new Converter<String, Date>(){
+
+            public Date convert(String input) {
+                spyInjection.add(input);
+                return input.equals("today") ? outputCheckValue : null;
+            }
+        });
+
+        assertEquals(spyInjection.size(),0);
+        assertEquals(memoizedFunction.convert(inputCheckValue), outputCheckValue);
+        assertEquals(spyInjection.size(),1);
+
+        assertEquals(memoizedFunction.convert(inputCheckValue), outputCheckValue);
+        assertEquals(spyInjection.size(),1);
+    }
+
+    @Test
+    public void testMemoizeForCondition(){
+
+        final List<String> spyInjection = new LinkedList<String>();
+        final String inputCheckValue = "today";
+
+        Condition<String> memoizedFunction = FunctionUtil.memoize(new Condition<String>(){
+
+            public boolean evaluate(String input) {
+                spyInjection.add(input);
+                return input.equals("today") ? true : false;
+            }
+        });
+
+        assertEquals(spyInjection.size(),0);
+        assertEquals(memoizedFunction.evaluate(inputCheckValue), true);
+        assertEquals(spyInjection.size(),1);
+
+        assertEquals(memoizedFunction.evaluate(inputCheckValue), true);
+        assertEquals(spyInjection.size(),1);
+    }
+
+    @Test
+    public void testMemoizeForFunction(){
+
+        final List<String> spyInjection = new LinkedList<String>();
+
+        Function<String, String> memoizedFunction = FunctionUtil.memoize(new Function<String, String>(){
+
+            public String apply(List<String> args) {
+                spyInjection.add(args.toString());
+                StringBuilder builder = new StringBuilder();
+                for(String string : args){
+                    builder.append(string);
+                }
+                return builder.toString();
+            }
+        });
+
+        assertEquals(spyInjection.size(),0);
+        assertEquals(memoizedFunction.apply(List("I","am","the","Almighty")), "IamtheAlmighty");
+        assertEquals(spyInjection.size(),1);
+
+        assertEquals(memoizedFunction.apply(List("I","am","the","Almighty")), "IamtheAlmighty");
+        assertEquals(spyInjection.size(),1);
+    }
+
+
+    @Test
+    public void testMemoizeForAccumulator(){
+
+        final List<String> spyInjection = new LinkedList<String>();
+
+        Accumulator<String, String> memoizedFunction = FunctionUtil.memoize(new Accumulator<String, String>(){
+
+            public String accumulate(String accum, String element) {
+                spyInjection.add(element);
+                StringBuilder builder = new StringBuilder();
+                builder.append(accum).append(element);
+                return builder.toString();
+            }
+        });
+
+        assertEquals(spyInjection.size(),0);
+        assertEquals(memoizedFunction.accumulate("Java", "Rocks!"), "JavaRocks!");
+        assertEquals(spyInjection.size(),1);
+
+        assertEquals(memoizedFunction.accumulate("Java", "Rocks!"), "JavaRocks!");
+        assertEquals(spyInjection.size(),1);
+    }
+
 }
