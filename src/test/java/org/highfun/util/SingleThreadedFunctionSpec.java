@@ -1,6 +1,8 @@
-package org.highfun;
+package org.highfun.util;
 
 import static org.highfun.util.CollectionUtil.*;
+
+import org.highfun.*;
 import org.highfun.util.FunctionUtil;
 import org.junit.Test;
 

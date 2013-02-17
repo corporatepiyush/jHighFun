@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class FunctionChainSpec {
 
      @Test
-     public void testProduce(){
+     public void testUnchain(){
 
          List<String> list = new LinkedList<String>();
          for (int i = 1; i <= 100; i++) {
