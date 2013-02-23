@@ -455,12 +455,13 @@ public class FunctionUtil {
         final Map<CacheObject<I>, CacheObject<O>> memo = new ConcurrentHashMap<CacheObject<I>, CacheObject<O>>();
         return new Converter<I, O>() {
             public O convert(I input) {
-                CacheObject<O> memoizedOutput = memo.get(new CacheObject<I>(input));
+                CacheObject<I> iCacheObject = new CacheObject<I>(input);
+                CacheObject<O> memoizedOutput = memo.get(iCacheObject);
                 if (memoizedOutput != null) {
                     return memoizedOutput.get();
                 } else {
                     O output = converter.convert(input);
-                    memo.put(new CacheObject<I>(input), new CacheObject<O>(new SoftReference<O>(output)));
+                    memo.put(iCacheObject, new CacheObject<O>(new SoftReference<O>(output)));
                     return output;
                 }
             }
@@ -473,36 +474,53 @@ public class FunctionUtil {
         final Map<CacheObject<T>, Boolean> memo = new ConcurrentHashMap<CacheObject<T>, Boolean>();
         return new Condition<T>() {
             public boolean evaluate(T input) {
-                Boolean memoizedOutput = memo.get(new CacheObject<T>(input));
+                CacheObject<T> tCacheObject = new CacheObject<T>(input);
+                Boolean memoizedOutput = memo.get(tCacheObject);
                 if (memoizedOutput != null) {
                     return memoizedOutput;
                 } else {
                     boolean output = condition.evaluate(input);
-                    memo.put(new CacheObject<T>(input), output);
+                    memo.put(tCacheObject, output);
                     return output;
                 }
             }
         };
     }
 
-    public static <I,O> Function<I,O> memoize(final Function<I,O> function) {
-        final Map<CacheObject<List<I>>, CacheObject<O>> memo = new ConcurrentHashMap< CacheObject<List<I>>, CacheObject<O>>();
+    public static <I, O> Function<I, O> memoize(final Function<I, O> function) {
+        final Map<CacheObject<List<I>>, CacheObject<O>> memo = new ConcurrentHashMap<CacheObject<List<I>>, CacheObject<O>>();
         return new Function<I, O>() {
             public O apply(List<I> input) {
-                CacheObject<O> memoizedOutput = memo.get(new CacheObject<List<I>>(input));
+                CacheObject<List<I>> listCacheObject = new CacheObject<List<I>>(input);
+                CacheObject<O> memoizedOutput = memo.get(listCacheObject);
                 if (memoizedOutput != null) {
                     return memoizedOutput.get();
                 } else {
                     O output = function.apply(input);
-                    memo.put(new CacheObject<List<I>>(input), new CacheObject<O>(output));
+                    memo.put(listCacheObject, new CacheObject<O>(output));
                     return output;
                 }
             }
         };
     }
 
-    public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(Accumulator<ACCUM, EL> accumulator) {
-        return null;
+    public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(final Accumulator<ACCUM, EL> accumulator) {
+
+        final Map<CacheObject<Pair<ACCUM, EL>>, CacheObject<ACCUM>> memo = new ConcurrentHashMap<CacheObject<Pair<ACCUM, EL>>, CacheObject<ACCUM>>();
+        return new Accumulator<ACCUM, EL>() {
+            public ACCUM accumulate(ACCUM accum, EL el) {
+                CacheObject<Pair<ACCUM, EL>> pairCacheObject = new CacheObject<Pair<ACCUM, EL>>(new Pair<ACCUM, EL>(accum, el));
+                CacheObject<ACCUM> memoizedOutput = memo.get(pairCacheObject);
+                if (memoizedOutput != null) {
+                    return memoizedOutput.get();
+                } else {
+                    ACCUM output = accumulator.accumulate(accum, el);
+                    memo.put(pairCacheObject, new CacheObject<ACCUM>(output));
+                    return output;
+                }
+            }
+        };
+
     }
 
 }
