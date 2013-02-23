@@ -1,6 +1,6 @@
 package org.highfun.util;
 
-import org.highfun.Entry;
+import org.highfun.Pair;
 import org.junit.Test;
 
 import java.util.List;
@@ -35,9 +35,9 @@ public class CollectionUtilSpec {
     @Test
     public void testEntry(){
 
-        Entry<Integer, Integer> entry = Entry(1, 2);
-       assertEquals(entry.getKey(), new Integer(1));
-       assertEquals(entry.getValue(), new Integer(2));
+        Pair<Integer, Integer> pair = Entry(1, 2);
+       assertEquals(pair.getKey(), new Integer(1));
+       assertEquals(pair.getValue(), new Integer(2));
 
     }
 

@@ -1,6 +1,6 @@
 package org.highfun.util;
 
-import org.highfun.Entry;
+import org.highfun.Pair;
 
 import java.util.*;
 
@@ -41,9 +41,9 @@ public class CollectionUtil {
         return flattenSet;
     }
 
-    public static <K, V> Map<K, V> Map(Entry<K, V>... pairs) {
+    public static <K, V> Map<K, V> Map(Pair<K, V>... pairs) {
         Map<K, V> map = new HashMap<K, V>();
-        for (Entry<K, V> pair : pairs) {
+        for (Pair<K, V> pair : pairs) {
             map.put(pair.getKey(), pair.getValue());
         }
         return map;
@@ -58,7 +58,7 @@ public class CollectionUtil {
         return flattenMap;
     }
 
-    public static <K, V> Entry<K, V> Entry(K key, V value) {
-        return new Entry<K, V>(key, value);
+    public static <K, V> Pair<K, V> Entry(K key, V value) {
+        return new Pair<K, V>(key, value);
     }
 }
