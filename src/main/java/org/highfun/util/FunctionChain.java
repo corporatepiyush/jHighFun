@@ -1,6 +1,4 @@
-package org.highfun;
-
-import org.highfun.util.FunctionUtil;
+package org.highfun.util;
 
 import java.util.Collection;
 import java.util.Comparator;

@@ -1,6 +1,5 @@
 package org.highfun.util;
 
-import org.highfun.*;
 import org.junit.Test;
 
 import java.util.*;

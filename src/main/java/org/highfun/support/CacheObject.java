@@ -1,4 +1,4 @@
-package org.highfun;
+package org.highfun.support;
 
 import java.lang.ref.SoftReference;
 

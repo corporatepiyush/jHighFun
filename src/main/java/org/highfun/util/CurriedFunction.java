@@ -1,4 +1,4 @@
-package org.highfun;
+package org.highfun.util;
 
 
 import java.util.ArrayList;

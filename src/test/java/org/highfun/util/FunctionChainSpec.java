@@ -1,6 +1,7 @@
-package org.highfun;
+package org.highfun.util;
 
 
+import org.highfun.util.*;
 import org.junit.Test;
 
 import java.util.*;

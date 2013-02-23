@@ -1,6 +1,8 @@
 package org.highfun.util;
 
-import org.highfun.*;
+import org.highfun.support.CacheObject;
+import org.highfun.support.Pair;
+import org.highfun.support.TaskInputOutput;
 
 import java.lang.ref.SoftReference;
 import java.util.*;

@@ -1,8 +1,5 @@
 package org.highfun.util;
 
-import org.highfun.Condition;
-import org.highfun.Converter;
-import org.highfun.ItemRecord;
 import org.junit.Test;
 
 import java.util.HashSet;

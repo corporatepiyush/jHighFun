@@ -1,4 +1,4 @@
-package org.highfun;
+package org.highfun.util;
 
 public interface Converter<I, O> {
 
