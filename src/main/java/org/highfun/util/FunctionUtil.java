@@ -75,7 +75,6 @@ public class FunctionUtil {
             index++;
         }
 
-        final List<Throwable> exceptions = new LinkedList<Throwable>();
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
 
@@ -88,7 +87,6 @@ public class FunctionUtil {
                             taskInputOutput.setOutput(converter.convert(taskInputOutput.getInput()));
                         }
                     } catch (Throwable e) {
-                        exceptions.add(e);
                         e.printStackTrace();
                     }
                 }
