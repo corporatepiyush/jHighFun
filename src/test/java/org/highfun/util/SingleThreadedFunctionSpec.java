@@ -1,31 +1,29 @@
 package org.highfun.util;
 
-import static org.highfun.util.CollectionUtil.*;
-
 import org.highfun.*;
-import org.highfun.util.FunctionUtil;
 import org.junit.Test;
 
 import java.util.*;
 
+import static org.highfun.util.CollectionUtil.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SingleThreadedFunctionSpec {
 
-	@Test
-	public void testMapFunctionForList() {
+    @Test
+    public void testMapFunctionForList() {
 
-		List<String> list = new LinkedList<String>();
-		for (int i = 1; i <= 100; i++) {
-			list.add("India");
-			list.add("ndia");
-			list.add("dia");
-			list.add("ia");
-			list.add("a");
-		}
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 100; i++) {
+            list.add("India");
+            list.add("ndia");
+            list.add("dia");
+            list.add("ia");
+            list.add("a");
+        }
 
-		List<Character> list1 = FunctionUtil.map(list,
+        List<Character> list1 = FunctionUtil.map(list,
                 new Converter<String, Character>() {
 
                     public Character convert(String input) {
@@ -38,14 +36,14 @@ public class SingleThreadedFunctionSpec {
                     }
                 });
 
-		int i = 0;
-		for (Character character : list1) {
-			assertTrue(character.charValue() == list.get(i++).charAt(0));
-		}
-	}
+        int i = 0;
+        for (Character character : list1) {
+            assertTrue(character.charValue() == list.get(i++).charAt(0));
+        }
+    }
 
-	@Test
-     public void testFilterFunctionForList() {
+    @Test
+    public void testFilterFunctionForList() {
 
         List<String> list = new LinkedList<String>();
         for (int i = 1; i <= 1000; i++) {
@@ -96,18 +94,18 @@ public class SingleThreadedFunctionSpec {
 
     }
 
-	@Test
-	public void testFoldLeftForStringAppend() {
+    @Test
+    public void testFoldLeftForStringAppend() {
 
-		List<String> list = new LinkedList<String>();
-		list.add("Java");
-		list.add(" ");
-		list.add("Rocks");
-		list.add("!");
+        List<String> list = new LinkedList<String>();
+        list.add("Java");
+        list.add(" ");
+        list.add("Rocks");
+        list.add("!");
 
-		StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
-		StringBuilder foldLeft = FunctionUtil.foldLeft(list, stringBuilder,
+        StringBuilder foldLeft = FunctionUtil.foldLeft(list, stringBuilder,
                 new Accumulator<StringBuilder, String>() {
 
                     public StringBuilder accumulate(StringBuilder accumulator,
@@ -117,20 +115,20 @@ public class SingleThreadedFunctionSpec {
 
                 });
 
-		assertTrue(foldLeft.toString().equals("Java Rocks!"));
+        assertTrue(foldLeft.toString().equals("Java Rocks!"));
 
-	}
+    }
 
-	@Test
-	public void testFoldLeftForAdditionOFIntegers() {
+    @Test
+    public void testFoldLeftForAdditionOFIntegers() {
 
-		List<Integer> list = new LinkedList<Integer>();
-		list.add(1);
-		list.add(2);
-		list.add(3);
-		list.add(4);
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
 
-		Integer foldLeft = FunctionUtil.foldLeft(list, 0,
+        Integer foldLeft = FunctionUtil.foldLeft(list, 0,
                 new Accumulator<Integer, Integer>() {
 
                     public Integer accumulate(Integer accumulator,
@@ -140,22 +138,22 @@ public class SingleThreadedFunctionSpec {
 
                 });
 
-		assertTrue(foldLeft == 10);
+        assertTrue(foldLeft == 10);
 
-	}
+    }
 
-	@Test
-	public void testFoldRightForStringAppend() {
+    @Test
+    public void testFoldRightForStringAppend() {
 
-		List<String> list = new LinkedList<String>();
-		list.add("Java");
-		list.add(" ");
-		list.add("Rocks");
-		list.add("!");
+        List<String> list = new LinkedList<String>();
+        list.add("Java");
+        list.add(" ");
+        list.add("Rocks");
+        list.add("!");
 
-		StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
-		StringBuilder foldRight = FunctionUtil.foldRight(list, stringBuilder,
+        StringBuilder foldRight = FunctionUtil.foldRight(list, stringBuilder,
                 new Accumulator<StringBuilder, String>() {
 
                     public StringBuilder accumulate(StringBuilder accumulator,
@@ -165,22 +163,22 @@ public class SingleThreadedFunctionSpec {
 
                 });
 
-		System.out.println(foldRight);
+        System.out.println(foldRight);
 
-		assertTrue(foldRight.toString().equals("!Rocks Java"));
+        assertTrue(foldRight.toString().equals("!Rocks Java"));
 
-	}
+    }
 
-	@Test
-	public void testFoldRightForAdditionOFIntegers() {
+    @Test
+    public void testFoldRightForAdditionOFIntegers() {
 
-		List<Integer> list = new LinkedList<Integer>();
-		list.add(1);
-		list.add(2);
-		list.add(3);
-		list.add(4);
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
 
-		Integer foldRight = FunctionUtil.foldRight(list, 0,
+        Integer foldRight = FunctionUtil.foldRight(list, 0,
                 new Accumulator<Integer, Integer>() {
 
                     public Integer accumulate(Integer accumulator,
@@ -190,28 +188,28 @@ public class SingleThreadedFunctionSpec {
 
                 });
 
-		assertTrue(foldRight == 10);
+        assertTrue(foldRight == 10);
 
-	}
+    }
 
-	@Test
-	public void testForSortForList() {
-		List<Integer> list = new LinkedList<Integer>();
-		list.add(1);
-		list.add(4);
-		list.add(2);
-		list.add(3);
+    @Test
+    public void testForSortForList() {
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(4);
+        list.add(2);
+        list.add(3);
 
-		list = FunctionUtil.sort(list, new Comparator<Integer>() {
+        list = FunctionUtil.sort(list, new Comparator<Integer>() {
 
             public int compare(Integer t1, Integer t2) {
                 return t1 - t2;
             }
         });
 
-		assertTrue(list.toString().equals("[1, 2, 3, 4]"));
+        assertTrue(list.toString().equals("[1, 2, 3, 4]"));
 
-	}
+    }
 
     @Test
     public void testForSortForSet() {
@@ -231,69 +229,69 @@ public class SingleThreadedFunctionSpec {
         assertTrue(set.toString().equals("[1, 2, 3, 4]"));
 
     }
-		
-	@Test
-	public void testEveryFunction(){
-		
-		List<String> list = new LinkedList<String>();
-		for (int i = 1; i <= 10; i++) {
-			list.add("Scala");
-			list.add("Java");
-		}
-		
-		boolean bool = FunctionUtil.every(list, new Condition<String>() {
+
+    @Test
+    public void testEveryFunction() {
+
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 10; i++) {
+            list.add("Scala");
+            list.add("Java");
+        }
+
+        boolean bool = FunctionUtil.every(list, new Condition<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("v");
             }
         });
-		
-		assertTrue(!bool);
 
-		bool = FunctionUtil.every(list, new Condition<String>() {
+        assertTrue(!bool);
+
+        bool = FunctionUtil.every(list, new Condition<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("a");
             }
         });
 
-		assertTrue(bool);
-	}
-	
-	@Test
-	public void testSomeFunction(){
-		
-		List<String> list = new LinkedList<String>();
-		for (int i = 1; i <= 10; i++) {
-			list.add("Scala");
-			list.add("Java");
-		}
-		
-		boolean bool = FunctionUtil.any(list, new Condition<String>() {
+        assertTrue(bool);
+    }
+
+    @Test
+    public void testSomeFunction() {
+
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 10; i++) {
+            list.add("Scala");
+            list.add("Java");
+        }
+
+        boolean bool = FunctionUtil.any(list, new Condition<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("R");
             }
         });
-		
-		assertTrue(!bool);
 
-		bool = FunctionUtil.any(list, new Condition<String>() {
+        assertTrue(!bool);
+
+        bool = FunctionUtil.any(list, new Condition<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("a");
             }
         });
 
-		assertTrue(bool);
-	}
+        assertTrue(bool);
+    }
 
     @Test
-    public void testEachFunction(){
+    public void testEachFunction() {
 
         List<String> list = new LinkedList<String>();
-            list.add("Scala");
-            list.add("Java");
+        list.add("Scala");
+        list.add("Java");
 
         final List<String> temp = new LinkedList<String>();
 
@@ -308,7 +306,7 @@ public class SingleThreadedFunctionSpec {
 
 
     @Test
-    public void testEachFunctionForMap(){
+    public void testEachFunctionForMap() {
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("IN", "India");
@@ -326,7 +324,7 @@ public class SingleThreadedFunctionSpec {
     }
 
     @Test
-    public void testCount(){
+    public void testCount() {
 
         Set<String> set = new HashSet<String>();
         set.add("Scala");
@@ -344,7 +342,7 @@ public class SingleThreadedFunctionSpec {
     }
 
     @Test
-    public void testSplit(){
+    public void testSplit() {
 
         Set<String> set = new HashSet<String>();
         set.add("Scala");
@@ -358,18 +356,18 @@ public class SingleThreadedFunctionSpec {
             }
         });
 
-        int i=0;
-        for (Collection<String> split : splits){
-            if(i==0){
-                assertEquals(split.toString(),"[Scala]");
-            }else{
-                assertEquals(split.toString(),"[Java]");
+        int i = 0;
+        for (Collection<String> split : splits) {
+            if (i == 0) {
+                assertEquals(split.toString(), "[Scala]");
+            } else {
+                assertEquals(split.toString(), "[Java]");
             }
         }
     }
 
     @Test
-    public void testChain(){
+    public void testChain() {
 
         Set<String> set = new HashSet<String>();
         set.add("Scala");
@@ -383,48 +381,48 @@ public class SingleThreadedFunctionSpec {
     }
 
     @Test
-    public void testCurry(){
+    public void testCurry() {
 
-        CurriedFunction<Integer,Integer> addToFive = FunctionUtil.curry(new Function<Integer,Integer>(){
-                       public Integer apply(List<Integer> integers){
-                            int sum =0;
-                            for(Integer i : integers){
-                                sum = sum + i;
-                            }
-                           return sum;
-                       }
-        }, List(5));
-
-        assertTrue(addToFive.call(List(10))==15);
-        assertTrue(addToFive.call(List(10,15))==30);
-        assertTrue(addToFive.call(10)==15);
-        assertTrue(addToFive.call(10,15)==30);
-
-        CurriedFunction<Integer,Integer> addToZero = FunctionUtil.curry(new Function<Integer,Integer>(){
-            public Integer apply(List<Integer> integers){
-                int sum =0;
-                for(Integer i : integers){
+        CurriedFunction<Integer, Integer> addToFive = FunctionUtil.curry(new Function<Integer, Integer>() {
+            public Integer apply(List<Integer> integers) {
+                int sum = 0;
+                for (Integer i : integers) {
                     sum = sum + i;
                 }
                 return sum;
             }
-        }, 0,0);
+        }, List(5));
 
-        assertTrue(addToZero.call(List(10))==10);
-        assertTrue(addToZero.call(List(15))==15);
-        assertTrue(addToZero.call(List(0))==0);
-        assertTrue(addToZero.call(5)==5);
-        assertTrue(addToZero.call(5,10)==15);
+        assertTrue(addToFive.call(List(10)) == 15);
+        assertTrue(addToFive.call(List(10, 15)) == 30);
+        assertTrue(addToFive.call(10) == 15);
+        assertTrue(addToFive.call(10, 15) == 30);
+
+        CurriedFunction<Integer, Integer> addToZero = FunctionUtil.curry(new Function<Integer, Integer>() {
+            public Integer apply(List<Integer> integers) {
+                int sum = 0;
+                for (Integer i : integers) {
+                    sum = sum + i;
+                }
+                return sum;
+            }
+        }, 0, 0);
+
+        assertTrue(addToZero.call(List(10)) == 10);
+        assertTrue(addToZero.call(List(15)) == 15);
+        assertTrue(addToZero.call(List(0)) == 0);
+        assertTrue(addToZero.call(5) == 5);
+        assertTrue(addToZero.call(5, 10) == 15);
     }
 
     @Test
-    public void testMemoizeForConverter(){
+    public void testMemoizeForConverter() {
 
         final List<String> spyInjection = new LinkedList<String>();
         final String inputCheckValue = "today";
         final Date outputCheckValue = new Date();
 
-        Converter<String, Date> memoizedFunction = FunctionUtil.memoize(new Converter<String, Date>(){
+        Converter<String, Date> memoizedFunction = FunctionUtil.memoize(new Converter<String, Date>() {
 
             public Date convert(String input) {
                 spyInjection.add(input);
@@ -432,21 +430,21 @@ public class SingleThreadedFunctionSpec {
             }
         });
 
-        assertEquals(spyInjection.size(),0);
+        assertEquals(spyInjection.size(), 0);
         assertEquals(memoizedFunction.convert(inputCheckValue), outputCheckValue);
-        assertEquals(spyInjection.size(),1);
+        assertEquals(spyInjection.size(), 1);
 
         assertEquals(memoizedFunction.convert(inputCheckValue), outputCheckValue);
-        assertEquals(spyInjection.size(),1);
+        assertEquals(spyInjection.size(), 1);
     }
 
     @Test
-    public void testMemoizeForCondition(){
+    public void testMemoizeForCondition() {
 
         final List<String> spyInjection = new LinkedList<String>();
         final String inputCheckValue = "today";
 
-        Condition<String> memoizedFunction = FunctionUtil.memoize(new Condition<String>(){
+        Condition<String> memoizedFunction = FunctionUtil.memoize(new Condition<String>() {
 
             public boolean evaluate(String input) {
                 spyInjection.add(input);
@@ -454,46 +452,46 @@ public class SingleThreadedFunctionSpec {
             }
         });
 
-        assertEquals(spyInjection.size(),0);
+        assertEquals(spyInjection.size(), 0);
         assertEquals(memoizedFunction.evaluate(inputCheckValue), true);
-        assertEquals(spyInjection.size(),1);
+        assertEquals(spyInjection.size(), 1);
 
         assertEquals(memoizedFunction.evaluate(inputCheckValue), true);
-        assertEquals(spyInjection.size(),1);
+        assertEquals(spyInjection.size(), 1);
     }
 
     @Test
-    public void testMemoizeForFunction(){
+    public void testMemoizeForFunction() {
 
         final List<String> spyInjection = new LinkedList<String>();
 
-        Function<String, String> memoizedFunction = FunctionUtil.memoize(new Function<String, String>(){
+        Function<String, String> memoizedFunction = FunctionUtil.memoize(new Function<String, String>() {
 
             public String apply(List<String> args) {
                 spyInjection.add(args.toString());
                 StringBuilder builder = new StringBuilder();
-                for(String string : args){
+                for (String string : args) {
                     builder.append(string);
                 }
                 return builder.toString();
             }
         });
 
-        assertEquals(spyInjection.size(),0);
-        assertEquals(memoizedFunction.apply(List("I","am","the","Almighty")), "IamtheAlmighty");
-        assertEquals(spyInjection.size(),1);
+        assertEquals(spyInjection.size(), 0);
+        assertEquals(memoizedFunction.apply(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
+        assertEquals(spyInjection.size(), 1);
 
-        assertEquals(memoizedFunction.apply(List("I","am","the","Almighty")), "IamtheAlmighty");
-        assertEquals(spyInjection.size(),1);
+        assertEquals(memoizedFunction.apply(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
+        assertEquals(spyInjection.size(), 1);
     }
 
 
     @Test
-    public void testMemoizeForAccumulator(){
+    public void testMemoizeForAccumulator() {
 
         final List<String> spyInjection = new LinkedList<String>();
 
-        Accumulator<String, String> memoizedFunction = FunctionUtil.memoize(new Accumulator<String, String>(){
+        Accumulator<String, String> memoizedFunction = FunctionUtil.memoize(new Accumulator<String, String>() {
 
             public String accumulate(String accum, String element) {
                 spyInjection.add(element);
@@ -503,12 +501,12 @@ public class SingleThreadedFunctionSpec {
             }
         });
 
-        assertEquals(spyInjection.size(),0);
+        assertEquals(spyInjection.size(), 0);
         assertEquals(memoizedFunction.accumulate("Java", "Rocks!"), "JavaRocks!");
-        assertEquals(spyInjection.size(),1);
+        assertEquals(spyInjection.size(), 1);
 
         assertEquals(memoizedFunction.accumulate("Java", "Rocks!"), "JavaRocks!");
-        assertEquals(spyInjection.size(),1);
+        assertEquals(spyInjection.size(), 1);
     }
 
 }

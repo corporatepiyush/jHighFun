@@ -6,8 +6,8 @@ public final class TaskInputOutput<I, O> {
     private I input;
     private O output;
 
-    public TaskInputOutput(I input){
-         this.input = input;
+    public TaskInputOutput(I input) {
+        this.input = input;
     }
 
     public void setOutput(O output) {

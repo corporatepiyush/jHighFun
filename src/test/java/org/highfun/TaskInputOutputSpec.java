@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 public class TaskInputOutputSpec {
 
     @Test
-    public void test(){
+    public void test() {
         TaskInputOutput<String, Date> today = new TaskInputOutput<String, Date>("today");
         assertEquals(today.getInput(), "today");
         assertEquals(today.getOutput(), null);

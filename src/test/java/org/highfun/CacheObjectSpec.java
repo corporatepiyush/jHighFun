@@ -1,39 +1,39 @@
 package org.highfun;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.lang.ref.SoftReference;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CacheObjectSpec {
 
 
     @Test(expected = NullPointerException.class)
-     public void testConsForNullValue(){
+    public void testConsForNullValue() {
         new CacheObject(null);
-     }
+    }
 
     @Test
-    public void testGetForSoftObject(){
+    public void testGetForSoftObject() {
         Object object = new Object();
         SoftReference softReference = new SoftReference(object);
         CacheObject cacheObject = new CacheObject(softReference);
-        assertTrue(cacheObject.get()==object);
+        assertTrue(cacheObject.get() == object);
     }
 
     @Test
-    public void testGetForObject(){
+    public void testGetForObject() {
         Object object = new Object();
         CacheObject cacheObject = new CacheObject(object);
-        assertTrue(cacheObject.get()==object);
+        assertTrue(cacheObject.get() == object);
     }
 
     @Test
-    public void testEquals(){
+    public void testEquals() {
         Object object = new Object();
-        
+
         CacheObject cacheObject1 = new CacheObject(object);
         CacheObject cacheObject2 = new CacheObject(object);
         assertFalse(cacheObject1.equals(null));
@@ -60,8 +60,8 @@ public class CacheObjectSpec {
         CacheObject cacheObject11 = new CacheObject(10);
         CacheObject cacheObject12 = new CacheObject(100);
         assertFalse(cacheObject11.equals(cacheObject12));
-        
-        
+
+
     }
 
 }

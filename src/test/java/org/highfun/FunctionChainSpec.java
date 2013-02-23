@@ -1,7 +1,6 @@
 package org.highfun;
 
 
-import org.highfun.util.FunctionUtil;
 import org.junit.Test;
 
 import java.util.*;
@@ -12,24 +11,24 @@ import static org.junit.Assert.assertTrue;
 
 public class FunctionChainSpec {
 
-     @Test
-     public void testUnchain(){
+    @Test
+    public void testUnchain() {
 
-         List<String> list = new LinkedList<String>();
-         for (int i = 1; i <= 100; i++) {
-             list.add("India");
-             list.add("ndia");
-             list.add("dia");
-             list.add("ia");
-             list.add("a");
-         }
-         FunctionChain<String> chain = new FunctionChain<String>(list);
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 100; i++) {
+            list.add("India");
+            list.add("ndia");
+            list.add("dia");
+            list.add("ia");
+            list.add("a");
+        }
+        FunctionChain<String> chain = new FunctionChain<String>(list);
 
-         assertEquals(chain.unchain(), list);
-     }
+        assertEquals(chain.unchain(), list);
+    }
 
     @Test
-    public void testMap(){
+    public void testMap() {
 
         List<String> list = new LinkedList<String>();
         for (int i = 1; i <= 100; i++) {
@@ -60,7 +59,7 @@ public class FunctionChainSpec {
     }
 
     @Test
-    public void testMapWithThreads(){
+    public void testMapWithThreads() {
 
         List<String> list = new LinkedList<String>();
         for (int i = 1; i <= 100; i++) {
@@ -224,7 +223,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        StringBuilder foldLeft = chain.foldLeft(stringBuilder,new Accumulator<StringBuilder, String>() {
+        StringBuilder foldLeft = chain.foldLeft(stringBuilder, new Accumulator<StringBuilder, String>() {
 
             public StringBuilder accumulate(StringBuilder accumulator,
                                             String element) {
@@ -289,7 +288,7 @@ public class FunctionChainSpec {
     }
 
     @Test
-    public void testEvery(){
+    public void testEvery() {
 
         List<String> list = new LinkedList<String>();
         for (int i = 1; i <= 10; i++) {
@@ -299,7 +298,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        boolean bool = chain.every( new Condition<String>() {
+        boolean bool = chain.every(new Condition<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("v");
@@ -308,7 +307,7 @@ public class FunctionChainSpec {
 
         assertTrue(!bool);
 
-        bool = chain.every( new Condition<String>() {
+        bool = chain.every(new Condition<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("a");
@@ -319,7 +318,7 @@ public class FunctionChainSpec {
     }
 
     @Test
-    public void testSomeFunction(){
+    public void testSomeFunction() {
 
         List<String> list = new LinkedList<String>();
         for (int i = 1; i <= 10; i++) {
@@ -329,7 +328,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        boolean bool = chain.some( new Condition<String>() {
+        boolean bool = chain.some(new Condition<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("R");
@@ -338,7 +337,7 @@ public class FunctionChainSpec {
 
         assertTrue(!bool);
 
-        bool = chain.some( new Condition<String>() {
+        bool = chain.some(new Condition<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("a");
@@ -349,7 +348,7 @@ public class FunctionChainSpec {
     }
 
     @Test
-    public void testCount(){
+    public void testCount() {
 
         Set<String> set = new HashSet<String>();
         set.add("Scala");

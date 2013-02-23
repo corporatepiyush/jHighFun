@@ -1,18 +1,22 @@
 package org.highfun.util;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 import org.highfun.*;
 
 import java.lang.ref.SoftReference;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
 
 public class FunctionUtil {
 
-    private static ExecutorService globalPool = new ThreadPoolExecutor(1, 100000, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
+    private static final ExecutorService globalPool = new ThreadPoolExecutor(1, 100000, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                globalPool.shutdownNow();
+            }
+        });
+    }
 
     public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
         List<O> outputList = new LinkedList<O>();

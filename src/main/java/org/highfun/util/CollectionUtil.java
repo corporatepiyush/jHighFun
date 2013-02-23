@@ -13,7 +13,7 @@ public class CollectionUtil {
         return argsList;
     }
 
-    public static  List List(List... listArgs) {
+    public static List List(List... listArgs) {
         List flattenList = new LinkedList();
         for (List list : listArgs) {
             for (Object obj : list) {
@@ -31,7 +31,7 @@ public class CollectionUtil {
         return set;
     }
 
-    public static  Set Set(Set... setArgs) {
+    public static Set Set(Set... setArgs) {
         Set flattenSet = new HashSet();
         for (Set list : setArgs) {
             for (Object obj : list) {
@@ -53,7 +53,7 @@ public class CollectionUtil {
         Map flattenMap = new HashMap();
         flattenMap.putAll(first);
         for (Map map : maps) {
-               flattenMap.putAll(map);
+            flattenMap.putAll(map);
         }
         return flattenMap;
     }
