@@ -3,6 +3,7 @@ package org.highfun.util;
 import org.highfun.support.CacheObject;
 import org.highfun.support.Pair;
 import org.highfun.support.TaskInputOutput;
+import org.highfun.support.ThreadPoolFactory;
 
 import java.lang.ref.SoftReference;
 import java.util.*;
@@ -10,15 +11,7 @@ import java.util.concurrent.*;
 
 public class FunctionUtil {
 
-    private static final ExecutorService globalPool = new ThreadPoolExecutor(1, 100000, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
-
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                globalPool.shutdownNow();
-            }
-        });
-    }
+    private static final ExecutorService globalPool = ThreadPoolFactory.getThreadPool();
 
     public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
         List<O> outputList = new LinkedList<O>();
