@@ -1,6 +1,5 @@
 package org.highfun.support;
 
-import org.highfun.support.CacheObject;
 import org.junit.Test;
 
 import java.lang.ref.SoftReference;

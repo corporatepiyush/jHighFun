@@ -16,9 +16,9 @@ import static org.junit.Assert.assertTrue;
 public class ThreadPoolFactorySpec {
 
     @Test
-    public void testForJNDILookUp(){
+    public void testForJNDILookUp() {
 
-        ExecutorService service = new ThreadPoolExecutor(1,10,5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
+        ExecutorService service = new ThreadPoolExecutor(1, 10, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
         InitialContext context = null;
 
         System.setProperty("org.highfun.threadpool", "globalThreadPool");
@@ -29,7 +29,7 @@ public class ThreadPoolFactorySpec {
                 "org.apache.naming");
 
         try {
-             context = new  InitialContext();
+            context = new InitialContext();
             context.createSubcontext("java:");
             context.createSubcontext("java:/comp");
             context.createSubcontext("java:/comp/env");
@@ -38,7 +38,7 @@ public class ThreadPoolFactorySpec {
             e.printStackTrace();
         }
 
-        assertTrue(ThreadPoolFactory.getThreadPool()==service);
+        assertTrue(ThreadPoolFactory.getThreadPool() == service);
 
         try {
             context.unbind("java:/comp/env/globalThreadPool");

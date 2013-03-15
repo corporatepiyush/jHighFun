@@ -1,7 +1,6 @@
 package org.highfun.util;
 
 
-import org.highfun.util.*;
 import org.junit.Test;
 
 import java.util.*;
@@ -274,15 +273,39 @@ public class FunctionChainSpec {
 
         FunctionChain<Integer> chain = new FunctionChain<Integer>(list);
 
-        Integer foldLeft = chain.reduce(0,
-                new Accumulator<Integer, Integer>() {
+        Integer foldLeft = chain.reduce(new Accumulator<Integer, Integer>() {
 
-                    public Integer accumulate(Integer accumulator,
-                                              Integer element) {
-                        return accumulator + element;
-                    }
+            public Integer accumulate(Integer accumulator,
+                                      Integer element) {
+                return accumulator + element;
+            }
 
-                });
+        });
+
+        assertTrue(foldLeft == 10);
+
+    }
+
+
+    @Test
+    public void testReduceWithNoOfThreads() {
+
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        FunctionChain<Integer> chain = new FunctionChain<Integer>(list);
+
+        Integer foldLeft = chain.reduce(new Accumulator<Integer, Integer>() {
+
+            public Integer accumulate(Integer accumulator,
+                                      Integer element) {
+                return accumulator + element;
+            }
+
+        }, 3);
 
         assertTrue(foldLeft == 10);
 

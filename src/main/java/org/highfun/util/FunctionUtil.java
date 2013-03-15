@@ -7,7 +7,10 @@ import org.highfun.support.ThreadPoolFactory;
 
 import java.lang.ref.SoftReference;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class FunctionUtil {
 
@@ -275,9 +278,80 @@ public class FunctionUtil {
         return foldLeft(reverselist, accum, accumulator);
     }
 
-    public static <ACCUM, EL> ACCUM reduce(Collection<EL> list, ACCUM accum,
-                                           Accumulator<ACCUM, EL> accumulator) {
-        return foldLeft(list, accum, accumulator);
+    public static <T> T reduce(Collection<T> list,
+                               Accumulator<T, T> accumulator) {
+        T current, accum = null;
+
+        Iterator<T> iterator = list.iterator();
+
+        if (iterator.hasNext()) {
+            accum = iterator.next();
+        }
+
+        while (iterator.hasNext()) {
+            current = iterator.next();
+            accum = accumulator.accumulate(accum, current);
+        }
+
+        return accum;
+    }
+
+
+    public static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, int noOfThread) {
+
+        final int size = inputList.size();
+
+        if (size < 2)
+            return reduce(inputList, accumulator);
+
+        final List<List<T>> taskList = new ArrayList<List<T>>();
+        final List<T> outList = new CopyOnWriteArrayList<T>();
+
+        if (noOfThread > size)
+            noOfThread = size;
+
+        for (int i = 0; i < noOfThread; i++) {
+            taskList.add(new LinkedList<T>());
+        }
+
+        int index = 0;
+        for (T input : inputList) {
+            taskList.get(index % noOfThread).add(input);
+            index++;
+        }
+
+        final Runnable[] threads = new Runnable[noOfThread];
+        final Future[] futures = new Future[noOfThread];
+
+        int i = 0;
+        for (final List<T> list2 : taskList) {
+            threads[i++] = new Runnable() {
+                public void run() {
+                    try {
+                        outList.add(reduce(list2, accumulator));
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }
+
+        for (i = 1; i < noOfThread; i++) {
+            futures[i] = globalPool.submit(threads[i]);
+        }
+
+        threads[0].run();
+
+        for (i = 1; i < noOfThread; i++) {
+            try {
+                futures[i].get();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+
+        return reduce(outList, accumulator);
     }
 
     public static <T> List<T> sort(List<T> inputList, final Comparator<T> comparator) {

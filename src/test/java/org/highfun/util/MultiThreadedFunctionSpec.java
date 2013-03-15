@@ -120,4 +120,26 @@ public class MultiThreadedFunctionSpec {
         }
 
     }
+
+    @Test
+    public void testReduceWithNoOfThreads() {
+
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        Integer reduceOutput = FunctionUtil.reduce(list, new Accumulator<Integer, Integer>() {
+
+            public Integer accumulate(Integer accumulator,
+                                      Integer element) {
+                return accumulator + element;
+            }
+
+        }, 3);
+
+        assertTrue(reduceOutput == 10);
+
+    }
 }

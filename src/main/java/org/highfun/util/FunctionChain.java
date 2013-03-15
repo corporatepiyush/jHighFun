@@ -54,9 +54,12 @@ public class FunctionChain<I> {
         return FunctionUtil.foldRight(this.collection, accum, accumulator);
     }
 
-    public <ACCUM> ACCUM reduce(ACCUM accum,
-                                Accumulator<ACCUM, I> accumulator) {
-        return FunctionUtil.reduce(this.collection, accum, accumulator);
+    public I reduce(Accumulator<I, I> accumulator) {
+        return FunctionUtil.reduce(this.collection, accumulator);
+    }
+
+    public I reduce(Accumulator<I, I> accumulator, int threads) {
+        return FunctionUtil.reduce(this.collection, accumulator, threads);
     }
 
     public boolean every(Condition<I> condition) {
