@@ -1,18 +1,39 @@
 package org.highfun.util;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public class MultiThreadedFunctionSpec {
+
+    @Spy
+    ExecutorService testThreadPool = new ThreadPoolExecutor(1,100,1, TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
+
+    @Before
+    public void before(){
+        try {
+            Field globalPool = FunctionUtil.class.getDeclaredField("globalPool");
+            globalPool.setAccessible(true);
+            globalPool.set(null, testThreadPool);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void testMapFunctionForListWithThreads() {
@@ -44,8 +65,10 @@ public class MultiThreadedFunctionSpec {
         for (Character character : list1) {
             assertTrue(character.charValue() == list.get(i++).charAt(0));
         }
-    }
 
+        verify(testThreadPool, times(2)).submit(any(Runnable.class));
+
+    }
 
     @Test
     public void testFilterFunctionForListWithThreads() {
@@ -71,6 +94,7 @@ public class MultiThreadedFunctionSpec {
             assertTrue(string.equals("Ruby"));
         }
 
+        verify(testThreadPool, times(2)).submit(any(Runnable.class));
     }
 
     @Test
@@ -97,6 +121,7 @@ public class MultiThreadedFunctionSpec {
             assertTrue(string.equals("Ruby"));
         }
 
+        verify(testThreadPool, times(1)).submit(any(Runnable.class));
     }
 
     @Test
@@ -119,6 +144,7 @@ public class MultiThreadedFunctionSpec {
             assertTrue(temp.contains(i));
         }
 
+        verify(testThreadPool, times(4)).submit(any(Runnable.class));
     }
 
     @Test
@@ -140,6 +166,7 @@ public class MultiThreadedFunctionSpec {
         }, 3);
 
         assertTrue(reduceOutput == 10);
+        verify(testThreadPool, times(2)).submit(any(Runnable.class));
 
     }
 }

@@ -1,15 +1,38 @@
 package org.highfun.util;
 
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class FunctionChainSpec {
+
+    @Spy
+    ExecutorService testThreadPool = new ThreadPoolExecutor(1,100,1, TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
+
+    @Before
+    public void before(){
+        try {
+            Field globalPool = FunctionUtil.class.getDeclaredField("globalPool");
+            globalPool.setAccessible(true);
+            globalPool.set(null, testThreadPool);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void testUnchain() {
@@ -87,6 +110,7 @@ public class FunctionChainSpec {
         }
 
         assertEquals(mapList, expectedList);
+        verify(testThreadPool, times(2)).submit(any(Runnable.class));
     }
 
     @Test
@@ -142,6 +166,7 @@ public class FunctionChainSpec {
             assertTrue(string.equals("Ruby"));
         }
 
+        verify(testThreadPool, times(2)).submit(any(Runnable.class));
     }
 
     @Test
@@ -208,6 +233,7 @@ public class FunctionChainSpec {
             assertTrue(temp.contains(i));
         }
 
+        verify(testThreadPool, times(4)).submit(any(Runnable.class));
     }
 
     @Test
@@ -305,9 +331,11 @@ public class FunctionChainSpec {
                 return accumulator + element;
             }
 
-        }, 3);
+        }, 2);
 
         assertTrue(foldLeft == 10);
+
+        verify(testThreadPool, times(1)).submit(any(Runnable.class));
 
     }
 

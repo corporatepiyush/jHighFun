@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
 
 public class FunctionUtil {
 
-    private static final ExecutorService globalPool = ThreadPoolFactory.getThreadPool();
+    private static ExecutorService globalPool = ThreadPoolFactory.getThreadPool();
 
     public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
         List<O> outputList = new LinkedList<O>();
