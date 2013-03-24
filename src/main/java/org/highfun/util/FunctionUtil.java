@@ -16,7 +16,7 @@ public class FunctionUtil {
 
     private static ExecutorService globalPool = ThreadPoolFactory.getThreadPool();
 
-    public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
+    static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
         List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
@@ -25,7 +25,7 @@ public class FunctionUtil {
         return outputList;
     }
 
-    public static <I, O> Collection<O> map(Collection<I> inputList, Converter<I, O> converter) {
+    static <I, O> Collection<O> map(Collection<I> inputList, Converter<I, O> converter) {
         List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
@@ -34,8 +34,8 @@ public class FunctionUtil {
         return outputList;
     }
 
-    public static <I, O> List<O> map(List<I> inputList,
-                                     final Converter<I, O> converter, int noOfThread) {
+    static <I, O> List<O> map(List<I> inputList,
+                              final Converter<I, O> converter, int noOfThread) {
 
         if (noOfThread < 2)
             return map(inputList, converter);
@@ -44,8 +44,8 @@ public class FunctionUtil {
                 noOfThread);
     }
 
-    public static <I, O> Collection<O> map(Collection<I> inputList,
-                                           final Converter<I, O> converter, int noOfThread) {
+    static <I, O> Collection<O> map(Collection<I> inputList,
+                                    final Converter<I, O> converter, int noOfThread) {
 
         if (noOfThread < 2)
             return map(inputList, converter);
@@ -80,16 +80,23 @@ public class FunctionUtil {
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
 
+        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+
         int i = 0;
         for (final List<TaskInputOutput<I, O>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-                    try {
-                        for (TaskInputOutput<I, O> taskInputOutput : list2) {
-                            taskInputOutput.setOutput(converter.convert(taskInputOutput.getInput()));
+                    for (TaskInputOutput<I, O> taskInputOutput : list2) {
+                        if (exception.size() == 0) {
+                            try {
+                                taskInputOutput.setOutput(converter.convert(taskInputOutput.getInput()));
+                            } catch (Throwable e) {
+                                exception.add(e);
+                                e.printStackTrace();
+                            }
+                        } else {
+                            break;
                         }
-                    } catch (Throwable e) {
-                        e.printStackTrace();
                     }
                 }
             };
@@ -110,6 +117,10 @@ public class FunctionUtil {
             }
         }
 
+        if (exception.size() > 0) {
+            throw new RuntimeException(exception.get(0));
+        }
+
         final List<O> outputList = new LinkedList<O>();
 
         for (TaskInputOutput<I, O> taskInputOutput : outList) {
@@ -118,75 +129,75 @@ public class FunctionUtil {
         return outputList;
     }
 
-    public static <T> List<T> filter(List<T> inputList, Condition<T> condition) {
+    static <T> List<T> filter(List<T> inputList, Predicate<T> predicate) {
 
         List<T> outputList = new LinkedList<T>();
 
         for (T i : inputList) {
-            if (condition.evaluate(i))
+            if (predicate.evaluate(i))
                 outputList.add(i);
         }
         return outputList;
     }
 
-    public static <T> Set<T> filter(Set<T> inputSet, Condition<T> condition) {
+    static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate) {
 
         Set<T> outputSet = new HashSet<T>();
 
         for (T i : inputSet) {
-            if (condition.evaluate(i))
+            if (predicate.evaluate(i))
                 outputSet.add(i);
         }
         return outputSet;
     }
 
-    public static <T> Collection<T> filter(Collection<T> inputList, Condition<T> condition) {
+    static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate) {
 
         List<T> outputList = new LinkedList<T>();
 
         for (T i : inputList) {
-            if (condition.evaluate(i))
+            if (predicate.evaluate(i))
                 outputList.add(i);
         }
         return outputList;
     }
 
-    public static <T> List<T> filter(List<T> inputList, Condition<T> condition,
-                                     int noOfThread) {
+    static <T> List<T> filter(List<T> inputList, Predicate<T> predicate,
+                              int noOfThread) {
 
         if (noOfThread < 2)
-            return filter(inputList, condition);
+            return filter(inputList, predicate);
 
         return (List<T>) filterParallel(inputList,
-                condition, noOfThread, List.class);
+                predicate, noOfThread, List.class);
 
     }
 
-    public static <T> Set<T> filter(Set<T> inputSet, Condition<T> condition,
+    static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate,
+                             int noOfThread) {
+
+        if (noOfThread < 2)
+            return filter(inputSet, predicate);
+
+        return (Set<T>) filterParallel(inputSet,
+                predicate, noOfThread, Set.class);
+
+
+    }
+
+    static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate,
                                     int noOfThread) {
 
         if (noOfThread < 2)
-            return filter(inputSet, condition);
-
-        return (Set<T>) filterParallel(inputSet,
-                condition, noOfThread, Set.class);
-
-
-    }
-
-    public static <T> Collection<T> filter(Collection<T> inputList, Condition<T> condition,
-                                           int noOfThread) {
-
-        if (noOfThread < 2)
-            return filter(inputList, condition);
+            return filter(inputList, predicate);
 
         return filterParallel(inputList,
-                condition, noOfThread, List.class);
+                predicate, noOfThread, List.class);
 
     }
 
     private static <T, DS> Collection<T> filterParallel(Collection<T> inputList,
-                                                        final Condition<T> condition, int noOfThread, Class<DS> expectedCollection) {
+                                                        final Predicate<T> predicate, int noOfThread, Class<DS> expectedCollection) {
         final int size = inputList.size();
         final List<List<TaskInputOutput<T, Boolean>>> taskList = new ArrayList<List<TaskInputOutput<T, Boolean>>>();
         final List<TaskInputOutput<T, Boolean>> outList = new LinkedList<TaskInputOutput<T, Boolean>>();
@@ -210,16 +221,23 @@ public class FunctionUtil {
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
 
+        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+
         int i = 0;
         for (final List<TaskInputOutput<T, Boolean>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-                    try {
-                        for (TaskInputOutput<T, Boolean> taskInputOutput : list2) {
-                            taskInputOutput.setOutput(condition.evaluate(taskInputOutput.getInput()));
+                    for (TaskInputOutput<T, Boolean> taskInputOutput : list2) {
+                        if (exception.size() == 0) {
+                            try {
+                                taskInputOutput.setOutput(predicate.evaluate(taskInputOutput.getInput()));
+                            } catch (Throwable e) {
+                                exception.add(e);
+                                e.printStackTrace();
+                            }
+                        } else {
+                            break;
                         }
-                    } catch (Throwable e) {
-                        e.printStackTrace();
                     }
                 }
             };
@@ -240,6 +258,11 @@ public class FunctionUtil {
             }
         }
 
+
+        if (exception.size() > 0) {
+            throw new RuntimeException(exception.get(0));
+        }
+
         Collection<T> outputList = null;
 
         if (expectedCollection.getName().equals("java.util.List")) {
@@ -249,15 +272,15 @@ public class FunctionUtil {
         }
 
         for (TaskInputOutput<T, Boolean> taskInputOutput : outList) {
-            if (taskInputOutput.getOutput())
+            if (taskInputOutput.getOutput() != null && taskInputOutput.getOutput())
                 outputList.add(taskInputOutput.getInput());
         }
 
         return outputList;
     }
 
-    public static <ACCUM, EL> ACCUM foldLeft(Collection<EL> list, ACCUM accum,
-                                             Accumulator<ACCUM, EL> accumulator) {
+    static <ACCUM, EL> ACCUM foldLeft(Collection<EL> list, ACCUM accum,
+                                      Accumulator<ACCUM, EL> accumulator) {
 
         for (EL element : list) {
             accum = accumulator.accumulate(accum, element);
@@ -266,8 +289,8 @@ public class FunctionUtil {
         return accum;
     }
 
-    public static <ACCUM, EL> ACCUM foldRight(Collection<EL> list, ACCUM accum,
-                                              Accumulator<ACCUM, EL> accumulator) {
+    static <ACCUM, EL> ACCUM foldRight(Collection<EL> list, ACCUM accum,
+                                       Accumulator<ACCUM, EL> accumulator) {
 
         LinkedList<EL> reverselist = new LinkedList<EL>();
 
@@ -278,8 +301,8 @@ public class FunctionUtil {
         return foldLeft(reverselist, accum, accumulator);
     }
 
-    public static <T> T reduce(Collection<T> list,
-                               Accumulator<T, T> accumulator) {
+    static <T> T reduce(Collection<T> list,
+                        Accumulator<T, T> accumulator) {
         T current, accum = null;
 
         Iterator<T> iterator = list.iterator();
@@ -297,7 +320,7 @@ public class FunctionUtil {
     }
 
 
-    public static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, int noOfThread) {
+    static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, int noOfThread) {
 
         final int size = inputList.size();
 
@@ -306,6 +329,7 @@ public class FunctionUtil {
 
         final List<List<T>> taskList = new ArrayList<List<T>>();
         final List<T> outList = new CopyOnWriteArrayList<T>();
+
 
         if (noOfThread > size)
             noOfThread = size;
@@ -323,15 +347,37 @@ public class FunctionUtil {
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
 
+        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+
         int i = 0;
         for (final List<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-                    try {
-                        outList.add(reduce(list2, accumulator));
-                    } catch (Throwable e) {
-                        e.printStackTrace();
+
+                    T current, accum = null;
+
+                    Iterator<T> iterator = list2.iterator();
+
+                    if (iterator.hasNext()) {
+                        accum = iterator.next();
                     }
+
+                    while (iterator.hasNext()) {
+                        current = iterator.next();
+
+                        if (exception.size() == 0) {
+                            try {
+                                accum = accumulator.accumulate(accum, current);
+                            } catch (Throwable e) {
+                                exception.add(e);
+                                e.printStackTrace();
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+
+                    outList.add(accum);
                 }
             };
         }
@@ -351,6 +397,9 @@ public class FunctionUtil {
             }
         }
 
+        if (exception.size() > 0)
+            throw new RuntimeException(exception.get(0));
+
         return reduce(outList, accumulator);
     }
 
@@ -367,7 +416,7 @@ public class FunctionUtil {
         return outList;
     }
 
-    public static <T> Set<T> sort(Set<T> inputList, final Comparator<T> comparator) {
+    static <T> Set<T> sort(Set<T> inputList, final Comparator<T> comparator) {
 
         List<T> outList = new ArrayList<T>(inputList.size());
 
@@ -386,7 +435,7 @@ public class FunctionUtil {
         return outSet;
     }
 
-    public static <T> Collection<T> sort(Collection<T> inputList, final Comparator<T> comparator) {
+    static <T> Collection<T> sort(Collection<T> inputList, final Comparator<T> comparator) {
 
         List<T> outList = new ArrayList<T>(inputList.size());
 
@@ -399,34 +448,34 @@ public class FunctionUtil {
         return outList;
     }
 
-    public static <T> boolean every(Collection<T> inputList, Condition<T> condition) {
+    static <T> boolean every(Collection<T> inputList, Predicate<T> predicate) {
 
         for (T t : inputList) {
-            if (!condition.evaluate(t))
+            if (!predicate.evaluate(t))
                 return false;
         }
         return true;
     }
 
-    public static <T> boolean any(Collection<T> inputList, Condition<T> condition) {
+    static <T> boolean any(Collection<T> inputList, Predicate<T> predicate) {
 
         for (T t : inputList) {
-            if (condition.evaluate(t))
+            if (predicate.evaluate(t))
                 return true;
         }
         return false;
     }
 
-    public static <T> int count(Collection<T> input, Condition<T> condition) {
+    static <T> int count(Collection<T> input, Predicate<T> predicate) {
         int count = 0;
         for (T t : input) {
-            if (condition.evaluate(t))
+            if (predicate.evaluate(t))
                 count++;
         }
         return count;
     }
 
-    public static <T> Collection<Collection<T>> split(Collection<T> input, Condition<T> condition) {
+    static <T> Collection<Collection<T>> split(Collection<T> input, Predicate<T> predicate) {
 
         Collection<T> list1 = new LinkedList<T>();
         Collection<T> list2 = new LinkedList<T>();
@@ -434,7 +483,7 @@ public class FunctionUtil {
         Collection<Collection<T>> out = new LinkedList<Collection<T>>();
 
         for (T t : input) {
-            if (condition.evaluate(t))
+            if (predicate.evaluate(t))
                 list1.add(t);
             else
                 list2.add(t);
@@ -445,19 +494,26 @@ public class FunctionUtil {
         return out;
     }
 
-    public static <K, V> void each(Map<K, V> map, KeyValueRecord<K, V> keyValueRecord) {
+    static <K, V> void each(Map<K, V> map, KeyValueRecordProcessor<K, V> keyValueRecordProcessor) {
         for (Map.Entry<K, V> entry : map.entrySet()) {
-            keyValueRecord.process(entry.getKey(), entry.getValue());
+            keyValueRecordProcessor.process(entry.getKey(), entry.getValue());
         }
     }
 
-    public static <T> void each(Collection<T> list, ItemRecord<T> itemRecord) {
+    static <T> void each(Collection<T> list, RecordProcessor<T> recordProcessor) {
         for (T item : list) {
-            itemRecord.process(item);
+            recordProcessor.process(item);
         }
     }
 
-    public static <T> void each(Collection<T> inputList, final ItemRecord<T> itemRecord, int noOfThread) {
+    static <T> void eachWithIndex(Collection<T> list, RecordWithIndexProcessor<T> recordProcessor) {
+        int index = 0;
+        for (T item : list) {
+            recordProcessor.process(item, index++);
+        }
+    }
+
+    static <T> void each(Collection<T> inputList, final RecordProcessor<T> recordProcessor, int noOfThread) {
         final int size = inputList.size();
         final List<List<T>> taskList = new ArrayList<List<T>>();
 
@@ -477,16 +533,24 @@ public class FunctionUtil {
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
 
+        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+
         int i = 0;
         for (final List<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-                    try {
-                        for (T task : list2) {
-                            itemRecord.process(task);
+
+                    for (T task : list2) {
+                        if (exception.size() == 0) {
+                            try {
+                                recordProcessor.process(task);
+                            } catch (Throwable e) {
+                                exception.add(e);
+                                e.printStackTrace();
+                            }
+                        } else {
+                            break;
                         }
-                    } catch (Throwable e) {
-                        e.printStackTrace();
                     }
                 }
             };
@@ -506,6 +570,9 @@ public class FunctionUtil {
                 throw new RuntimeException(e);
             }
         }
+
+        if (exception.size() > 0)
+            throw new RuntimeException(exception.get(0));
     }
 
     public static <I> FunctionChain<I> chain(Collection<I> collection) {
@@ -528,7 +595,7 @@ public class FunctionUtil {
             public O convert(I input) {
                 CacheObject<I> iCacheObject = new CacheObject<I>(input);
                 CacheObject<O> memoizedOutput = memo.get(iCacheObject);
-                if (memoizedOutput != null) {
+                if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
                     O output = converter.convert(input);
@@ -540,17 +607,17 @@ public class FunctionUtil {
 
     }
 
-    public static <T> Condition<T> memoize(final Condition<T> condition) {
+    public static <T> Predicate<T> memoize(final Predicate<T> predicate) {
 
         final Map<CacheObject<T>, Boolean> memo = new ConcurrentHashMap<CacheObject<T>, Boolean>();
-        return new Condition<T>() {
+        return new Predicate<T>() {
             public boolean evaluate(T input) {
                 CacheObject<T> tCacheObject = new CacheObject<T>(input);
                 Boolean memoizedOutput = memo.get(tCacheObject);
                 if (memoizedOutput != null) {
                     return memoizedOutput;
                 } else {
-                    boolean output = condition.evaluate(input);
+                    boolean output = predicate.evaluate(input);
                     memo.put(tCacheObject, output);
                     return output;
                 }
@@ -564,7 +631,7 @@ public class FunctionUtil {
             public O apply(List<I> input) {
                 CacheObject<List<I>> listCacheObject = new CacheObject<List<I>>(input);
                 CacheObject<O> memoizedOutput = memo.get(listCacheObject);
-                if (memoizedOutput != null) {
+                if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
                     O output = function.apply(input);
@@ -582,7 +649,7 @@ public class FunctionUtil {
             public ACCUM accumulate(ACCUM accum, EL el) {
                 CacheObject<Pair<ACCUM, EL>> pairCacheObject = new CacheObject<Pair<ACCUM, EL>>(new Pair<ACCUM, EL>(accum, el));
                 CacheObject<ACCUM> memoizedOutput = memo.get(pairCacheObject);
-                if (memoizedOutput != null) {
+                if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
                     ACCUM output = accumulator.accumulate(accum, el);

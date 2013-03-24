@@ -1,6 +1,6 @@
 package org.highfun.util;
 
-public interface Condition<T> {
+public interface Predicate<T> {
 
     public boolean evaluate(T t);
 

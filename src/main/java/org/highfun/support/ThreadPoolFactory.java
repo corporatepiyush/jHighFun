@@ -16,6 +16,7 @@ public class ThreadPoolFactory {
         try {
             context = new InitialContext();
         } catch (NamingException e) {
+            System.err.println("Error while looking up for 'org.highfun.threadpool' system property, falling back to default ThreadPool.");
         }
 
         if (context != null) {
@@ -38,7 +39,7 @@ public class ThreadPoolFactory {
     }
 
     private static ExecutorService getDefaultThreadPool() {
-        final ThreadPoolExecutor pool = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
+        final ThreadPoolExecutor pool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {

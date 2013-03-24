@@ -16,11 +16,11 @@ public final class CurriedFunction<I, O> {
         this.fixedInputs = fixedInputs;
     }
 
-    public CurriedFunction curry(List<I> dynamicInputs){
+    public CurriedFunction curry(List<I> dynamicInputs) {
         return new CurriedFunction(this.function, List(this.fixedInputs, dynamicInputs));
     }
 
-    public CurriedFunction curry(I... dynamicInputs){
+    public CurriedFunction curry(I... dynamicInputs) {
 
         List<I> argList = new ArrayList<I>();
 

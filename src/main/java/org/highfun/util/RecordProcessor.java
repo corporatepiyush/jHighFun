@@ -1,5 +1,5 @@
 package org.highfun.util;
 
-public interface ItemRecord<I> {
+public interface RecordProcessor<I> {
     public void process(I item);
 }

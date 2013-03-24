@@ -51,7 +51,7 @@ public class SingleThreadedFunctionSpec {
         }
 
         List<String> list1 = FunctionUtil.filter(list,
-                new Condition<String>() {
+                new Predicate<String>() {
 
                     public boolean evaluate(String t) {
                         return t.contains("y");
@@ -77,7 +77,7 @@ public class SingleThreadedFunctionSpec {
         }
 
         Set<String> list1 = FunctionUtil.filter(set,
-                new Condition<String>() {
+                new Predicate<String>() {
 
                     public boolean evaluate(String t) {
                         return t.contains("y");
@@ -238,7 +238,7 @@ public class SingleThreadedFunctionSpec {
             list.add("Java");
         }
 
-        boolean bool = FunctionUtil.every(list, new Condition<String>() {
+        boolean bool = FunctionUtil.every(list, new Predicate<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("v");
@@ -247,7 +247,7 @@ public class SingleThreadedFunctionSpec {
 
         assertTrue(!bool);
 
-        bool = FunctionUtil.every(list, new Condition<String>() {
+        bool = FunctionUtil.every(list, new Predicate<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("a");
@@ -266,7 +266,7 @@ public class SingleThreadedFunctionSpec {
             list.add("Java");
         }
 
-        boolean bool = FunctionUtil.any(list, new Condition<String>() {
+        boolean bool = FunctionUtil.any(list, new Predicate<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("R");
@@ -275,7 +275,7 @@ public class SingleThreadedFunctionSpec {
 
         assertTrue(!bool);
 
-        bool = FunctionUtil.any(list, new Condition<String>() {
+        bool = FunctionUtil.any(list, new Predicate<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("a");
@@ -316,7 +316,7 @@ public class SingleThreadedFunctionSpec {
 
         final List<String> temp = new LinkedList<String>();
 
-        FunctionUtil.each(list, new ItemRecord<String>() {
+        FunctionUtil.each(list, new RecordProcessor<String>() {
             public void process(String item) {
                 temp.add(item);
             }
@@ -325,6 +325,27 @@ public class SingleThreadedFunctionSpec {
         assertEquals(list, temp);
     }
 
+    @Test
+    public void testEachWithIndexFunction() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+
+        final Map<Integer, String> temp = new HashMap<Integer, String>();
+
+        FunctionUtil.eachWithIndex(list, new RecordWithIndexProcessor<String>() {
+            public void process(String item, int index) {
+                temp.put(index, item);
+            }
+        });
+
+        final Map<Integer, String> expected = new HashMap<Integer, String>();
+        expected.put(0, "Scala");
+        expected.put(1, "Java");
+
+        assertEquals(expected, temp);
+    }
 
     @Test
     public void testEachFunctionForMap() {
@@ -335,7 +356,7 @@ public class SingleThreadedFunctionSpec {
 
         final Map<String, String> temp = new HashMap<String, String>();
 
-        FunctionUtil.each(map, new KeyValueRecord<String, String>() {
+        FunctionUtil.each(map, new KeyValueRecordProcessor<String, String>() {
             public void process(String key, String value) {
                 temp.put(key, value);
             }
@@ -353,7 +374,7 @@ public class SingleThreadedFunctionSpec {
 
         final Set<String> temp = new HashSet<String>();
 
-        int count = FunctionUtil.count(set, new Condition<String>() {
+        int count = FunctionUtil.count(set, new Predicate<String>() {
             public boolean evaluate(String s) {
                 return s.contains("Scala");
             }
@@ -371,7 +392,7 @@ public class SingleThreadedFunctionSpec {
 
         final Set<String> temp = new HashSet<String>();
 
-        Collection<Collection<String>> splits = FunctionUtil.split(set, new Condition<String>() {
+        Collection<Collection<String>> splits = FunctionUtil.split(set, new Predicate<String>() {
             public boolean evaluate(String s) {
                 return s.contains("Scala");
             }
@@ -465,7 +486,7 @@ public class SingleThreadedFunctionSpec {
         final List<String> spyInjection = new LinkedList<String>();
         final String inputCheckValue = "today";
 
-        Condition<String> memoizedFunction = FunctionUtil.memoize(new Condition<String>() {
+        Predicate<String> memoizedFunction = FunctionUtil.memoize(new Predicate<String>() {
 
             public boolean evaluate(String input) {
                 spyInjection.add(input);

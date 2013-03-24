@@ -21,10 +21,10 @@ import static org.mockito.Mockito.verify;
 public class FunctionChainSpec {
 
     @Spy
-    ExecutorService testThreadPool = new ThreadPoolExecutor(1,100,1, TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
+    ExecutorService testThreadPool = new ThreadPoolExecutor(1, 100, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     @Before
-    public void before(){
+    public void before() {
         try {
             Field globalPool = FunctionUtil.class.getDeclaredField("globalPool");
             globalPool.setAccessible(true);
@@ -125,7 +125,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        Collection<String> filterList = chain.filter(new Condition<String>() {
+        Collection<String> filterList = chain.filter(new Predicate<String>() {
 
             public boolean evaluate(String t) {
                 return t.contains("y");
@@ -152,7 +152,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        Collection<String> filterList = chain.filter(new Condition<String>() {
+        Collection<String> filterList = chain.filter(new Predicate<String>() {
 
             public boolean evaluate(String t) {
                 return t.contains("y");
@@ -201,7 +201,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        chain.each(new ItemRecord<String>() {
+        chain.each(new RecordProcessor<String>() {
             public void process(String item) {
                 temp.add(item);
             }
@@ -223,7 +223,7 @@ public class FunctionChainSpec {
 
         FunctionChain<Integer> chain = new FunctionChain<Integer>(list);
 
-        chain.each(new ItemRecord<Integer>() {
+        chain.each(new RecordProcessor<Integer>() {
             public void process(Integer item) {
                 temp.add(item);
             }
@@ -350,7 +350,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        boolean bool = chain.every(new Condition<String>() {
+        boolean bool = chain.every(new Predicate<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("v");
@@ -359,7 +359,7 @@ public class FunctionChainSpec {
 
         assertTrue(!bool);
 
-        bool = chain.every(new Condition<String>() {
+        bool = chain.every(new Predicate<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("a");
@@ -380,7 +380,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        boolean bool = chain.some(new Condition<String>() {
+        boolean bool = chain.any(new Predicate<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("R");
@@ -389,7 +389,7 @@ public class FunctionChainSpec {
 
         assertTrue(!bool);
 
-        bool = chain.some(new Condition<String>() {
+        bool = chain.any(new Predicate<String>() {
 
             public boolean evaluate(String string) {
                 return string.contains("a");
@@ -408,7 +408,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(set);
 
-        int count = chain.count(new Condition<String>() {
+        int count = chain.count(new Predicate<String>() {
             public boolean evaluate(String s) {
                 return s.contains("Scala");
             }

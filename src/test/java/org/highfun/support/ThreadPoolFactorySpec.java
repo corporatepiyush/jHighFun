@@ -18,7 +18,7 @@ public class ThreadPoolFactorySpec {
     @Test
     public void testForJNDILookUp() {
 
-        ExecutorService service = new ThreadPoolExecutor(1, 10, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
+        ExecutorService service = new ThreadPoolExecutor(0, 10, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
         InitialContext context = null;
 
         System.setProperty("org.highfun.threadpool", "globalThreadPool");
@@ -48,7 +48,7 @@ public class ThreadPoolFactorySpec {
 
         ThreadPoolExecutor defaultPool = (ThreadPoolExecutor) ThreadPoolFactory.getThreadPool();
 
-        assertEquals(defaultPool.getCorePoolSize(), 1);
+        assertEquals(defaultPool.getCorePoolSize(), 0);
         assertEquals(defaultPool.getMaximumPoolSize(), Integer.MAX_VALUE);
         assertEquals(defaultPool.getKeepAliveTime(TimeUnit.MINUTES), 5);
         assertEquals(defaultPool.getQueue().getClass(), new SynchronousQueue<Runnable>().getClass());

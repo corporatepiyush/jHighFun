@@ -11,10 +11,10 @@ import static org.junit.Assert.assertEquals;
 
 public class CurriedFunctionSpec {
 
-    CurriedFunction<Character, String> curriedFunction ;
+    CurriedFunction<Character, String> curriedFunction;
 
     @Before
-    public void before(){
+    public void before() {
         curriedFunction = new CurriedFunction<Character, String>(new Function<Character, String>() {
             public String apply(List<Character> args) {
                 StringBuilder string = new StringBuilder();
@@ -29,27 +29,27 @@ public class CurriedFunctionSpec {
     }
 
     @Test
-    public void testCallWithFixedInputs(){
+    public void testCallWithFixedInputs() {
         assertEquals(curriedFunction.call(), "Hello");
     }
 
     @Test
-    public void testCallWithVarArg(){
+    public void testCallWithVarArg() {
         assertEquals(curriedFunction.call(' ', 'J', 'i', 'm'), "Hello Jim");
     }
 
     @Test
-    public void testCallWithListArg(){
+    public void testCallWithListArg() {
         assertEquals(curriedFunction.call(List(' ', 'J', 'i', 'm')), "Hello Jim");
     }
 
     @Test
-    public void testCurryWithListArgs(){
+    public void testCurryWithListArgs() {
         assertEquals(curriedFunction.curry(List(' ', 'J', 'i', 'm')).call(), "Hello Jim");
     }
 
     @Test
-    public void testCurryWithVarArgs(){
+    public void testCurryWithVarArgs() {
         assertEquals(curriedFunction.curry(' ', 'J', 'i', 'm').call(), "Hello Jim");
     }
 }

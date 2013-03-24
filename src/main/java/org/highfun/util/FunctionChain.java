@@ -19,13 +19,13 @@ public class FunctionChain<I> {
         return new FunctionChain<O>(FunctionUtil.map(this.collection, converter, threads));
     }
 
-    public FunctionChain<I> filter(Condition<I> condition) {
-        this.collection = FunctionUtil.filter(this.collection, condition);
+    public FunctionChain<I> filter(Predicate<I> predicate) {
+        this.collection = FunctionUtil.filter(this.collection, predicate);
         return this;
     }
 
-    public FunctionChain<I> filter(Condition<I> condition, int threads) {
-        this.collection = FunctionUtil.filter(this.collection, condition, threads);
+    public FunctionChain<I> filter(Predicate<I> predicate, int threads) {
+        this.collection = FunctionUtil.filter(this.collection, predicate, threads);
         return this;
     }
 
@@ -34,13 +34,13 @@ public class FunctionChain<I> {
         return this;
     }
 
-    public FunctionChain<I> each(ItemRecord<I> itemRecord) {
-        FunctionUtil.each(this.collection, itemRecord);
+    public FunctionChain<I> each(RecordProcessor<I> recordProcessor) {
+        FunctionUtil.each(this.collection, recordProcessor);
         return this;
     }
 
-    public FunctionChain<I> each(ItemRecord<I> itemRecord, int threads) {
-        FunctionUtil.each(this.collection, itemRecord, threads);
+    public FunctionChain<I> each(RecordProcessor<I> recordProcessor, int threads) {
+        FunctionUtil.each(this.collection, recordProcessor, threads);
         return this;
     }
 
@@ -62,16 +62,16 @@ public class FunctionChain<I> {
         return FunctionUtil.reduce(this.collection, accumulator, threads);
     }
 
-    public boolean every(Condition<I> condition) {
-        return FunctionUtil.every(this.collection, condition);
+    public boolean every(Predicate<I> predicate) {
+        return FunctionUtil.every(this.collection, predicate);
     }
 
-    public boolean some(Condition<I> condition) {
-        return FunctionUtil.any(this.collection, condition);
+    public boolean any(Predicate<I> predicate) {
+        return FunctionUtil.any(this.collection, predicate);
     }
 
-    public int count(Condition<I> condition) {
-        return FunctionUtil.count(this.collection, condition);
+    public int count(Predicate<I> predicate) {
+        return FunctionUtil.count(this.collection, predicate);
     }
 
     public Collection<I> unchain() {
