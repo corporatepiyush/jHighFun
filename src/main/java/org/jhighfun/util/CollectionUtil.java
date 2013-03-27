@@ -1,6 +1,6 @@
-package org.highfun.util;
+package org.jhighfun.util;
 
-import org.highfun.support.Pair;
+import org.jhighfun.internal.Pair;
 
 import java.util.*;
 

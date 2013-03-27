@@ -1,10 +1,10 @@
-package org.highfun.util;
+package org.jhighfun.util;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.highfun.util.CollectionUtil.List;
+import static org.jhighfun.util.CollectionUtil.List;
 
 public final class CurriedFunction<I, O> {
 

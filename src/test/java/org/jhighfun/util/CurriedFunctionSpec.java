@@ -1,4 +1,4 @@
-package org.highfun.util;
+package org.jhighfun.util;
 
 
 import org.junit.Before;
@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.highfun.util.CollectionUtil.List;
+import static org.jhighfun.util.CollectionUtil.List;
 import static org.junit.Assert.assertEquals;
 
 public class CurriedFunctionSpec {

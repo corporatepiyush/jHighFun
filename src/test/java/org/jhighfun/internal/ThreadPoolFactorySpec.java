@@ -1,4 +1,4 @@
-package org.highfun.support;
+package org.jhighfun.internal;
 
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class ThreadPoolFactorySpec {
         ExecutorService service = new ThreadPoolExecutor(0, 10, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
         InitialContext context = null;
 
-        System.setProperty("org.highfun.threadpool", "globalThreadPool");
+        System.setProperty("org.jhighfun.threadpool", "globalThreadPool");
         // Create initial context
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                 "org.apache.naming.java.javaURLContextFactory");

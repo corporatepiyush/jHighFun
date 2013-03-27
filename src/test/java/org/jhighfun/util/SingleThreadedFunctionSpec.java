@@ -1,10 +1,10 @@
-package org.highfun.util;
+package org.jhighfun.util;
 
 import org.junit.Test;
 
 import java.util.*;
 
-import static org.highfun.util.CollectionUtil.List;
+import static org.jhighfun.util.CollectionUtil.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -199,14 +199,12 @@ public class SingleThreadedFunctionSpec {
         list.add(2);
         list.add(3);
 
-        list = FunctionUtil.sort(list, new Comparator<Integer>() {
+        assertTrue(FunctionUtil.sort(list, new Comparator<Integer>() {
 
             public int compare(Integer t1, Integer t2) {
                 return t1 - t2;
             }
-        });
-
-        assertTrue(list.toString().equals("[1, 2, 3, 4]"));
+        }).toString().equals("[1, 2, 3, 4]"));
 
     }
 
@@ -218,14 +216,24 @@ public class SingleThreadedFunctionSpec {
         set.add(2);
         set.add(3);
 
-        set = FunctionUtil.sort(set, new Comparator<Integer>() {
+        assertTrue(FunctionUtil.sort(set, new Comparator<Integer>() {
 
             public int compare(Integer t1, Integer t2) {
                 return t1 - t2;
             }
-        });
+        }).toString().equals("[1, 2, 3, 4]"));
 
-        assertTrue(set.toString().equals("[1, 2, 3, 4]"));
+    }
+
+    @Test
+    public void testForSortImplicit() {
+        Set<Integer> set = new HashSet<Integer>();
+        set.add(1);
+        set.add(4);
+        set.add(2);
+        set.add(3);
+
+        assertTrue(FunctionUtil.sort(set).toString().equals("[1, 2, 3, 4]"));
 
     }
 

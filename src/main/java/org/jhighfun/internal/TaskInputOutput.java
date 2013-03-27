@@ -1,4 +1,4 @@
-package org.highfun.support;
+package org.jhighfun.internal;
 
 
 public final class TaskInputOutput<I, O> {

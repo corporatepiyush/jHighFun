@@ -1,4 +1,4 @@
-package org.highfun.util;
+package org.jhighfun.util;
 
 
 public interface KeyValueRecordProcessor<K, V> {

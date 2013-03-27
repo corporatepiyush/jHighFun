@@ -1,13 +1,13 @@
-package org.highfun.util;
+package org.jhighfun.util;
 
-import org.highfun.support.Pair;
+import org.jhighfun.internal.Pair;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.highfun.util.CollectionUtil.*;
+import static org.jhighfun.util.CollectionUtil.*;
 import static org.junit.Assert.assertEquals;
 
 

@@ -1,4 +1,4 @@
-package org.highfun.support;
+package org.jhighfun.internal;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -16,15 +16,15 @@ public class ThreadPoolFactory {
         try {
             context = new InitialContext();
         } catch (NamingException e) {
-            System.err.println("Error while looking up for 'org.highfun.threadpool' system property, falling back to default ThreadPool.");
+            System.err.println("Error while looking up for 'org.jhighfun.threadpool' system property, falling back to default ThreadPool.");
         }
 
         if (context != null) {
             ExecutorService managedThreadPool = null;
             try {
-                managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.highfun.threadpool"));
+                managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.jhighfun.threadpool"));
             } catch (Exception e) {
-                System.err.println("Error while looking up for 'org.highfun.threadpool' system property, falling back to default ThreadPool.");
+                System.err.println("Error while looking up for 'org.jhighfun.threadpool' system property, falling back to default ThreadPool.");
             } finally {
                 if (managedThreadPool != null)
                     return managedThreadPool;

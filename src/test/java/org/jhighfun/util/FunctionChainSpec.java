@@ -1,4 +1,4 @@
-package org.highfun.util;
+package org.jhighfun.util;
 
 
 import org.junit.Before;
@@ -538,7 +538,7 @@ public class FunctionChainSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        Collection<String> combinedList = new FunctionChain<String>(list).slice(1,2).unchain();
+        Collection<String> combinedList = new FunctionChain<String>(list).slice(1, 2).unchain();
 
         List<String> expectedList = new LinkedList<String>();
         expectedList.add("Java");
@@ -548,7 +548,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(1,3).unchain();
+        combinedList = new FunctionChain<String>(list).slice(1, 3).unchain();
 
         expectedList = new LinkedList<String>();
         expectedList.add("Java");

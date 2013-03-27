@@ -1,9 +1,9 @@
-package org.highfun.util;
+package org.jhighfun.util;
 
-import org.highfun.support.CacheObject;
-import org.highfun.support.Pair;
-import org.highfun.support.TaskInputOutput;
-import org.highfun.support.ThreadPoolFactory;
+import org.jhighfun.internal.CacheObject;
+import org.jhighfun.internal.Pair;
+import org.jhighfun.internal.TaskInputOutput;
+import org.jhighfun.internal.ThreadPoolFactory;
 
 import java.lang.ref.SoftReference;
 import java.util.*;
@@ -403,38 +403,6 @@ public class FunctionUtil {
         return reduce(outList, accumulator);
     }
 
-    public static <T> List<T> sort(List<T> inputList, final Comparator<T> comparator) {
-
-        List<T> outList = new ArrayList<T>(inputList.size());
-
-        for (T element : inputList) {
-            outList.add(element);
-        }
-
-        Collections.sort(outList, comparator);
-
-        return outList;
-    }
-
-    public static <T> Set<T> sort(Set<T> inputList, final Comparator<T> comparator) {
-
-        List<T> outList = new ArrayList<T>(inputList.size());
-
-        for (T element : inputList) {
-            outList.add(element);
-        }
-
-        Collections.sort(outList, comparator);
-
-        Set<T> outSet = new HashSet<T>(inputList.size());
-
-        for (T element : outList) {
-            outSet.add(element);
-        }
-
-        return outSet;
-    }
-
     public static <T> Collection<T> sort(Collection<T> inputList, final Comparator<T> comparator) {
 
         List<T> outList = new ArrayList<T>(inputList.size());
@@ -447,6 +415,24 @@ public class FunctionUtil {
 
         return outList;
     }
+
+    public static <T> Collection<T> sort(Collection<T> inputList) {
+
+        List<T> outList = new ArrayList<T>(inputList.size());
+
+        for (T element : inputList) {
+            outList.add(element);
+        }
+
+        Collections.sort(outList, new Comparator<T>() {
+            public int compare(T o1, T o2) {
+                return ((Comparable)o1).compareTo(o2);
+            }
+        });
+
+        return outList;
+    }
+
 
     public static <T> boolean every(Collection<T> inputList, Predicate<T> predicate) {
 
