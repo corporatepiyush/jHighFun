@@ -16,7 +16,7 @@ public class FunctionUtil {
 
     private static ExecutorService globalPool = ThreadPoolFactory.getThreadPool();
 
-    static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
+    public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
         List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
@@ -25,7 +25,7 @@ public class FunctionUtil {
         return outputList;
     }
 
-    static <I, O> Collection<O> map(Collection<I> inputList, Converter<I, O> converter) {
+    public static <I, O> Collection<O> map(Collection<I> inputList, Converter<I, O> converter) {
         List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
@@ -34,7 +34,7 @@ public class FunctionUtil {
         return outputList;
     }
 
-    static <I, O> List<O> map(List<I> inputList,
+    public static <I, O> List<O> map(List<I> inputList,
                               final Converter<I, O> converter, int noOfThread) {
 
         if (noOfThread < 2)
@@ -44,7 +44,7 @@ public class FunctionUtil {
                 noOfThread);
     }
 
-    static <I, O> Collection<O> map(Collection<I> inputList,
+    public static <I, O> Collection<O> map(Collection<I> inputList,
                                     final Converter<I, O> converter, int noOfThread) {
 
         if (noOfThread < 2)
@@ -129,7 +129,7 @@ public class FunctionUtil {
         return outputList;
     }
 
-    static <T> List<T> filter(List<T> inputList, Predicate<T> predicate) {
+    public static <T> List<T> filter(List<T> inputList, Predicate<T> predicate) {
 
         List<T> outputList = new LinkedList<T>();
 
@@ -140,7 +140,7 @@ public class FunctionUtil {
         return outputList;
     }
 
-    static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate) {
+    public static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate) {
 
         Set<T> outputSet = new HashSet<T>();
 
@@ -151,7 +151,7 @@ public class FunctionUtil {
         return outputSet;
     }
 
-    static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate) {
+    public static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate) {
 
         List<T> outputList = new LinkedList<T>();
 
@@ -162,7 +162,7 @@ public class FunctionUtil {
         return outputList;
     }
 
-    static <T> List<T> filter(List<T> inputList, Predicate<T> predicate,
+    public static <T> List<T> filter(List<T> inputList, Predicate<T> predicate,
                               int noOfThread) {
 
         if (noOfThread < 2)
@@ -173,7 +173,7 @@ public class FunctionUtil {
 
     }
 
-    static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate,
+    public static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate,
                              int noOfThread) {
 
         if (noOfThread < 2)
@@ -185,7 +185,7 @@ public class FunctionUtil {
 
     }
 
-    static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate,
+    public static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate,
                                     int noOfThread) {
 
         if (noOfThread < 2)
@@ -279,7 +279,7 @@ public class FunctionUtil {
         return outputList;
     }
 
-    static <ACCUM, EL> ACCUM foldLeft(Collection<EL> list, ACCUM accum,
+    public static <ACCUM, EL> ACCUM foldLeft(Collection<EL> list, ACCUM accum,
                                       Accumulator<ACCUM, EL> accumulator) {
 
         for (EL element : list) {
@@ -289,7 +289,7 @@ public class FunctionUtil {
         return accum;
     }
 
-    static <ACCUM, EL> ACCUM foldRight(Collection<EL> list, ACCUM accum,
+    public static <ACCUM, EL> ACCUM foldRight(Collection<EL> list, ACCUM accum,
                                        Accumulator<ACCUM, EL> accumulator) {
 
         LinkedList<EL> reverselist = new LinkedList<EL>();
@@ -301,7 +301,7 @@ public class FunctionUtil {
         return foldLeft(reverselist, accum, accumulator);
     }
 
-    static <T> T reduce(Collection<T> list,
+    public static <T> T reduce(Collection<T> list,
                         Accumulator<T, T> accumulator) {
         T current, accum = null;
 
@@ -320,7 +320,7 @@ public class FunctionUtil {
     }
 
 
-    static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, int noOfThread) {
+    public static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, int noOfThread) {
 
         final int size = inputList.size();
 
@@ -416,7 +416,7 @@ public class FunctionUtil {
         return outList;
     }
 
-    static <T> Set<T> sort(Set<T> inputList, final Comparator<T> comparator) {
+    public static <T> Set<T> sort(Set<T> inputList, final Comparator<T> comparator) {
 
         List<T> outList = new ArrayList<T>(inputList.size());
 
@@ -435,7 +435,7 @@ public class FunctionUtil {
         return outSet;
     }
 
-    static <T> Collection<T> sort(Collection<T> inputList, final Comparator<T> comparator) {
+    public static <T> Collection<T> sort(Collection<T> inputList, final Comparator<T> comparator) {
 
         List<T> outList = new ArrayList<T>(inputList.size());
 
@@ -448,7 +448,7 @@ public class FunctionUtil {
         return outList;
     }
 
-    static <T> boolean every(Collection<T> inputList, Predicate<T> predicate) {
+    public static <T> boolean every(Collection<T> inputList, Predicate<T> predicate) {
 
         for (T t : inputList) {
             if (!predicate.evaluate(t))
@@ -457,7 +457,7 @@ public class FunctionUtil {
         return true;
     }
 
-    static <T> boolean any(Collection<T> inputList, Predicate<T> predicate) {
+    public static <T> boolean any(Collection<T> inputList, Predicate<T> predicate) {
 
         for (T t : inputList) {
             if (predicate.evaluate(t))
@@ -466,7 +466,7 @@ public class FunctionUtil {
         return false;
     }
 
-    static <T> int count(Collection<T> input, Predicate<T> predicate) {
+    public static <T> int count(Collection<T> input, Predicate<T> predicate) {
         int count = 0;
         for (T t : input) {
             if (predicate.evaluate(t))
@@ -475,7 +475,7 @@ public class FunctionUtil {
         return count;
     }
 
-    static <T> Collection<Collection<T>> split(Collection<T> input, Predicate<T> predicate) {
+    public static <T> Collection<Collection<T>> split(Collection<T> input, Predicate<T> predicate) {
 
         Collection<T> list1 = new LinkedList<T>();
         Collection<T> list2 = new LinkedList<T>();
@@ -494,26 +494,26 @@ public class FunctionUtil {
         return out;
     }
 
-    static <K, V> void each(Map<K, V> map, KeyValueRecordProcessor<K, V> keyValueRecordProcessor) {
+    public static <K, V> void each(Map<K, V> map, KeyValueRecordProcessor<K, V> keyValueRecordProcessor) {
         for (Map.Entry<K, V> entry : map.entrySet()) {
             keyValueRecordProcessor.process(entry.getKey(), entry.getValue());
         }
     }
 
-    static <T> void each(Collection<T> list, RecordProcessor<T> recordProcessor) {
+    public static <T> void each(Collection<T> list, RecordProcessor<T> recordProcessor) {
         for (T item : list) {
             recordProcessor.process(item);
         }
     }
 
-    static <T> void eachWithIndex(Collection<T> list, RecordWithIndexProcessor<T> recordProcessor) {
+    public static <T> void eachWithIndex(Collection<T> list, RecordWithIndexProcessor<T> recordProcessor) {
         int index = 0;
         for (T item : list) {
             recordProcessor.process(item, index++);
         }
     }
 
-    static <T> void each(Collection<T> inputList, final RecordProcessor<T> recordProcessor, int noOfThread) {
+    public static <T> void each(Collection<T> inputList, final RecordProcessor<T> recordProcessor, int noOfThread) {
         final int size = inputList.size();
         final List<List<T>> taskList = new ArrayList<List<T>>();
 
