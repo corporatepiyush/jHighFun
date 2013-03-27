@@ -28,8 +28,18 @@ public class FunctionChain<I> {
         return this;
     }
 
-    public FunctionChain<I> sort(Comparator<I> comparator) {
-        this.collection = FunctionUtil.sort(this.collection, comparator);
+    public FunctionChain<I> sortWith(Comparator<I> comparator) {
+        this.collection = FunctionUtil.sortWith(this.collection, comparator);
+        return this;
+    }
+
+    public FunctionChain<I> sort() {
+        this.collection = FunctionUtil.sort(this.collection);
+        return this;
+    }
+
+    public FunctionChain<I> sortBy(String memberVar, String... memberVars) {
+        this.collection = FunctionUtil.sortBy(this.collection, memberVar, memberVars);
         return this;
     }
 
@@ -93,9 +103,9 @@ public class FunctionChain<I> {
     }
 
     public FunctionChain<I> union(Collection<I> inputCollection) {
-        final Collection<I> extraElements =  new LinkedList<I>();
-        for(I item : inputCollection){
-            if(!this.collection.contains(item))
+        final Collection<I> extraElements = new LinkedList<I>();
+        for (I item : inputCollection) {
+            if (!this.collection.contains(item))
                 extraElements.add(item);
         }
         this.collection.addAll(extraElements);
@@ -105,9 +115,9 @@ public class FunctionChain<I> {
 
     public FunctionChain<I> intersect(Collection<I> collection) {
         final Collection<I> commonElements = getCollection();
-        for(I item : this.collection){
-             if(collection.contains(item))
-                 commonElements.add(item);
+        for (I item : this.collection) {
+            if (collection.contains(item))
+                commonElements.add(item);
         }
         return new FunctionChain<I>(commonElements);
     }
@@ -116,8 +126,8 @@ public class FunctionChain<I> {
     public FunctionChain<I> slice(int from, int to) {
         final Collection<I> sliced = getCollection();
         int index = 0;
-        for (I item : this.collection){
-            if(index >= from  && index <=to){
+        for (I item : this.collection) {
+            if (index >= from && index <= to) {
                 sliced.add(item);
             }
             index++;
@@ -126,10 +136,11 @@ public class FunctionChain<I> {
     }
 
     private Collection<I> getCollection() {
-        if(this.collection instanceof Set){
+        if (this.collection instanceof Set) {
             return new LinkedHashSet<I>();
-        }else {
+        } else {
             return new LinkedList<I>();
         }
     }
+
 }

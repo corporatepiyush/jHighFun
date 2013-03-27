@@ -6,6 +6,7 @@ import org.jhighfun.internal.TaskInputOutput;
 import org.jhighfun.internal.ThreadPoolFactory;
 
 import java.lang.ref.SoftReference;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -35,7 +36,7 @@ public class FunctionUtil {
     }
 
     public static <I, O> List<O> map(List<I> inputList,
-                              final Converter<I, O> converter, int noOfThread) {
+                                     final Converter<I, O> converter, int noOfThread) {
 
         if (noOfThread < 2)
             return map(inputList, converter);
@@ -45,7 +46,7 @@ public class FunctionUtil {
     }
 
     public static <I, O> Collection<O> map(Collection<I> inputList,
-                                    final Converter<I, O> converter, int noOfThread) {
+                                           final Converter<I, O> converter, int noOfThread) {
 
         if (noOfThread < 2)
             return map(inputList, converter);
@@ -163,7 +164,7 @@ public class FunctionUtil {
     }
 
     public static <T> List<T> filter(List<T> inputList, Predicate<T> predicate,
-                              int noOfThread) {
+                                     int noOfThread) {
 
         if (noOfThread < 2)
             return filter(inputList, predicate);
@@ -174,7 +175,7 @@ public class FunctionUtil {
     }
 
     public static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate,
-                             int noOfThread) {
+                                    int noOfThread) {
 
         if (noOfThread < 2)
             return filter(inputSet, predicate);
@@ -186,7 +187,7 @@ public class FunctionUtil {
     }
 
     public static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate,
-                                    int noOfThread) {
+                                           int noOfThread) {
 
         if (noOfThread < 2)
             return filter(inputList, predicate);
@@ -280,7 +281,7 @@ public class FunctionUtil {
     }
 
     public static <ACCUM, EL> ACCUM foldLeft(Collection<EL> list, ACCUM accum,
-                                      Accumulator<ACCUM, EL> accumulator) {
+                                             Accumulator<ACCUM, EL> accumulator) {
 
         for (EL element : list) {
             accum = accumulator.accumulate(accum, element);
@@ -290,7 +291,7 @@ public class FunctionUtil {
     }
 
     public static <ACCUM, EL> ACCUM foldRight(Collection<EL> list, ACCUM accum,
-                                       Accumulator<ACCUM, EL> accumulator) {
+                                              Accumulator<ACCUM, EL> accumulator) {
 
         LinkedList<EL> reverselist = new LinkedList<EL>();
 
@@ -302,7 +303,7 @@ public class FunctionUtil {
     }
 
     public static <T> T reduce(Collection<T> list,
-                        Accumulator<T, T> accumulator) {
+                               Accumulator<T, T> accumulator) {
         T current, accum = null;
 
         Iterator<T> iterator = list.iterator();
@@ -403,7 +404,7 @@ public class FunctionUtil {
         return reduce(outList, accumulator);
     }
 
-    public static <T> Collection<T> sort(Collection<T> inputList, final Comparator<T> comparator) {
+    public static <T> Collection<T> sortWith(Collection<T> inputList, final Comparator<T> comparator) {
 
         List<T> outList = new ArrayList<T>(inputList.size());
 
@@ -417,22 +418,78 @@ public class FunctionUtil {
     }
 
     public static <T> Collection<T> sort(Collection<T> inputList) {
+        return sortWith(inputList, new Comparator<T>() {
+            public int compare(T o1, T o2) {
+                return ((Comparable) o1).compareTo(o2);
+            }
+        });
+    }
 
-        List<T> outList = new ArrayList<T>(inputList.size());
+    public static <T> Collection<T> sortBy(Collection<T> inputList, String member, String... members) {
 
-        for (T element : inputList) {
-            outList.add(element);
+        List<String> memberVars = new LinkedList<String>();
+        memberVars.add(member);
+        for (String memberVar : members) {
+            memberVars.add(memberVar);
         }
 
-        Collections.sort(outList, new Comparator<T>() {
+        Iterator<T> iterator = inputList.iterator();
+        final List<Field> fieldList = new ArrayList<Field>();
+        List<T> list = new LinkedList<T>();
+
+        if (iterator.hasNext()) {
+            T t = iterator.next();
+            list.add(t);
+            Class<?> tClass = t.getClass();
+
+            for (String memberVar : memberVars) {
+                try {
+                    Field field = tClass.getDeclaredField(memberVar);
+
+                    if (field != null) {
+                        field.setAccessible(true);
+                        fieldList.add(field);
+                    }
+
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }
+
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+
+        final int fieldLength = fieldList.size();
+
+        Collections.sort(list, new Comparator<T>() {
             public int compare(T o1, T o2) {
-                return ((Comparable)o1).compareTo(o2);
+
+                int compareResult = 0;
+
+                for (int i = 0; i < fieldLength; i++) {
+
+                    try {
+                        compareResult = ((Comparable) fieldList.get(i).get(o1)).compareTo(fieldList.get(i).get(o2));
+                        if (compareResult != 0) {
+                            break;
+                        }
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+
+                }
+
+                return compareResult;
             }
         });
 
-        return outList;
+        return list;
     }
-
 
     public static <T> boolean every(Collection<T> inputList, Predicate<T> predicate) {
 
@@ -645,6 +702,14 @@ public class FunctionUtil {
             }
         };
 
+    }
+
+    private static <I> Collection<I> getCollection(Collection<I> collection) {
+        if (collection instanceof Set) {
+            return new LinkedHashSet<I>();
+        } else {
+            return new LinkedList<I>();
+        }
     }
 
 }

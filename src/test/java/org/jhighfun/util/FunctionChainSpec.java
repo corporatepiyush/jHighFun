@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import support.Person;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -170,7 +171,7 @@ public class FunctionChainSpec {
     }
 
     @Test
-    public void testSort() {
+    public void testSortWith() {
         List<Integer> list = new LinkedList<Integer>();
         list.add(1);
         list.add(4);
@@ -179,7 +180,7 @@ public class FunctionChainSpec {
 
         FunctionChain<Integer> chain = new FunctionChain<Integer>(list);
 
-        Collection<Integer> filterList = chain.sort(new Comparator<Integer>() {
+        Collection<Integer> filterList = chain.sortWith(new Comparator<Integer>() {
 
             public int compare(Integer t1, Integer t2) {
                 return t1 - t2;
@@ -189,6 +190,50 @@ public class FunctionChainSpec {
         assertTrue(filterList.toString().equals("[1, 2, 3, 4]"));
 
     }
+
+    @Test
+    public void testForSort() {
+        Set<Integer> set = new HashSet<Integer>();
+        set.add(1);
+        set.add(4);
+        set.add(2);
+        set.add(3);
+
+        assertTrue(new FunctionChain<Integer>(set).sort().unchain().toString().equals("[1, 2, 3, 4]"));
+
+    }
+
+    @Test
+    public void testForSortBy() {
+        Person joe = new Person("Joe", 10000, 34);
+        Person amanda = new Person("Amanda", 70000, 24);
+        Person chloe = new Person("Chloe", 10000, 30);
+
+        List<Person> inputList = new LinkedList<Person>();
+        inputList.add(joe);
+        inputList.add(amanda);
+        inputList.add(chloe);
+
+        //---sort by age
+
+        List<Person> expectedList = new LinkedList<Person>();
+        expectedList.add(amanda);
+        expectedList.add(chloe);
+        expectedList.add(joe);
+
+        assertEquals(new FunctionChain<Person>(inputList).sortBy("age").unchain(), expectedList);
+
+        //---sort by salary, name
+
+        expectedList = new LinkedList<Person>();
+        expectedList.add(chloe);
+        expectedList.add(joe);
+        expectedList.add(amanda);
+
+        assertEquals(new FunctionChain<Person>(inputList).sortBy("salary", "firstName").unchain(), expectedList);
+
+    }
+
 
     @Test
     public void testEach() {
@@ -220,7 +265,7 @@ public class FunctionChainSpec {
 
         final Map<Integer, String> temp = new HashMap<Integer, String>();
 
-         new FunctionChain<String>(list).eachWithIndex(new RecordWithIndexProcessor<String>() {
+        new FunctionChain<String>(list).eachWithIndex(new RecordWithIndexProcessor<String>() {
             public void process(String item, int index) {
                 temp.put(index, item);
             }
@@ -559,7 +604,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(0,0).unchain();
+        combinedList = new FunctionChain<String>(list).slice(0, 0).unchain();
 
         expectedList = new LinkedList<String>();
         expectedList.add("Scala");
@@ -568,7 +613,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(-2,-1).unchain();
+        combinedList = new FunctionChain<String>(list).slice(-2, -1).unchain();
 
         expectedList = new LinkedList<String>();
 
@@ -576,7 +621,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(5,6).unchain();
+        combinedList = new FunctionChain<String>(list).slice(5, 6).unchain();
 
         expectedList = new LinkedList<String>();
 

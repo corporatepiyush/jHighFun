@@ -1,6 +1,7 @@
 package org.jhighfun.util;
 
 import org.junit.Test;
+import support.Person;
 
 import java.util.*;
 
@@ -192,14 +193,14 @@ public class SingleThreadedFunctionSpec {
     }
 
     @Test
-    public void testForSortForList() {
+    public void testForSortWithForList() {
         List<Integer> list = new LinkedList<Integer>();
         list.add(1);
         list.add(4);
         list.add(2);
         list.add(3);
 
-        assertTrue(FunctionUtil.sort(list, new Comparator<Integer>() {
+        assertTrue(FunctionUtil.sortWith(list, new Comparator<Integer>() {
 
             public int compare(Integer t1, Integer t2) {
                 return t1 - t2;
@@ -209,14 +210,14 @@ public class SingleThreadedFunctionSpec {
     }
 
     @Test
-    public void testForSortForSet() {
+    public void testForSortWithForSet() {
         Set<Integer> set = new HashSet<Integer>();
         set.add(1);
         set.add(4);
         set.add(2);
         set.add(3);
 
-        assertTrue(FunctionUtil.sort(set, new Comparator<Integer>() {
+        assertTrue(FunctionUtil.sortWith(set, new Comparator<Integer>() {
 
             public int compare(Integer t1, Integer t2) {
                 return t1 - t2;
@@ -226,7 +227,7 @@ public class SingleThreadedFunctionSpec {
     }
 
     @Test
-    public void testForSortImplicit() {
+    public void testForSort() {
         Set<Integer> set = new HashSet<Integer>();
         set.add(1);
         set.add(4);
@@ -236,6 +237,38 @@ public class SingleThreadedFunctionSpec {
         assertTrue(FunctionUtil.sort(set).toString().equals("[1, 2, 3, 4]"));
 
     }
+
+    @Test
+    public void testForSortBy() {
+        Person joe = new Person("Joe", 10000, 34);
+        Person amanda = new Person("Amanda", 70000, 24);
+        Person chloe = new Person("Chloe", 10000, 30);
+
+        List<Person> inputList = new LinkedList<Person>();
+        inputList.add(joe);
+        inputList.add(amanda);
+        inputList.add(chloe);
+
+        //---sort by age
+
+        List<Person> expectedList = new LinkedList<Person>();
+        expectedList.add(amanda);
+        expectedList.add(chloe);
+        expectedList.add(joe);
+
+        assertEquals(FunctionUtil.sortBy(inputList, "age"), expectedList);
+
+        //---sort by salary, name
+
+        expectedList = new LinkedList<Person>();
+        expectedList.add(chloe);
+        expectedList.add(joe);
+        expectedList.add(amanda);
+
+        assertEquals(FunctionUtil.sortBy(inputList, "salary", "firstName"), expectedList);
+
+    }
+
 
     @Test
     public void testEveryFunction() {
