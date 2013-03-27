@@ -212,6 +212,28 @@ public class FunctionChainSpec {
     }
 
     @Test
+    public void testEachWithIndexFunction() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+
+        final Map<Integer, String> temp = new HashMap<Integer, String>();
+
+         new FunctionChain<String>(list).eachWithIndex(new RecordWithIndexProcessor<String>() {
+            public void process(String item, int index) {
+                temp.put(index, item);
+            }
+        });
+
+        final Map<Integer, String> expected = new HashMap<Integer, String>();
+        expected.put(0, "Scala");
+        expected.put(1, "Java");
+
+        assertEquals(expected, temp);
+    }
+
+    @Test
     public void testEachFunctionWithThreads() {
 
         List<Integer> list = new LinkedList<Integer>();
@@ -415,5 +437,150 @@ public class FunctionChainSpec {
         });
 
         assertEquals(count, 1);
+    }
+
+
+    @Test
+    public void testPlus() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+
+        List<String> list1 = new LinkedList<String>();
+        list1.add("Groovy");
+        list1.add("Ruby");
+
+        FunctionChain<String> chain = new FunctionChain<String>(list);
+
+        Collection<String> combinedList = chain.plus(list1).unchain();
+
+        List<String> expectedList = new LinkedList<String>();
+        expectedList.add("Scala");
+        expectedList.add("Java");
+        expectedList.add("Groovy");
+        expectedList.add("Ruby");
+
+        assertEquals(expectedList, combinedList);
+    }
+
+    @Test
+    public void testMinus() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+
+        List<String> list1 = new LinkedList<String>();
+        list1.add("Java");
+
+        FunctionChain<String> chain = new FunctionChain<String>(list);
+
+        Collection<String> combinedList = chain.minus(list1).unchain();
+
+        List<String> expectedList = new LinkedList<String>();
+        expectedList.add("Scala");
+
+        assertEquals(expectedList, combinedList);
+    }
+
+
+    @Test
+    public void testUnion() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+
+        List<String> list1 = new LinkedList<String>();
+        list1.add("Java");
+        list1.add("Groovy");
+
+        FunctionChain<String> chain = new FunctionChain<String>(list);
+
+        Collection<String> combinedList = chain.union(list1).unchain();
+
+        List<String> expectedList = new LinkedList<String>();
+        expectedList.add("Scala");
+        expectedList.add("Java");
+        expectedList.add("Groovy");
+
+        assertEquals(expectedList, combinedList);
+    }
+
+    @Test
+    public void testIntersect() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+
+        List<String> list1 = new LinkedList<String>();
+        list1.add("Java");
+
+        FunctionChain<String> chain = new FunctionChain<String>(list);
+
+        Collection<String> combinedList = chain.intersect(list1).unchain();
+
+        List<String> expectedList = new LinkedList<String>();
+        expectedList.add("Java");
+
+        assertEquals(expectedList, combinedList);
+    }
+
+
+    @Test
+    public void testSlice() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+        list.add("Groovy");
+        list.add("Ruby");
+
+        Collection<String> combinedList = new FunctionChain<String>(list).slice(1,2).unchain();
+
+        List<String> expectedList = new LinkedList<String>();
+        expectedList.add("Java");
+        expectedList.add("Groovy");
+
+        assertEquals(expectedList, combinedList);
+
+        //--------------------------------
+
+        combinedList = new FunctionChain<String>(list).slice(1,3).unchain();
+
+        expectedList = new LinkedList<String>();
+        expectedList.add("Java");
+        expectedList.add("Groovy");
+        expectedList.add("Ruby");
+
+        assertEquals(expectedList, combinedList);
+
+        //--------------------------------
+
+        combinedList = new FunctionChain<String>(list).slice(0,0).unchain();
+
+        expectedList = new LinkedList<String>();
+        expectedList.add("Scala");
+
+        assertEquals(expectedList, combinedList);
+
+        //--------------------------------
+
+        combinedList = new FunctionChain<String>(list).slice(-2,-1).unchain();
+
+        expectedList = new LinkedList<String>();
+
+        assertEquals(expectedList, combinedList);
+
+        //--------------------------------
+
+        combinedList = new FunctionChain<String>(list).slice(5,6).unchain();
+
+        expectedList = new LinkedList<String>();
+
+        assertEquals(expectedList, combinedList);
+
     }
 }

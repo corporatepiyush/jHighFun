@@ -1,7 +1,6 @@
 package org.highfun.util;
 
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.*;
 
 public class FunctionChain<I> {
 
@@ -36,6 +35,11 @@ public class FunctionChain<I> {
 
     public FunctionChain<I> each(RecordProcessor<I> recordProcessor) {
         FunctionUtil.each(this.collection, recordProcessor);
+        return this;
+    }
+
+    public FunctionChain<I> eachWithIndex(RecordWithIndexProcessor<I> recordWithIndexProcessor) {
+        FunctionUtil.eachWithIndex(this.collection, recordWithIndexProcessor);
         return this;
     }
 
@@ -76,5 +80,72 @@ public class FunctionChain<I> {
 
     public Collection<I> unchain() {
         return this.collection;
+    }
+
+    public FunctionChain<I> plus(Collection<I> collection) {
+        this.collection.addAll(collection);
+        return this;
+    }
+
+    public FunctionChain<I> minus(Collection<I> collection) {
+        this.collection.removeAll(collection);
+        return this;
+    }
+
+    public FunctionChain<I> union(Collection<I> inputCollection) {
+
+        Collection<I> extraElements =  new LinkedList<I>();
+
+        for(I item : inputCollection){
+            if(!this.collection.contains(item))
+                extraElements.add(item);
+        }
+
+        this.collection.addAll(extraElements);
+        return this;
+    }
+
+
+    public FunctionChain<I> intersect(Collection<I> collection) {
+
+        Collection<I> commonElements = null;
+
+        commonElements = getCollection();
+
+        for(I item : this.collection){
+             if(collection.contains(item))
+                 commonElements.add(item);
+        }
+
+        return new FunctionChain<I>(commonElements);
+    }
+
+
+    public FunctionChain<I> slice(int from, int to) {
+
+        Collection<I> sliced = null;
+
+        sliced = getCollection();
+
+        int index = 0;
+
+        for (I item : this.collection){
+            if(index >= from  && index <=to){
+                sliced.add(item);
+            }
+            index++;
+        }
+
+        return new FunctionChain<I>(sliced);
+    }
+
+    private Collection<I> getCollection() {
+        Collection<I> is = null ;
+        if(this.collection instanceof Set){
+            is = new LinkedHashSet<I>();
+        }else {
+            is = new LinkedList<I>();
+        }
+        return is;
     }
 }
