@@ -93,59 +93,43 @@ public class FunctionChain<I> {
     }
 
     public FunctionChain<I> union(Collection<I> inputCollection) {
-
-        Collection<I> extraElements =  new LinkedList<I>();
-
+        final Collection<I> extraElements =  new LinkedList<I>();
         for(I item : inputCollection){
             if(!this.collection.contains(item))
                 extraElements.add(item);
         }
-
         this.collection.addAll(extraElements);
         return this;
     }
 
 
     public FunctionChain<I> intersect(Collection<I> collection) {
-
-        Collection<I> commonElements = null;
-
-        commonElements = getCollection();
-
+        final Collection<I> commonElements = getCollection();
         for(I item : this.collection){
              if(collection.contains(item))
                  commonElements.add(item);
         }
-
         return new FunctionChain<I>(commonElements);
     }
 
 
     public FunctionChain<I> slice(int from, int to) {
-
-        Collection<I> sliced = null;
-
-        sliced = getCollection();
-
+        final Collection<I> sliced = getCollection();
         int index = 0;
-
         for (I item : this.collection){
             if(index >= from  && index <=to){
                 sliced.add(item);
             }
             index++;
         }
-
         return new FunctionChain<I>(sliced);
     }
 
     private Collection<I> getCollection() {
-        Collection<I> is = null ;
         if(this.collection instanceof Set){
-            is = new LinkedHashSet<I>();
+            return new LinkedHashSet<I>();
         }else {
-            is = new LinkedList<I>();
+            return new LinkedList<I>();
         }
-        return is;
     }
 }
