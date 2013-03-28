@@ -467,7 +467,7 @@ public class SingleThreadedFunctionSpec {
     public void testCurry() {
 
         CurriedFunction<Integer, Integer> addToFive = FunctionUtil.curry(new Function<Integer, Integer>() {
-            public Integer apply(List<Integer> integers) {
+            public Integer execute(Collection<Integer> integers) {
                 int sum = 0;
                 for (Integer i : integers) {
                     sum = sum + i;
@@ -482,7 +482,7 @@ public class SingleThreadedFunctionSpec {
         assertTrue(addToFive.call(10, 15) == 30);
 
         CurriedFunction<Integer, Integer> addToZero = FunctionUtil.curry(new Function<Integer, Integer>() {
-            public Integer apply(List<Integer> integers) {
+            public Integer execute(Collection<Integer> integers) {
                 int sum = 0;
                 for (Integer i : integers) {
                     sum = sum + i;
@@ -550,7 +550,7 @@ public class SingleThreadedFunctionSpec {
 
         Function<String, String> memoizedFunction = FunctionUtil.memoize(new Function<String, String>() {
 
-            public String apply(List<String> args) {
+            public String execute(Collection<String> args) {
                 spyInjection.add(args.toString());
                 StringBuilder builder = new StringBuilder();
                 for (String string : args) {
@@ -561,10 +561,10 @@ public class SingleThreadedFunctionSpec {
         });
 
         assertEquals(spyInjection.size(), 0);
-        assertEquals(memoizedFunction.apply(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
+        assertEquals(memoizedFunction.execute(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
         assertEquals(spyInjection.size(), 1);
 
-        assertEquals(memoizedFunction.apply(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
+        assertEquals(memoizedFunction.execute(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
         assertEquals(spyInjection.size(), 1);
     }
 

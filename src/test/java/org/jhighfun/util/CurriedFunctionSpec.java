@@ -4,6 +4,7 @@ package org.jhighfun.util;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.jhighfun.util.CollectionUtil.List;
@@ -16,7 +17,7 @@ public class CurriedFunctionSpec {
     @Before
     public void before() {
         curriedFunction = new CurriedFunction<Character, String>(new Function<Character, String>() {
-            public String apply(List<Character> args) {
+            public String execute(Collection<Character> args) {
                 StringBuilder string = new StringBuilder();
                 for (Character character : args) {
                     string.append(character);

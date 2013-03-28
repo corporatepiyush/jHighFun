@@ -2,7 +2,7 @@ package org.jhighfun.util;
 
 import java.util.*;
 
-public class FunctionChain<I> {
+public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFunction<I> {
 
     private Collection<I> collection;
 
@@ -133,6 +133,15 @@ public class FunctionChain<I> {
             index++;
         }
         return new FunctionChain<I>(sliced);
+    }
+
+    public ForkAndJoin<I> fork(){
+         return new ForkAndJoin<I>(this);
+    }
+
+    public FunctionChain<I> execute(Task<Collection<I>> task){
+        task.execute(this.collection);
+        return this;
     }
 
     private Collection<I> getCollection() {

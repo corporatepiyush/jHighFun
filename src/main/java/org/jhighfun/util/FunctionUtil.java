@@ -669,15 +669,15 @@ public class FunctionUtil {
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function) {
-        final Map<CacheObject<List<I>>, CacheObject<O>> memo = new ConcurrentHashMap<CacheObject<List<I>>, CacheObject<O>>();
+        final Map<CacheObject<Collection<I>>, CacheObject<O>> memo = new ConcurrentHashMap<CacheObject<Collection<I>>, CacheObject<O>>();
         return new Function<I, O>() {
-            public O apply(List<I> input) {
-                CacheObject<List<I>> listCacheObject = new CacheObject<List<I>>(input);
+            public O execute(Collection<I> input) {
+                CacheObject<Collection<I>> listCacheObject = new CacheObject<Collection<I>>(input);
                 CacheObject<O> memoizedOutput = memo.get(listCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
-                    O output = function.apply(input);
+                    O output = function.execute(input);
                     memo.put(listCacheObject, new CacheObject<O>(output));
                     return output;
                 }
