@@ -3,51 +3,112 @@ package org.jhighfun.internal;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 public class ThreadPoolFactory {
 
-    public static ExecutorService getThreadPool() {
+    public static ExecutorService getHighPriorityTaskThreadPool() {
         Context context = null;
         try {
             context = new InitialContext();
         } catch (NamingException e) {
-            System.err.println("Error while looking up for 'org.jhighfun.threadpool' system property, falling back to default ThreadPool.");
+            System.err.println("Error while looking up for 'org.jhighfun.hpthreadpool' system property, falling back to default AsyncHighPriorityThreadPool.");
         }
 
         if (context != null) {
             ExecutorService managedThreadPool = null;
             try {
-                managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.jhighfun.threadpool"));
+                managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.jhighfun.hpthreadpool"));
             } catch (Exception e) {
-                System.err.println("Error while looking up for 'org.jhighfun.threadpool' system property, falling back to default ThreadPool.");
+                System.err.println("Error while looking up for 'org.jhighfun.hpthreadpool' system property, falling back to default AsyncHighPriorityThreadPool.");
             } finally {
                 if (managedThreadPool != null)
                     return managedThreadPool;
                 else
-                    return getDefaultThreadPool();
+                    return getDefaultThreadPool("hp");
             }
 
         } else {
-            return getDefaultThreadPool();
+            return getDefaultThreadPool("hp");
         }
 
     }
 
-    private static ExecutorService getDefaultThreadPool() {
-        final ThreadPoolExecutor pool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
+    public static ExecutorService getMediumPriorityAsyncTaskThreadPool() {
+        Context context = null;
+        try {
+            context = new InitialContext();
+        } catch (NamingException e) {
+            System.err.println("Error while looking up for 'org.jhighfun.mpthreadpool' system property, falling back to default AsyncMediumPriorityThreadPool.");
+        }
+
+        if (context != null) {
+            ExecutorService managedThreadPool = null;
+            try {
+                managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.jhighfun.mpthreadpool"));
+            } catch (Exception e) {
+                System.err.println("Error while looking up for 'org.jhighfun.mpthreadpool' system property, falling back to default AsyncMediumPriorityThreadPool.");
+            } finally {
+                if (managedThreadPool != null)
+                    return managedThreadPool;
+                else
+                    return getDefaultThreadPool("mp");
+            }
+
+        } else {
+            return getDefaultThreadPool("mp");
+        }
+
+    }
+
+    public static ExecutorService getLowPriorityAsyncTaskThreadPool() {
+        Context context = null;
+        try {
+            context = new InitialContext();
+        } catch (NamingException e) {
+            System.err.println("Error while looking up for 'org.jhighfun.lpthreadpool' system property, falling back to default AsyncLowPriorityThreadPool.");
+        }
+
+        if (context != null) {
+            ExecutorService managedThreadPool = null;
+            try {
+                managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.jhighfun.lpthreadpool"));
+            } catch (Exception e) {
+                System.err.println("Error while looking up for 'org.jhighfun.lpthreadpool' system property, falling back to default AsyncLowPriorityThreadPool.");
+            } finally {
+                if (managedThreadPool != null)
+                    return managedThreadPool;
+                else
+                    return getDefaultThreadPool("lp");
+            }
+
+        } else {
+            return getDefaultThreadPool("lp");
+        }
+
+    }
+
+    private static ExecutorService getDefaultThreadPool(String priority) {
+
+        ThreadPoolExecutor asyncPool = null;
+
+        if (priority.equals("hp")) {
+            asyncPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
+        } else if (priority.equals("mp")) {
+            asyncPool = new ThreadPoolExecutor(0, 100, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+        } else if (priority.equals("lp")) {
+            asyncPool = new ThreadPoolExecutor(0, 5, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+        }
+
+        final ThreadPoolExecutor asyncPoolDummy = asyncPool;
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                pool.shutdownNow();
+                asyncPoolDummy.shutdownNow();
             }
         });
 
-        return pool;
+        return asyncPool;
     }
-
 }

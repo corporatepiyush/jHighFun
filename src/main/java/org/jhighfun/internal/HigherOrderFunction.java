@@ -1,4 +1,6 @@
-package org.jhighfun.util;
+package org.jhighfun.internal;
+
+import org.jhighfun.util.*;
 
 import java.util.Comparator;
 

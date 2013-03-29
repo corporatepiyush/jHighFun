@@ -1,5 +1,8 @@
 package org.jhighfun.util;
 
+import org.jhighfun.internal.HigherOrderFunction;
+import org.jhighfun.internal.SetTheoryFunction;
+
 import java.util.*;
 
 public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFunction<I> {
@@ -88,7 +91,7 @@ public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFuncti
         return FunctionUtil.count(this.collection, predicate);
     }
 
-    public Collection<I> unchain() {
+    public Collection<I> extract() {
         return this.collection;
     }
 
@@ -135,11 +138,11 @@ public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFuncti
         return new FunctionChain<I>(sliced);
     }
 
-    public ForkAndJoin<I> fork(){
-         return new ForkAndJoin<I>(this);
+    public ForkAndJoin<I> fork() {
+        return new ForkAndJoin<I>(this);
     }
 
-    public FunctionChain<I> execute(Task<Collection<I>> task){
+    public FunctionChain<I> execute(Task<Collection<I>> task) {
         task.execute(this.collection);
         return this;
     }

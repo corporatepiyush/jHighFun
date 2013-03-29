@@ -12,10 +12,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class FunctionUtil {
 
-    private static ExecutorService globalPool = ThreadPoolFactory.getThreadPool();
+    private static ExecutorService highPriorityTaskThreadPool = ThreadPoolFactory.getHighPriorityTaskThreadPool();
+    private static ExecutorService mediumPriorityAsyncTaskThreadPool = ThreadPoolFactory.getMediumPriorityAsyncTaskThreadPool();
+    private static ExecutorService lowPriorityAsyncTaskThreadPool = ThreadPoolFactory.getLowPriorityAsyncTaskThreadPool();
+
+    private static Lock globalLock = new ReentrantLock(true);
 
     public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
         List<O> outputList = new LinkedList<O>();
@@ -104,7 +110,7 @@ public class FunctionUtil {
         }
 
         for (i = 1; i < noOfThread; i++) {
-            futures[i] = globalPool.submit(threads[i]);
+            futures[i] = highPriorityTaskThreadPool.submit(threads[i]);
         }
 
         threads[0].run();
@@ -245,7 +251,7 @@ public class FunctionUtil {
         }
 
         for (i = 1; i < noOfThread; i++) {
-            futures[i] = globalPool.submit(threads[i]);
+            futures[i] = highPriorityTaskThreadPool.submit(threads[i]);
         }
 
         threads[0].run();
@@ -384,7 +390,7 @@ public class FunctionUtil {
         }
 
         for (i = 1; i < noOfThread; i++) {
-            futures[i] = globalPool.submit(threads[i]);
+            futures[i] = highPriorityTaskThreadPool.submit(threads[i]);
         }
 
         threads[0].run();
@@ -600,7 +606,7 @@ public class FunctionUtil {
         }
 
         for (i = 1; i < noOfThread; i++) {
-            futures[i] = globalPool.submit(threads[i]);
+            futures[i] = highPriorityTaskThreadPool.submit(threads[i]);
         }
 
         threads[0].run();
@@ -630,6 +636,30 @@ public class FunctionUtil {
         return new CurriedFunction<I, O>(function, Arrays.asList(fixedInputs));
     }
 
+    public static <I> void executeAsync(final I input, final Task<I> futureTask) {
+        mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
+            public void run() {
+                futureTask.execute(input);
+            }
+        });
+    }
+
+    public static <I> void executeLater(final I input, final Task<I> futureTask) {
+        lowPriorityAsyncTaskThreadPool.submit(new Runnable() {
+            public void run() {
+                futureTask.execute(input);
+            }
+        });
+    }
+
+    public static void executeWithGlobalLock(Block codeBlock) {
+        globalLock.lock();
+        try {
+            codeBlock.execute();
+        } finally {
+            globalLock.unlock();
+        }
+    }
 
     public static <I, O> Converter<I, O> memoize(final Converter<I, O> converter) {
 

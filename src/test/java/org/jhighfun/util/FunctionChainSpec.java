@@ -15,21 +15,20 @@ import java.util.concurrent.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FunctionChainSpec {
 
     @Spy
-    ExecutorService testThreadPool = new ThreadPoolExecutor(1, 100, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+    ExecutorService spyHighPriorityTaskThreadPool = new ThreadPoolExecutor(1, 100, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     @Before
     public void before() {
         try {
-            Field globalPool = FunctionUtil.class.getDeclaredField("globalPool");
+            Field globalPool = FunctionUtil.class.getDeclaredField("highPriorityTaskThreadPool");
             globalPool.setAccessible(true);
-            globalPool.set(null, testThreadPool);
+            globalPool.set(null, spyHighPriorityTaskThreadPool);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,7 +47,7 @@ public class FunctionChainSpec {
         }
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        assertEquals(chain.unchain(), list);
+        assertEquals(chain.extract(), list);
     }
 
     @Test
@@ -68,7 +67,7 @@ public class FunctionChainSpec {
             public Character convert(String input) {
                 return input.charAt(0);
             }
-        }).unchain();
+        }).extract();
 
         List<Character> expectedList = new LinkedList<Character>();
         for (int i = 1; i <= 100; i++) {
@@ -99,7 +98,7 @@ public class FunctionChainSpec {
             public Character convert(String input) {
                 return input.charAt(0);
             }
-        }, 3).unchain();
+        }, 3).extract();
 
         List<Character> expectedList = new LinkedList<Character>();
         for (int i = 1; i <= 100; i++) {
@@ -111,7 +110,7 @@ public class FunctionChainSpec {
         }
 
         assertEquals(mapList, expectedList);
-        verify(testThreadPool, times(2)).submit(any(Runnable.class));
+        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Runnable.class));
     }
 
     @Test
@@ -132,7 +131,7 @@ public class FunctionChainSpec {
                 return t.contains("y");
             }
 
-        }).unchain();
+        }).extract();
 
         assertTrue(filterList.size() == (list.size() / 2));
 
@@ -159,7 +158,7 @@ public class FunctionChainSpec {
                 return t.contains("y");
             }
 
-        }, 3).unchain();
+        }, 3).extract();
 
         assertEquals(filterList.size(), (list.size() / 2));
 
@@ -167,7 +166,7 @@ public class FunctionChainSpec {
             assertTrue(string.equals("Ruby"));
         }
 
-        verify(testThreadPool, times(2)).submit(any(Runnable.class));
+        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Runnable.class));
     }
 
     @Test
@@ -185,7 +184,7 @@ public class FunctionChainSpec {
             public int compare(Integer t1, Integer t2) {
                 return t1 - t2;
             }
-        }).unchain();
+        }).extract();
 
         assertTrue(filterList.toString().equals("[1, 2, 3, 4]"));
 
@@ -199,7 +198,7 @@ public class FunctionChainSpec {
         set.add(2);
         set.add(3);
 
-        assertTrue(new FunctionChain<Integer>(set).sort().unchain().toString().equals("[1, 2, 3, 4]"));
+        assertTrue(new FunctionChain<Integer>(set).sort().extract().toString().equals("[1, 2, 3, 4]"));
 
     }
 
@@ -221,7 +220,7 @@ public class FunctionChainSpec {
         expectedList.add(chloe);
         expectedList.add(joe);
 
-        assertEquals(new FunctionChain<Person>(inputList).sortBy("age").unchain(), expectedList);
+        assertEquals(new FunctionChain<Person>(inputList).sortBy("age").extract(), expectedList);
 
         //---sort by salary, name
 
@@ -230,7 +229,7 @@ public class FunctionChainSpec {
         expectedList.add(joe);
         expectedList.add(amanda);
 
-        assertEquals(new FunctionChain<Person>(inputList).sortBy("salary", "firstName").unchain(), expectedList);
+        assertEquals(new FunctionChain<Person>(inputList).sortBy("salary", "firstName").extract(), expectedList);
 
     }
 
@@ -250,7 +249,7 @@ public class FunctionChainSpec {
             public void process(String item) {
                 temp.add(item);
             }
-        }).unchain();
+        }).extract();
 
         assertEquals(temp, list);
 
@@ -294,13 +293,13 @@ public class FunctionChainSpec {
             public void process(Integer item) {
                 temp.add(item);
             }
-        }, 5).unchain();
+        }, 5).extract();
 
         for (int i = 0; i < 1000; i++) {
             assertTrue(temp.contains(i));
         }
 
-        verify(testThreadPool, times(4)).submit(any(Runnable.class));
+        verify(spyHighPriorityTaskThreadPool, times(4)).submit(any(Runnable.class));
     }
 
     @Test
@@ -402,7 +401,7 @@ public class FunctionChainSpec {
 
         assertTrue(foldLeft == 10);
 
-        verify(testThreadPool, times(1)).submit(any(Runnable.class));
+        verify(spyHighPriorityTaskThreadPool, times(1)).submit(any(Runnable.class));
 
     }
 
@@ -498,7 +497,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        Collection<String> combinedList = chain.plus(list1).unchain();
+        Collection<String> combinedList = chain.plus(list1).extract();
 
         List<String> expectedList = new LinkedList<String>();
         expectedList.add("Scala");
@@ -521,7 +520,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        Collection<String> combinedList = chain.minus(list1).unchain();
+        Collection<String> combinedList = chain.minus(list1).extract();
 
         List<String> expectedList = new LinkedList<String>();
         expectedList.add("Scala");
@@ -543,7 +542,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        Collection<String> combinedList = chain.union(list1).unchain();
+        Collection<String> combinedList = chain.union(list1).extract();
 
         List<String> expectedList = new LinkedList<String>();
         expectedList.add("Scala");
@@ -565,7 +564,7 @@ public class FunctionChainSpec {
 
         FunctionChain<String> chain = new FunctionChain<String>(list);
 
-        Collection<String> combinedList = chain.intersect(list1).unchain();
+        Collection<String> combinedList = chain.intersect(list1).extract();
 
         List<String> expectedList = new LinkedList<String>();
         expectedList.add("Java");
@@ -583,7 +582,7 @@ public class FunctionChainSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        Collection<String> combinedList = new FunctionChain<String>(list).slice(1, 2).unchain();
+        Collection<String> combinedList = new FunctionChain<String>(list).slice(1, 2).extract();
 
         List<String> expectedList = new LinkedList<String>();
         expectedList.add("Java");
@@ -593,7 +592,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(1, 3).unchain();
+        combinedList = new FunctionChain<String>(list).slice(1, 3).extract();
 
         expectedList = new LinkedList<String>();
         expectedList.add("Java");
@@ -604,7 +603,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(0, 0).unchain();
+        combinedList = new FunctionChain<String>(list).slice(0, 0).extract();
 
         expectedList = new LinkedList<String>();
         expectedList.add("Scala");
@@ -613,7 +612,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(-2, -1).unchain();
+        combinedList = new FunctionChain<String>(list).slice(-2, -1).extract();
 
         expectedList = new LinkedList<String>();
 
@@ -621,11 +620,44 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(5, 6).unchain();
+        combinedList = new FunctionChain<String>(list).slice(5, 6).extract();
 
         expectedList = new LinkedList<String>();
 
         assertEquals(expectedList, combinedList);
+
+    }
+
+    @Test
+    public void testFork() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+        list.add("Groovy");
+        list.add("Ruby");
+
+        FunctionChain<String> chain = new FunctionChain<String>(list);
+        assertTrue(chain.fork().getClass() == ForkAndJoin.class);
+
+    }
+
+    @Test
+    public void testExecute() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+        list.add("Groovy");
+        list.add("Ruby");
+
+        FunctionChain<String> chain = new FunctionChain<String>(list);
+        Task<Collection<String>> mockTask = mock(Task.class);
+
+        chain.execute(mockTask);
+
+        verify(mockTask, times(1)).execute(list);
+
 
     }
 }

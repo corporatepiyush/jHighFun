@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
-import java.util.List;
 
 import static org.jhighfun.util.CollectionUtil.List;
 import static org.junit.Assert.assertEquals;
