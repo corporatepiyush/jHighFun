@@ -193,36 +193,32 @@ public class FunctionUtilSpec {
     @Test
     public void testExecuteAsync() {
 
-        Object object = new Object();
-        Task<Object> mockFutureTask = mock(Task.class);
+        Block mockBlock = mock(Block.class);
 
-
-        FunctionUtil.executeAsync(object, mockFutureTask);
+        FunctionUtil.executeAsync(mockBlock);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        verify(mockFutureTask, times(1)).execute(object);
+        verify(mockBlock, times(1)).execute();
         verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
     }
 
     @Test
     public void testExecuteLater() {
 
-        Object object = new Object();
-        Task<Object> mockFutureTask = mock(Task.class);
+        Block mockBlock = mock(Block.class);
 
-
-        FunctionUtil.executeLater(object, mockFutureTask);
+        FunctionUtil.executeLater(mockBlock);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        verify(mockFutureTask, times(1)).execute(object);
+        verify(mockBlock, times(1)).execute();
         verify(spyLowPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
     }
 
@@ -251,19 +247,21 @@ public class FunctionUtilSpec {
 
         for (int i = 0; i < 10000; list.add(i), i++) ;
 
-        final Block block = new Block() {
+        final Block spyBlock = spy(new Block() {
             public void execute() {
                 list.add(1);
                 for (Integer i : list) ;
                 list.add(2);
             }
-        };
+        });
 
         FunctionUtil.each(load, new RecordProcessor<Integer>() {
             public void process(Integer item) {
-                FunctionUtil.executeWithGlobalLock(block);
+                FunctionUtil.executeWithGlobalLock(spyBlock);
             }
         }, 10);
+
+        verify(spyBlock, times(10)).execute();
 
     }
 

@@ -636,18 +636,18 @@ public class FunctionUtil {
         return new CurriedFunction<I, O>(function, Arrays.asList(fixedInputs));
     }
 
-    public static <I> void executeAsync(final I input, final Task<I> futureTask) {
+    public static <I> void executeAsync(final Block codeBlock) {
         mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
-                futureTask.execute(input);
+                codeBlock.execute();
             }
         });
     }
 
-    public static <I> void executeLater(final I input, final Task<I> futureTask) {
+    public static void executeLater(final Block codeBlock) {
         lowPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
-                futureTask.execute(input);
+                codeBlock.execute();
             }
         });
     }

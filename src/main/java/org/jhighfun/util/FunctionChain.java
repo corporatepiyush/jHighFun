@@ -91,10 +91,6 @@ public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFuncti
         return FunctionUtil.count(this.collection, predicate);
     }
 
-    public Collection<I> extract() {
-        return this.collection;
-    }
-
     public FunctionChain<I> plus(Collection<I> collection) {
         this.collection.addAll(collection);
         return this;
@@ -147,12 +143,47 @@ public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFuncti
         return this;
     }
 
+    public FunctionChain<I> executeAsync(final Task<Collection<I>> task) {
+        final Collection<I> collectionCopy = getCollection();
+        collectionCopy.addAll(this.collection);
+        FunctionUtil.executeAsync(new Block() {
+            public void execute() {
+                task.execute(collectionCopy);
+            }
+        });
+        return this;
+    }
+
+    public FunctionChain<I> executeLater(final Task<Collection<I>> task) {
+        final Collection<I> collectionCopy = getCollection();
+        collectionCopy.addAll(this.collection);
+        FunctionUtil.executeLater(new Block() {
+            public void execute() {
+                task.execute(collectionCopy);
+            }
+        });
+        return this;
+    }
+
+    public FunctionChain<I> executeWithGlobalLock(final Task<Collection<I>> task) {
+        FunctionUtil.executeWithGlobalLock(new Block() {
+            public void execute() {
+                task.execute(collection);
+            }
+        });
+        return this;
+    }
+
     private Collection<I> getCollection() {
         if (this.collection instanceof Set) {
             return new LinkedHashSet<I>();
         } else {
             return new LinkedList<I>();
         }
+    }
+
+    public Collection<I> extract() {
+        return this.collection;
     }
 
 }

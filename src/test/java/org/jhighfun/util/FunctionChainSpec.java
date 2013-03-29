@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static org.jhighfun.util.CollectionUtil.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -23,12 +24,28 @@ public class FunctionChainSpec {
     @Spy
     ExecutorService spyHighPriorityTaskThreadPool = new ThreadPoolExecutor(1, 100, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
+    @Spy
+    ExecutorService spyMediumPriorityAsyncTaskThreadPool = new ThreadPoolExecutor(0, 100, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+
+    @Spy
+    ExecutorService spyLowPriorityAsyncTaskThreadPool = new ThreadPoolExecutor(0, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+
+
     @Before
     public void before() {
         try {
             Field globalPool = FunctionUtil.class.getDeclaredField("highPriorityTaskThreadPool");
             globalPool.setAccessible(true);
             globalPool.set(null, spyHighPriorityTaskThreadPool);
+
+            globalPool = FunctionUtil.class.getDeclaredField("mediumPriorityAsyncTaskThreadPool");
+            globalPool.setAccessible(true);
+            globalPool.set(null, spyMediumPriorityAsyncTaskThreadPool);
+
+            globalPool = FunctionUtil.class.getDeclaredField("lowPriorityAsyncTaskThreadPool");
+            globalPool.setAccessible(true);
+            globalPool.set(null, spyLowPriorityAsyncTaskThreadPool);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -657,7 +674,83 @@ public class FunctionChainSpec {
         chain.execute(mockTask);
 
         verify(mockTask, times(1)).execute(list);
+    }
 
+    @Test
+    public void testExecuteAsync() {
 
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+        list.add("Groovy");
+        list.add("Ruby");
+
+        FunctionChain<String> chain = new FunctionChain<String>(list);
+        Task<Collection<String>> mockTask = mock(Task.class);
+
+        chain.executeAsync(mockTask);
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        verify(mockTask, times(1)).execute(list);
+        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any((Runnable.class)));
+    }
+
+    @Test
+    public void testExecuteLater() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+        list.add("Groovy");
+        list.add("Ruby");
+
+        FunctionChain<String> chain = new FunctionChain<String>(list);
+        Task<Collection<String>> mockTask = mock(Task.class);
+
+        chain.executeLater(mockTask);
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        verify(mockTask, times(1)).execute(list);
+        verify(spyLowPriorityAsyncTaskThreadPool, times(1)).submit(any((Runnable.class)));
+    }
+
+    @Test
+    public void testExecuteWithGlobalLockWithMultipleThread() {
+
+        final List<Integer> list = new LinkedList<Integer>();
+
+        List<Integer> load = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+        for (int i = 0; i < 10000; list.add(i), i++) ;
+
+        final Block spyBlock = spy(new Block() {
+            public void execute() {
+                list.add(1);
+                for (Integer i : list) ;
+                list.add(2);
+            }
+        });
+
+        new FunctionChain<Integer>(load).each(new RecordProcessor<Integer>() {
+            public void process(Integer item) {
+                new FunctionChain<Integer>(list).executeWithGlobalLock(new Task<Collection<Integer>>() {
+                    public void execute(Collection<Integer> input) {
+                        spyBlock.execute();
+                    }
+                });
+            }
+        }, 10);
+
+        verify(spyBlock, times(10)).execute();
     }
 }
