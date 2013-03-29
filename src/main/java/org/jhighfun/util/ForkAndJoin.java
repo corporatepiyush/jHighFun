@@ -7,11 +7,11 @@ import java.util.List;
 
 public class ForkAndJoin<I> {
 
-    private FunctionChain<I> functionChain;
+    private CollectionFunctionChain<I> collectionFunctionChain;
     private List<Task<Collection<I>>> taskList = new ArrayList<Task<Collection<I>>>();
 
-    public ForkAndJoin(FunctionChain<I> functionChain) {
-        this.functionChain = functionChain;
+    public ForkAndJoin(CollectionFunctionChain<I> collectionFunctionChain) {
+        this.collectionFunctionChain = collectionFunctionChain;
     }
 
     public ForkAndJoin execute(Task<Collection<I>> task) {
@@ -19,12 +19,12 @@ public class ForkAndJoin<I> {
         return this;
     }
 
-    public FunctionChain<I> join() {
+    public CollectionFunctionChain<I> join() {
         FunctionUtil.each(taskList, new RecordProcessor<Task<Collection<I>>>() {
             public void process(Task<Collection<I>> task) {
-                task.execute(new LinkedList<I>(functionChain.extract()));
+                task.execute(new LinkedList<I>(collectionFunctionChain.extract()));
             }
         }, taskList.size());
-        return functionChain;
+        return collectionFunctionChain;
     }
 }

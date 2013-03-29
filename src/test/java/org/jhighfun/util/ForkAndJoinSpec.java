@@ -28,7 +28,7 @@ public class ForkAndJoinSpec {
         Task<Collection<String>> mockTask2 = mock(Task.class);
         Task<Collection<String>> mockTask3 = mock(Task.class);
 
-        ForkAndJoin<String> forkAndJoin = new ForkAndJoin<String>(new FunctionChain<String>(list));
+        ForkAndJoin<String> forkAndJoin = new ForkAndJoin<String>(new CollectionFunctionChain<String>(list));
 
         forkAndJoin.execute(mockTask1);
         forkAndJoin.execute(mockTask2);
@@ -53,7 +53,7 @@ public class ForkAndJoinSpec {
         Task<Collection<String>> mockTask2 = mock(Task.class);
         Task<Collection<String>> mockTask3 = mock(Task.class);
 
-        ForkAndJoin<String> forkAndJoin = new ForkAndJoin<String>(new FunctionChain<String>(list));
+        ForkAndJoin<String> forkAndJoin = new ForkAndJoin<String>(new CollectionFunctionChain<String>(list));
 
         forkAndJoin.execute(mockTask1);
         forkAndJoin.execute(mockTask2);
@@ -80,7 +80,7 @@ public class ForkAndJoinSpec {
         Task<Collection<String>> mockTask2 = mock(Task.class);
         Task<Collection<String>> mockTask3 = mock(Task.class);
 
-        ForkAndJoin<String> forkAndJoin = new ForkAndJoin<String>(new FunctionChain<String>(list));
+        ForkAndJoin<String> forkAndJoin = new ForkAndJoin<String>(new CollectionFunctionChain<String>(list));
 
         forkAndJoin.execute(mockTask1);
         forkAndJoin.execute(mockTask2);

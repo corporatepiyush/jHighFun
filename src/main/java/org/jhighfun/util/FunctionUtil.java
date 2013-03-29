@@ -624,8 +624,8 @@ public class FunctionUtil {
             throw new RuntimeException(exception.get(0));
     }
 
-    public static <I> FunctionChain<I> chain(Collection<I> collection) {
-        return new FunctionChain<I>(collection);
+    public static <I> CollectionFunctionChain<I> chain(Collection<I> collection) {
+        return new CollectionFunctionChain<I>(collection);
     }
 
     public static <I, O> CurriedFunction<I, O> curry(Function<I, O> function, List<I> fixedInputs) {

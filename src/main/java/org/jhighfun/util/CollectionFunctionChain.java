@@ -5,58 +5,58 @@ import org.jhighfun.internal.SetTheoryFunction;
 
 import java.util.*;
 
-public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFunction<I> {
+public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFunction<I> {
 
     private Collection<I> collection;
 
-    public FunctionChain(Collection<I> collection) {
+    public CollectionFunctionChain(Collection<I> collection) {
         this.collection = collection;
     }
 
-    public <O> FunctionChain<O> map(Converter<I, O> converter) {
-        return new FunctionChain<O>(FunctionUtil.map(this.collection, converter));
+    public <O> CollectionFunctionChain<O> map(Converter<I, O> converter) {
+        return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter));
     }
 
-    public <O> FunctionChain<O> map(Converter<I, O> converter, int threads) {
-        return new FunctionChain<O>(FunctionUtil.map(this.collection, converter, threads));
+    public <O> CollectionFunctionChain<O> map(Converter<I, O> converter, int threads) {
+        return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter, threads));
     }
 
-    public FunctionChain<I> filter(Predicate<I> predicate) {
+    public CollectionFunctionChain<I> filter(Predicate<I> predicate) {
         this.collection = FunctionUtil.filter(this.collection, predicate);
         return this;
     }
 
-    public FunctionChain<I> filter(Predicate<I> predicate, int threads) {
+    public CollectionFunctionChain<I> filter(Predicate<I> predicate, int threads) {
         this.collection = FunctionUtil.filter(this.collection, predicate, threads);
         return this;
     }
 
-    public FunctionChain<I> sortWith(Comparator<I> comparator) {
+    public CollectionFunctionChain<I> sortWith(Comparator<I> comparator) {
         this.collection = FunctionUtil.sortWith(this.collection, comparator);
         return this;
     }
 
-    public FunctionChain<I> sort() {
+    public CollectionFunctionChain<I> sort() {
         this.collection = FunctionUtil.sort(this.collection);
         return this;
     }
 
-    public FunctionChain<I> sortBy(String memberVar, String... memberVars) {
+    public CollectionFunctionChain<I> sortBy(String memberVar, String... memberVars) {
         this.collection = FunctionUtil.sortBy(this.collection, memberVar, memberVars);
         return this;
     }
 
-    public FunctionChain<I> each(RecordProcessor<I> recordProcessor) {
+    public CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor) {
         FunctionUtil.each(this.collection, recordProcessor);
         return this;
     }
 
-    public FunctionChain<I> eachWithIndex(RecordWithIndexProcessor<I> recordWithIndexProcessor) {
+    public CollectionFunctionChain<I> eachWithIndex(RecordWithIndexProcessor<I> recordWithIndexProcessor) {
         FunctionUtil.eachWithIndex(this.collection, recordWithIndexProcessor);
         return this;
     }
 
-    public FunctionChain<I> each(RecordProcessor<I> recordProcessor, int threads) {
+    public CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor, int threads) {
         FunctionUtil.each(this.collection, recordProcessor, threads);
         return this;
     }
@@ -91,17 +91,17 @@ public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFuncti
         return FunctionUtil.count(this.collection, predicate);
     }
 
-    public FunctionChain<I> plus(Collection<I> collection) {
+    public CollectionFunctionChain<I> plus(Collection<I> collection) {
         this.collection.addAll(collection);
         return this;
     }
 
-    public FunctionChain<I> minus(Collection<I> collection) {
+    public CollectionFunctionChain<I> minus(Collection<I> collection) {
         this.collection.removeAll(collection);
         return this;
     }
 
-    public FunctionChain<I> union(Collection<I> inputCollection) {
+    public CollectionFunctionChain<I> union(Collection<I> inputCollection) {
         final Collection<I> extraElements = new LinkedList<I>();
         for (I item : inputCollection) {
             if (!this.collection.contains(item))
@@ -112,17 +112,17 @@ public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFuncti
     }
 
 
-    public FunctionChain<I> intersect(Collection<I> collection) {
+    public CollectionFunctionChain<I> intersect(Collection<I> collection) {
         final Collection<I> commonElements = getCollection();
         for (I item : this.collection) {
             if (collection.contains(item))
                 commonElements.add(item);
         }
-        return new FunctionChain<I>(commonElements);
+        return new CollectionFunctionChain<I>(commonElements);
     }
 
 
-    public FunctionChain<I> slice(int from, int to) {
+    public CollectionFunctionChain<I> slice(int from, int to) {
         final Collection<I> sliced = getCollection();
         int index = 0;
         for (I item : this.collection) {
@@ -131,19 +131,19 @@ public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFuncti
             }
             index++;
         }
-        return new FunctionChain<I>(sliced);
+        return new CollectionFunctionChain<I>(sliced);
     }
 
     public ForkAndJoin<I> fork() {
         return new ForkAndJoin<I>(this);
     }
 
-    public FunctionChain<I> execute(Task<Collection<I>> task) {
+    public CollectionFunctionChain<I> execute(Task<Collection<I>> task) {
         task.execute(this.collection);
         return this;
     }
 
-    public FunctionChain<I> executeAsync(final Task<Collection<I>> task) {
+    public CollectionFunctionChain<I> executeAsync(final Task<Collection<I>> task) {
         final Collection<I> collectionCopy = getCollection();
         collectionCopy.addAll(this.collection);
         FunctionUtil.executeAsync(new Block() {
@@ -154,7 +154,7 @@ public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFuncti
         return this;
     }
 
-    public FunctionChain<I> executeLater(final Task<Collection<I>> task) {
+    public CollectionFunctionChain<I> executeLater(final Task<Collection<I>> task) {
         final Collection<I> collectionCopy = getCollection();
         collectionCopy.addAll(this.collection);
         FunctionUtil.executeLater(new Block() {
@@ -165,7 +165,7 @@ public class FunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFuncti
         return this;
     }
 
-    public FunctionChain<I> executeWithGlobalLock(final Task<Collection<I>> task) {
+    public CollectionFunctionChain<I> executeWithGlobalLock(final Task<Collection<I>> task) {
         FunctionUtil.executeWithGlobalLock(new Block() {
             public void execute() {
                 task.execute(collection);

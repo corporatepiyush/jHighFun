@@ -54,7 +54,7 @@ public class FunctionUtilSpec {
         set.add("Scala");
         set.add("Java");
 
-        FunctionChain<String> chain = FunctionUtil.chain(set);
+        CollectionFunctionChain<String> chain = FunctionUtil.chain(set);
 
         Collection<String> expected = chain.extract();
 

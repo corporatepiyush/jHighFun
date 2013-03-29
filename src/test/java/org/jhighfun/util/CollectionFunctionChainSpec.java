@@ -19,7 +19,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FunctionChainSpec {
+public class CollectionFunctionChainSpec {
 
     @Spy
     ExecutorService spyHighPriorityTaskThreadPool = new ThreadPoolExecutor(1, 100, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
@@ -62,7 +62,7 @@ public class FunctionChainSpec {
             list.add("ia");
             list.add("a");
         }
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         assertEquals(chain.extract(), list);
     }
@@ -78,7 +78,7 @@ public class FunctionChainSpec {
             list.add("ia");
             list.add("a");
         }
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<Character> mapList = chain.map(new Converter<String, Character>() {
             public Character convert(String input) {
@@ -109,7 +109,7 @@ public class FunctionChainSpec {
             list.add("ia");
             list.add("a");
         }
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<Character> mapList = chain.map(new Converter<String, Character>() {
             public Character convert(String input) {
@@ -140,7 +140,7 @@ public class FunctionChainSpec {
         }
 
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<String> filterList = chain.filter(new Predicate<String>() {
 
@@ -167,7 +167,7 @@ public class FunctionChainSpec {
             list.add("Ruby");
         }
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<String> filterList = chain.filter(new Predicate<String>() {
 
@@ -194,7 +194,7 @@ public class FunctionChainSpec {
         list.add(2);
         list.add(3);
 
-        FunctionChain<Integer> chain = new FunctionChain<Integer>(list);
+        CollectionFunctionChain<Integer> chain = new CollectionFunctionChain<Integer>(list);
 
         Collection<Integer> filterList = chain.sortWith(new Comparator<Integer>() {
 
@@ -215,7 +215,7 @@ public class FunctionChainSpec {
         set.add(2);
         set.add(3);
 
-        assertTrue(new FunctionChain<Integer>(set).sort().extract().toString().equals("[1, 2, 3, 4]"));
+        assertTrue(new CollectionFunctionChain<Integer>(set).sort().extract().toString().equals("[1, 2, 3, 4]"));
 
     }
 
@@ -237,7 +237,7 @@ public class FunctionChainSpec {
         expectedList.add(chloe);
         expectedList.add(joe);
 
-        assertEquals(new FunctionChain<Person>(inputList).sortBy("age").extract(), expectedList);
+        assertEquals(new CollectionFunctionChain<Person>(inputList).sortBy("age").extract(), expectedList);
 
         //---sort by salary, name
 
@@ -246,7 +246,7 @@ public class FunctionChainSpec {
         expectedList.add(joe);
         expectedList.add(amanda);
 
-        assertEquals(new FunctionChain<Person>(inputList).sortBy("salary", "firstName").extract(), expectedList);
+        assertEquals(new CollectionFunctionChain<Person>(inputList).sortBy("salary", "firstName").extract(), expectedList);
 
     }
 
@@ -260,7 +260,7 @@ public class FunctionChainSpec {
 
         final List<String> temp = new LinkedList<String>();
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         chain.each(new RecordProcessor<String>() {
             public void process(String item) {
@@ -281,7 +281,7 @@ public class FunctionChainSpec {
 
         final Map<Integer, String> temp = new HashMap<Integer, String>();
 
-        new FunctionChain<String>(list).eachWithIndex(new RecordWithIndexProcessor<String>() {
+        new CollectionFunctionChain<String>(list).eachWithIndex(new RecordWithIndexProcessor<String>() {
             public void process(String item, int index) {
                 temp.put(index, item);
             }
@@ -304,7 +304,7 @@ public class FunctionChainSpec {
 
         final List<Integer> temp = new CopyOnWriteArrayList<Integer>();
 
-        FunctionChain<Integer> chain = new FunctionChain<Integer>(list);
+        CollectionFunctionChain<Integer> chain = new CollectionFunctionChain<Integer>(list);
 
         chain.each(new RecordProcessor<Integer>() {
             public void process(Integer item) {
@@ -330,7 +330,7 @@ public class FunctionChainSpec {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         StringBuilder foldLeft = chain.foldLeft(stringBuilder, new Accumulator<StringBuilder, String>() {
 
@@ -356,7 +356,7 @@ public class FunctionChainSpec {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         StringBuilder foldRight = chain.foldRight(stringBuilder, new Accumulator<StringBuilder, String>() {
 
@@ -380,7 +380,7 @@ public class FunctionChainSpec {
         list.add(3);
         list.add(4);
 
-        FunctionChain<Integer> chain = new FunctionChain<Integer>(list);
+        CollectionFunctionChain<Integer> chain = new CollectionFunctionChain<Integer>(list);
 
         Integer foldLeft = chain.reduce(new Accumulator<Integer, Integer>() {
 
@@ -405,7 +405,7 @@ public class FunctionChainSpec {
         list.add(3);
         list.add(4);
 
-        FunctionChain<Integer> chain = new FunctionChain<Integer>(list);
+        CollectionFunctionChain<Integer> chain = new CollectionFunctionChain<Integer>(list);
 
         Integer foldLeft = chain.reduce(new Accumulator<Integer, Integer>() {
 
@@ -431,7 +431,7 @@ public class FunctionChainSpec {
             list.add("Java");
         }
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         boolean bool = chain.every(new Predicate<String>() {
 
@@ -461,7 +461,7 @@ public class FunctionChainSpec {
             list.add("Java");
         }
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         boolean bool = chain.any(new Predicate<String>() {
 
@@ -489,7 +489,7 @@ public class FunctionChainSpec {
         set.add("Scala");
         set.add("Java");
 
-        FunctionChain<String> chain = new FunctionChain<String>(set);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(set);
 
         int count = chain.count(new Predicate<String>() {
             public boolean evaluate(String s) {
@@ -512,7 +512,7 @@ public class FunctionChainSpec {
         list1.add("Groovy");
         list1.add("Ruby");
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<String> combinedList = chain.plus(list1).extract();
 
@@ -535,7 +535,7 @@ public class FunctionChainSpec {
         List<String> list1 = new LinkedList<String>();
         list1.add("Java");
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<String> combinedList = chain.minus(list1).extract();
 
@@ -557,7 +557,7 @@ public class FunctionChainSpec {
         list1.add("Java");
         list1.add("Groovy");
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<String> combinedList = chain.union(list1).extract();
 
@@ -579,7 +579,7 @@ public class FunctionChainSpec {
         List<String> list1 = new LinkedList<String>();
         list1.add("Java");
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<String> combinedList = chain.intersect(list1).extract();
 
@@ -599,7 +599,7 @@ public class FunctionChainSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        Collection<String> combinedList = new FunctionChain<String>(list).slice(1, 2).extract();
+        Collection<String> combinedList = new CollectionFunctionChain<String>(list).slice(1, 2).extract();
 
         List<String> expectedList = new LinkedList<String>();
         expectedList.add("Java");
@@ -609,7 +609,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(1, 3).extract();
+        combinedList = new CollectionFunctionChain<String>(list).slice(1, 3).extract();
 
         expectedList = new LinkedList<String>();
         expectedList.add("Java");
@@ -620,7 +620,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(0, 0).extract();
+        combinedList = new CollectionFunctionChain<String>(list).slice(0, 0).extract();
 
         expectedList = new LinkedList<String>();
         expectedList.add("Scala");
@@ -629,7 +629,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(-2, -1).extract();
+        combinedList = new CollectionFunctionChain<String>(list).slice(-2, -1).extract();
 
         expectedList = new LinkedList<String>();
 
@@ -637,7 +637,7 @@ public class FunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new FunctionChain<String>(list).slice(5, 6).extract();
+        combinedList = new CollectionFunctionChain<String>(list).slice(5, 6).extract();
 
         expectedList = new LinkedList<String>();
 
@@ -654,7 +654,7 @@ public class FunctionChainSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
         assertTrue(chain.fork().getClass() == ForkAndJoin.class);
 
     }
@@ -668,7 +668,7 @@ public class FunctionChainSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
         Task<Collection<String>> mockTask = mock(Task.class);
 
         chain.execute(mockTask);
@@ -685,7 +685,7 @@ public class FunctionChainSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
         Task<Collection<String>> mockTask = mock(Task.class);
 
         chain.executeAsync(mockTask);
@@ -709,7 +709,7 @@ public class FunctionChainSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        FunctionChain<String> chain = new FunctionChain<String>(list);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
         Task<Collection<String>> mockTask = mock(Task.class);
 
         chain.executeLater(mockTask);
@@ -741,9 +741,9 @@ public class FunctionChainSpec {
             }
         });
 
-        new FunctionChain<Integer>(load).each(new RecordProcessor<Integer>() {
+        new CollectionFunctionChain<Integer>(load).each(new RecordProcessor<Integer>() {
             public void process(Integer item) {
-                new FunctionChain<Integer>(list).executeWithGlobalLock(new Task<Collection<Integer>>() {
+                new CollectionFunctionChain<Integer>(list).executeWithGlobalLock(new Task<Collection<Integer>>() {
                     public void execute(Collection<Integer> input) {
                         spyBlock.execute();
                     }

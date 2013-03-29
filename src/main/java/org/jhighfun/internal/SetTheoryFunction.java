@@ -1,18 +1,18 @@
 package org.jhighfun.internal;
 
-import org.jhighfun.util.FunctionChain;
+import org.jhighfun.util.CollectionFunctionChain;
 
 import java.util.Collection;
 
 public interface SetTheoryFunction<I> {
 
-    FunctionChain<I> plus(Collection<I> collection);
+    CollectionFunctionChain<I> plus(Collection<I> collection);
 
-    FunctionChain<I> minus(Collection<I> collection);
+    CollectionFunctionChain<I> minus(Collection<I> collection);
 
-    FunctionChain<I> union(Collection<I> inputCollection);
+    CollectionFunctionChain<I> union(Collection<I> inputCollection);
 
-    FunctionChain<I> intersect(Collection<I> collection);
+    CollectionFunctionChain<I> intersect(Collection<I> collection);
 
-    FunctionChain<I> slice(int from, int to);
+    CollectionFunctionChain<I> slice(int from, int to);
 }

@@ -6,25 +6,25 @@ import java.util.Comparator;
 
 public interface HigherOrderFunction<I> {
 
-    <O> FunctionChain<O> map(Converter<I, O> converter);
+    <O> CollectionFunctionChain<O> map(Converter<I, O> converter);
 
-    <O> FunctionChain<O> map(Converter<I, O> converter, int threads);
+    <O> CollectionFunctionChain<O> map(Converter<I, O> converter, int threads);
 
-    FunctionChain<I> filter(Predicate<I> predicate);
+    CollectionFunctionChain<I> filter(Predicate<I> predicate);
 
-    FunctionChain<I> filter(Predicate<I> predicate, int threads);
+    CollectionFunctionChain<I> filter(Predicate<I> predicate, int threads);
 
-    FunctionChain<I> sortWith(Comparator<I> comparator);
+    CollectionFunctionChain<I> sortWith(Comparator<I> comparator);
 
-    FunctionChain<I> sort();
+    CollectionFunctionChain<I> sort();
 
-    FunctionChain<I> sortBy(String memberVar, String... memberVars);
+    CollectionFunctionChain<I> sortBy(String memberVar, String... memberVars);
 
-    FunctionChain<I> each(RecordProcessor<I> recordProcessor);
+    CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor);
 
-    FunctionChain<I> eachWithIndex(RecordWithIndexProcessor<I> recordWithIndexProcessor);
+    CollectionFunctionChain<I> eachWithIndex(RecordWithIndexProcessor<I> recordWithIndexProcessor);
 
-    FunctionChain<I> each(RecordProcessor<I> recordProcessor, int threads);
+    CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor, int threads);
 
     <ACCUM> ACCUM foldLeft(ACCUM accum,
                            Accumulator<ACCUM, I> accumulator);
