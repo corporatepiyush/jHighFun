@@ -734,6 +734,14 @@ public class FunctionUtil {
 
     }
 
+    public static Chunks chunks(int chunkSize){
+         return new Chunks(chunkSize);
+    }
+
+    public static Partitions partitions(int partitionSize){
+        return new Partitions(partitionSize);
+    }
+
     private static <I> Collection<I> getCollection(Collection<I> collection) {
         if (collection instanceof Set) {
             return new LinkedHashSet<I>();
@@ -742,4 +750,83 @@ public class FunctionUtil {
         }
     }
 
+    public static <T> void divideAndConquer(Collection<T> collection, Chunks chunks, final Task<Collection<T>> task) {
+
+        List<List<T>> collections = new LinkedList<List<T>>();
+
+        int chunkSize = chunks.getChunkSize();
+        int counter = chunkSize;
+        int collectionsIndex = 0;
+
+        collections.add(new LinkedList<T>());
+
+        for(T t : collection){
+
+            if(counter == 0){
+                collections.add(new LinkedList<T>());
+                collectionsIndex++;
+                counter = chunkSize;
+            }
+
+            collections.get(collectionsIndex).add(t);
+            counter--;
+        }
+
+        each(collections, new RecordProcessor<List<T>>() {
+            public void process(List<T> items) {
+                        task.execute(items);
+            }
+        }, chunkSize);
+
+    }
+
+    public static <T> void divideAndConquer(Collection<T> collection, Partitions partitions, final Task<Collection<T>> task) {
+
+        int partitionSize = partitions.getPartitionSize();
+
+        List<List<T>> collections = new LinkedList<List<T>>();
+
+        int counter = partitionSize > collection.size() ? collection.size() : partitionSize;
+        int collectionsIndex = 0;
+
+        for(int i=0; i<counter; i++){
+            collections.add(new LinkedList<T>());
+        }
+
+        for(T t : collection){
+            collections.get(collectionsIndex % counter).add(t);
+            collectionsIndex++;
+        }
+
+        each(collections, new RecordProcessor<List<T>>() {
+            public void process(List<T> items) {
+                task.execute(items);
+            }
+        }, partitionSize);
+    }
+}
+
+class Chunks {
+    private int size;
+
+    public Chunks(int size){
+       this.size = size;
+    }
+
+    public int getChunkSize(){
+        return size;
+    }
+}
+
+
+class Partitions {
+    private int size;
+
+    public Partitions(int size){
+        this.size = size;
+    }
+
+    public int getPartitionSize(){
+        return size;
+    }
 }

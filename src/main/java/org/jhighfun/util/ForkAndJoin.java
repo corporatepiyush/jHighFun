@@ -5,24 +5,24 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ForkAndJoin<I> {
+public class ForkAndJoin<T> {
 
-    private CollectionFunctionChain<I> collectionFunctionChain;
-    private List<Task<Collection<I>>> taskList = new ArrayList<Task<Collection<I>>>();
+    private CollectionFunctionChain<T> collectionFunctionChain;
+    private List<Task<Collection<T>>> taskList = new ArrayList<Task<Collection<T>>>();
 
-    public ForkAndJoin(CollectionFunctionChain<I> collectionFunctionChain) {
+    public ForkAndJoin(CollectionFunctionChain<T> collectionFunctionChain) {
         this.collectionFunctionChain = collectionFunctionChain;
     }
 
-    public ForkAndJoin execute(Task<Collection<I>> task) {
+    public ForkAndJoin execute(Task<Collection<T>> task) {
         taskList.add(task);
         return this;
     }
 
-    public CollectionFunctionChain<I> join() {
-        FunctionUtil.each(taskList, new RecordProcessor<Task<Collection<I>>>() {
-            public void process(Task<Collection<I>> task) {
-                task.execute(new LinkedList<I>(collectionFunctionChain.extract()));
+    public CollectionFunctionChain<T> join() {
+        FunctionUtil.each(taskList, new RecordProcessor<Task<Collection<T>>>() {
+            public void process(Task<Collection<T>> task) {
+                task.execute(new LinkedList<T>(collectionFunctionChain.extract()));
             }
         }, taskList.size());
         return collectionFunctionChain;

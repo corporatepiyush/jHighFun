@@ -660,6 +660,68 @@ public class CollectionFunctionChainSpec {
     }
 
     @Test
+    public void testDivideAndConquerWithChunks(){
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        Task<Collection<Integer>> mockTask  = mock(Task.class);
+
+        new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.chunks(2), mockTask);
+
+        Collection<Integer> chunk1 = new LinkedList<Integer>();
+        chunk1.add(1);
+        chunk1.add(2);
+
+        verify(mockTask, times(1)).execute(chunk1);
+
+        Collection<Integer> chunk2 = new LinkedList<Integer>();
+        chunk2.add(3);
+        chunk2.add(4);
+
+        verify(mockTask, times(1)).execute(chunk2);
+        verify(spyHighPriorityTaskThreadPool, times(1)).submit(any(Runnable.class));
+
+    }
+
+    @Test
+    public void testDivideAndConquerWithPartitions(){
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+
+        Task<Collection<Integer>> mockTask  = mock(Task.class);
+
+        new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.partitions(3), mockTask);
+
+        Collection<Integer> partition1 = new LinkedList<Integer>();
+        partition1.add(1);
+        partition1.add(4);
+
+        verify(mockTask, times(1)).execute(partition1);
+
+        Collection<Integer> partition2 = new LinkedList<Integer>();
+        partition2.add(2);
+        partition2.add(5);
+
+        verify(mockTask, times(1)).execute(partition2);
+
+        Collection<Integer> partitions3 = new LinkedList<Integer>();
+        partitions3.add(3);
+
+        verify(mockTask, times(1)).execute(partitions3);
+
+        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Runnable.class));
+
+    }
+
+
+    @Test
     public void testExecute() {
 
         List<String> list = new LinkedList<String>();
