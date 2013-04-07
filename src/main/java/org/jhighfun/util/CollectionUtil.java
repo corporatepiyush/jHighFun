@@ -1,7 +1,5 @@
 package org.jhighfun.util;
 
-import org.jhighfun.internal.Pair;
-
 import java.util.*;
 
 public class CollectionUtil {
@@ -41,10 +39,10 @@ public class CollectionUtil {
         return flattenSet;
     }
 
-    public static <K, V> Map<K, V> Map(Pair<K, V>... pairs) {
+    public static <K, V> Map<K, V> Map(Entry<K, V>... entries) {
         Map<K, V> map = new HashMap<K, V>();
-        for (Pair<K, V> pair : pairs) {
-            map.put(pair.getKey(), pair.getValue());
+        for (Entry<K, V> entry : entries) {
+            map.put(entry.getKey(), entry.getValue());
         }
         return map;
     }
@@ -58,7 +56,7 @@ public class CollectionUtil {
         return flattenMap;
     }
 
-    public static <K, V> Pair<K, V> Entry(K key, V value) {
-        return new Pair<K, V>(key, value);
+    public static <K, V> Entry<K, V> Entry(K key, V value) {
+        return new Entry<K, V>(key, value);
     }
 }

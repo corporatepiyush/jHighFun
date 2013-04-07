@@ -1,7 +1,6 @@
 package org.jhighfun.util;
 
 import org.jhighfun.internal.CacheObject;
-import org.jhighfun.internal.Pair;
 import org.jhighfun.internal.TaskInputOutput;
 import org.jhighfun.internal.ThreadPoolFactory;
 
@@ -721,10 +720,10 @@ public class FunctionUtil {
 
     public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(final Accumulator<ACCUM, EL> accumulator) {
 
-        final Map<CacheObject<Pair<ACCUM, EL>>, CacheObject<ACCUM>> memo = new ConcurrentHashMap<CacheObject<Pair<ACCUM, EL>>, CacheObject<ACCUM>>();
+        final Map<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>> memo = new ConcurrentHashMap<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>>();
         return new Accumulator<ACCUM, EL>() {
             public ACCUM accumulate(ACCUM accum, EL el) {
-                CacheObject<Pair<ACCUM, EL>> pairCacheObject = new CacheObject<Pair<ACCUM, EL>>(new Pair<ACCUM, EL>(accum, el));
+                CacheObject<Entry<ACCUM, EL>> pairCacheObject = new CacheObject<Entry<ACCUM, EL>>(new Entry<ACCUM, EL>(accum, el));
                 CacheObject<ACCUM> memoizedOutput = memo.get(pairCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
@@ -816,6 +815,19 @@ public class FunctionUtil {
             }
         }, parallel(partitionSize));
     }
+
+    public static <F, S> Pair<F, S> tuple(F first, S second) {
+        return new Pair<F, S>(first, second);
+    }
+
+    public static <F, S, T> Triplet<F, S, T> tuple(F first, S second, T third) {
+        return new Triplet<F, S, T>(first, second, third);
+    }
+
+    public static <F, S, T, FO> Quadruplet<F, S, T, FO> tuple(F first, S second, T third, FO fourth) {
+        return new Quadruplet<F, S, T, FO>(first, second, third, fourth);
+    }
+
 }
 
 class Chunks {

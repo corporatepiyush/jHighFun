@@ -265,4 +265,28 @@ public class FunctionUtilSpec {
 
     }
 
+    @Test
+    public void testTuples() {
+
+        String first = "first";
+        Integer second = 2;
+        Double third = 3.0;
+        Object fourth = new Object();
+
+        Pair<String, Integer> pair = FunctionUtil.tuple(first, second);
+        assertEquals(pair._first, "first");
+        assertEquals(pair._second, new Integer(2));
+
+        Triplet<String, Integer, Double> triplet = FunctionUtil.tuple(first, second, third);
+        assertEquals(triplet._first, "first");
+        assertEquals(triplet._second, new Integer(2));
+        assertEquals(triplet._third, new Double(3));
+
+        Quadruplet<String, Integer, Double, Object> quadruplet = FunctionUtil.tuple(first, second, third, fourth);
+        assertEquals(quadruplet._first, "first");
+        assertEquals(quadruplet._second, new Integer(2));
+        assertEquals(quadruplet._third, new Double(3));
+        assertEquals(quadruplet._fourth, fourth);
+    }
+
 }

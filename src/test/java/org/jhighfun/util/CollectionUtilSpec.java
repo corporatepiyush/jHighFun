@@ -1,12 +1,12 @@
 package org.jhighfun.util;
 
-import org.jhighfun.internal.Pair;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jhighfun.util.CollectionUtil.Entry;
 import static org.jhighfun.util.CollectionUtil.*;
 import static org.junit.Assert.assertEquals;
 
@@ -34,9 +34,9 @@ public class CollectionUtilSpec {
     @Test
     public void testEntry() {
 
-        Pair<Integer, Integer> pair = Entry(1, 2);
-        assertEquals(pair.getKey(), new Integer(1));
-        assertEquals(pair.getValue(), new Integer(2));
+        Entry<Integer, Integer> entry = Entry(1, 2);
+        assertEquals(entry.getKey(), new Integer(1));
+        assertEquals(entry.getValue(), new Integer(2));
 
     }
 
