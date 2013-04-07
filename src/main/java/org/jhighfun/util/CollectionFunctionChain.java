@@ -1,8 +1,5 @@
 package org.jhighfun.util;
 
-import org.jhighfun.internal.HigherOrderFunction;
-import org.jhighfun.internal.SetTheoryFunction;
-
 import java.util.*;
 
 public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFunction<I> {
@@ -17,8 +14,8 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter));
     }
 
-    public <O> CollectionFunctionChain<O> map(Converter<I, O> converter, int threads) {
-        return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter, threads));
+    public <O> CollectionFunctionChain<O> map(Converter<I, O> converter, Parallel parallel) {
+        return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter, parallel));
     }
 
     public CollectionFunctionChain<I> filter(Predicate<I> predicate) {
@@ -26,8 +23,8 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return this;
     }
 
-    public CollectionFunctionChain<I> filter(Predicate<I> predicate, int threads) {
-        this.collection = FunctionUtil.filter(this.collection, predicate, threads);
+    public CollectionFunctionChain<I> filter(Predicate<I> predicate, Parallel parallel) {
+        this.collection = FunctionUtil.filter(this.collection, predicate, parallel);
         return this;
     }
 
@@ -56,8 +53,8 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return this;
     }
 
-    public CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor, int threads) {
-        FunctionUtil.each(this.collection, recordProcessor, threads);
+    public CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor, Parallel parallel) {
+        FunctionUtil.each(this.collection, recordProcessor, parallel);
         return this;
     }
 
@@ -75,8 +72,8 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return FunctionUtil.reduce(this.collection, accumulator);
     }
 
-    public I reduce(Accumulator<I, I> accumulator, int threads) {
-        return FunctionUtil.reduce(this.collection, accumulator, threads);
+    public I reduce(Accumulator<I, I> accumulator, Parallel parallel) {
+        return FunctionUtil.reduce(this.collection, accumulator, parallel);
     }
 
     public boolean every(Predicate<I> predicate) {
@@ -138,12 +135,12 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return new ForkAndJoin<I>(this);
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Chunks chunks, Task<Collection<I>> task){
+    public CollectionFunctionChain<I> divideAndConquer(Chunks chunks, Task<Collection<I>> task) {
         FunctionUtil.divideAndConquer(this.collection, chunks, task);
         return this;
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Partitions partitions, Task<Collection<I>> task){
+    public CollectionFunctionChain<I> divideAndConquer(Partitions partitions, Task<Collection<I>> task) {
         FunctionUtil.divideAndConquer(this.collection, partitions, task);
         return this;
     }

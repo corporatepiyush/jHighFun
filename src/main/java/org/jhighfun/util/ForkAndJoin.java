@@ -24,7 +24,7 @@ public class ForkAndJoin<T> {
             public void process(Task<Collection<T>> task) {
                 task.execute(new LinkedList<T>(collectionFunctionChain.extract()));
             }
-        }, taskList.size());
+        }, FunctionUtil.parallel(taskList.size()));
         return collectionFunctionChain;
     }
 }

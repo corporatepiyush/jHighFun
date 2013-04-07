@@ -115,7 +115,7 @@ public class CollectionFunctionChainSpec {
             public Character convert(String input) {
                 return input.charAt(0);
             }
-        }, 3).extract();
+        }, FunctionUtil.parallel(3)).extract();
 
         List<Character> expectedList = new LinkedList<Character>();
         for (int i = 1; i <= 100; i++) {
@@ -175,7 +175,7 @@ public class CollectionFunctionChainSpec {
                 return t.contains("y");
             }
 
-        }, 3).extract();
+        }, FunctionUtil.parallel(3)).extract();
 
         assertEquals(filterList.size(), (list.size() / 2));
 
@@ -310,7 +310,7 @@ public class CollectionFunctionChainSpec {
             public void process(Integer item) {
                 temp.add(item);
             }
-        }, 5).extract();
+        }, FunctionUtil.parallel(5)).extract();
 
         for (int i = 0; i < 1000; i++) {
             assertTrue(temp.contains(i));
@@ -414,7 +414,7 @@ public class CollectionFunctionChainSpec {
                 return accumulator + element;
             }
 
-        }, 2);
+        }, FunctionUtil.parallel(2));
 
         assertTrue(foldLeft == 10);
 
@@ -660,14 +660,14 @@ public class CollectionFunctionChainSpec {
     }
 
     @Test
-    public void testDivideAndConquerWithChunks(){
+    public void testDivideAndConquerWithChunks() {
         List<Integer> list = new LinkedList<Integer>();
         list.add(1);
         list.add(2);
         list.add(3);
         list.add(4);
 
-        Task<Collection<Integer>> mockTask  = mock(Task.class);
+        Task<Collection<Integer>> mockTask = mock(Task.class);
 
         new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.chunks(2), mockTask);
 
@@ -687,7 +687,7 @@ public class CollectionFunctionChainSpec {
     }
 
     @Test
-    public void testDivideAndConquerWithPartitions(){
+    public void testDivideAndConquerWithPartitions() {
         List<Integer> list = new LinkedList<Integer>();
         list.add(1);
         list.add(2);
@@ -695,7 +695,7 @@ public class CollectionFunctionChainSpec {
         list.add(4);
         list.add(5);
 
-        Task<Collection<Integer>> mockTask  = mock(Task.class);
+        Task<Collection<Integer>> mockTask = mock(Task.class);
 
         new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.partitions(3), mockTask);
 
@@ -811,7 +811,7 @@ public class CollectionFunctionChainSpec {
                     }
                 });
             }
-        }, 10);
+        }, FunctionUtil.parallel(10));
 
         verify(spyBlock, times(10)).execute();
     }

@@ -42,23 +42,23 @@ public class FunctionUtil {
     }
 
     public static <I, O> List<O> map(List<I> inputList,
-                                     final Converter<I, O> converter, int noOfThread) {
+                                     final Converter<I, O> converter, Parallel parallel) {
 
-        if (noOfThread < 2)
+        if (parallel.getThreads() < 2)
             return map(inputList, converter);
 
         return mapParallel(inputList, converter,
-                noOfThread);
+                parallel.getThreads());
     }
 
     public static <I, O> Collection<O> map(Collection<I> inputList,
-                                           final Converter<I, O> converter, int noOfThread) {
+                                           final Converter<I, O> converter, Parallel parallel) {
 
-        if (noOfThread < 2)
+        if (parallel.getThreads() < 2)
             return map(inputList, converter);
 
         return mapParallel(inputList, converter,
-                noOfThread);
+                parallel.getThreads());
     }
 
     private static <I, O> List<O> mapParallel(Collection<I> inputList,
@@ -170,36 +170,36 @@ public class FunctionUtil {
     }
 
     public static <T> List<T> filter(List<T> inputList, Predicate<T> predicate,
-                                     int noOfThread) {
+                                     Parallel parallel) {
 
-        if (noOfThread < 2)
+        if (parallel.getThreads() < 2)
             return filter(inputList, predicate);
 
         return (List<T>) filterParallel(inputList,
-                predicate, noOfThread, List.class);
+                predicate, parallel.getThreads(), List.class);
 
     }
 
     public static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate,
-                                    int noOfThread) {
+                                    Parallel parallel) {
 
-        if (noOfThread < 2)
+        if (parallel.getThreads() < 2)
             return filter(inputSet, predicate);
 
         return (Set<T>) filterParallel(inputSet,
-                predicate, noOfThread, Set.class);
+                predicate, parallel.getThreads(), Set.class);
 
 
     }
 
     public static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate,
-                                           int noOfThread) {
+                                           Parallel parallel) {
 
-        if (noOfThread < 2)
+        if (parallel.getThreads() < 2)
             return filter(inputList, predicate);
 
         return filterParallel(inputList,
-                predicate, noOfThread, List.class);
+                predicate, parallel.getThreads(), List.class);
 
     }
 
@@ -327,7 +327,9 @@ public class FunctionUtil {
     }
 
 
-    public static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, int noOfThread) {
+    public static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, Parallel parallel) {
+
+        int noOfThread = parallel.getThreads();
 
         final int size = inputList.size();
 
@@ -562,9 +564,11 @@ public class FunctionUtil {
         }
     }
 
-    public static <T> void each(Collection<T> inputList, final RecordProcessor<T> recordProcessor, int noOfThread) {
+    public static <T> void each(Collection<T> inputList, final RecordProcessor<T> recordProcessor, Parallel parallel) {
         final int size = inputList.size();
         final List<List<T>> taskList = new ArrayList<List<T>>();
+
+        int noOfThread = parallel.getThreads();
 
         if (noOfThread > size)
             noOfThread = size;
@@ -734,12 +738,20 @@ public class FunctionUtil {
 
     }
 
-    public static Chunks chunks(int chunkSize){
-         return new Chunks(chunkSize);
+    public static Chunks chunks(int chunkSize) {
+        return new Chunks(chunkSize);
     }
 
-    public static Partitions partitions(int partitionSize){
+    public static Partitions partitions(int partitionSize) {
         return new Partitions(partitionSize);
+    }
+
+    public static Parallel parallel() {
+        return new Parallel();
+    }
+
+    public static Parallel parallel(int threads) {
+        return new Parallel(threads);
     }
 
     private static <I> Collection<I> getCollection(Collection<I> collection) {
@@ -760,9 +772,9 @@ public class FunctionUtil {
 
         collections.add(new LinkedList<T>());
 
-        for(T t : collection){
+        for (T t : collection) {
 
-            if(counter == 0){
+            if (counter == 0) {
                 collections.add(new LinkedList<T>());
                 collectionsIndex++;
                 counter = chunkSize;
@@ -774,9 +786,9 @@ public class FunctionUtil {
 
         each(collections, new RecordProcessor<List<T>>() {
             public void process(List<T> items) {
-                        task.execute(items);
+                task.execute(items);
             }
-        }, chunkSize);
+        }, parallel(chunkSize));
 
     }
 
@@ -789,11 +801,11 @@ public class FunctionUtil {
         int counter = partitionSize > collection.size() ? collection.size() : partitionSize;
         int collectionsIndex = 0;
 
-        for(int i=0; i<counter; i++){
+        for (int i = 0; i < counter; i++) {
             collections.add(new LinkedList<T>());
         }
 
-        for(T t : collection){
+        for (T t : collection) {
             collections.get(collectionsIndex % counter).add(t);
             collectionsIndex++;
         }
@@ -802,18 +814,18 @@ public class FunctionUtil {
             public void process(List<T> items) {
                 task.execute(items);
             }
-        }, partitionSize);
+        }, parallel(partitionSize));
     }
 }
 
 class Chunks {
     private int size;
 
-    public Chunks(int size){
-       this.size = size;
+    public Chunks(int size) {
+        this.size = size;
     }
 
-    public int getChunkSize(){
+    public int getChunkSize() {
         return size;
     }
 }
@@ -822,11 +834,29 @@ class Chunks {
 class Partitions {
     private int size;
 
-    public Partitions(int size){
+    public Partitions(int size) {
         this.size = size;
     }
 
-    public int getPartitionSize(){
+    public int getPartitionSize() {
         return size;
+    }
+}
+
+class Parallel {
+    private static int affinity = Runtime.getRuntime().availableProcessors();
+
+    private int threads = affinity;
+
+    public Parallel() {
+        super();
+    }
+
+    public Parallel(int threads) {
+        this.threads = threads;
+    }
+
+    public int getThreads() {
+        return this.threads;
     }
 }

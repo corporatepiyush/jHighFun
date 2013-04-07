@@ -1,6 +1,4 @@
-package org.jhighfun.internal;
-
-import org.jhighfun.util.*;
+package org.jhighfun.util;
 
 import java.util.Comparator;
 
@@ -8,11 +6,11 @@ public interface HigherOrderFunction<I> {
 
     <O> CollectionFunctionChain<O> map(Converter<I, O> converter);
 
-    <O> CollectionFunctionChain<O> map(Converter<I, O> converter, int threads);
+    <O> CollectionFunctionChain<O> map(Converter<I, O> converter, Parallel parallel);
 
     CollectionFunctionChain<I> filter(Predicate<I> predicate);
 
-    CollectionFunctionChain<I> filter(Predicate<I> predicate, int threads);
+    CollectionFunctionChain<I> filter(Predicate<I> predicate, Parallel parallel);
 
     CollectionFunctionChain<I> sortWith(Comparator<I> comparator);
 
@@ -24,7 +22,7 @@ public interface HigherOrderFunction<I> {
 
     CollectionFunctionChain<I> eachWithIndex(RecordWithIndexProcessor<I> recordWithIndexProcessor);
 
-    CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor, int threads);
+    CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor, Parallel parallel);
 
     <ACCUM> ACCUM foldLeft(ACCUM accum,
                            Accumulator<ACCUM, I> accumulator);
@@ -34,7 +32,7 @@ public interface HigherOrderFunction<I> {
 
     I reduce(Accumulator<I, I> accumulator);
 
-    I reduce(Accumulator<I, I> accumulator, int threads);
+    I reduce(Accumulator<I, I> accumulator, Parallel parallel);
 
     boolean every(Predicate<I> predicate);
 

@@ -55,7 +55,7 @@ public class MultiThreadedFunctionSpec {
                         }
                         return input.charAt(0);
                     }
-                }, 3);
+                }, FunctionUtil.parallel(3));
 
         int i = 0;
 
@@ -83,7 +83,7 @@ public class MultiThreadedFunctionSpec {
                         return t.contains("y");
                     }
 
-                }, 3);
+                }, FunctionUtil.parallel(3));
 
         assertTrue(list1.size() == (list.size() / 2));
 
@@ -110,7 +110,7 @@ public class MultiThreadedFunctionSpec {
                         return t.contains("y");
                     }
 
-                }, 3);
+                }, FunctionUtil.parallel(3));
 
         assertEquals(set1.size(), (set.size() / 2));
 
@@ -135,7 +135,7 @@ public class MultiThreadedFunctionSpec {
             public void process(Integer item) {
                 temp.add(item);
             }
-        }, 5);
+        }, FunctionUtil.parallel(5));
 
         for (int i = 0; i < 1000; i++) {
             assertTrue(temp.contains(i));
@@ -160,7 +160,7 @@ public class MultiThreadedFunctionSpec {
                 return accumulator + element;
             }
 
-        }, 3);
+        }, FunctionUtil.parallel(3));
 
         assertTrue(reduceOutput == 10);
         verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Runnable.class));
@@ -168,14 +168,14 @@ public class MultiThreadedFunctionSpec {
     }
 
     @Test
-    public void testDivideAndConquerWithChunks(){
+    public void testDivideAndConquerWithChunks() {
         List<Integer> list = new LinkedList<Integer>();
         list.add(1);
         list.add(2);
         list.add(3);
         list.add(4);
 
-        Task<Collection<Integer>> mockTask  = mock(Task.class);
+        Task<Collection<Integer>> mockTask = mock(Task.class);
 
         FunctionUtil.divideAndConquer(list, FunctionUtil.chunks(2), mockTask);
 
@@ -195,7 +195,7 @@ public class MultiThreadedFunctionSpec {
     }
 
     @Test
-    public void testDivideAndConquerWithPartitions(){
+    public void testDivideAndConquerWithPartitions() {
         List<Integer> list = new LinkedList<Integer>();
         list.add(1);
         list.add(2);
@@ -203,7 +203,7 @@ public class MultiThreadedFunctionSpec {
         list.add(4);
         list.add(5);
 
-        Task<Collection<Integer>> mockTask  = mock(Task.class);
+        Task<Collection<Integer>> mockTask = mock(Task.class);
 
         FunctionUtil.divideAndConquer(list, FunctionUtil.partitions(3), mockTask);
 

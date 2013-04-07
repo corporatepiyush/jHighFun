@@ -41,7 +41,7 @@ public class MultiThreadedFunctionExceptionSpec {
 
                         return input.charAt(0);
                     }
-                }, 3);
+                }, FunctionUtil.parallel(3));
 
     }
 
@@ -62,7 +62,7 @@ public class MultiThreadedFunctionExceptionSpec {
                         return t.contains("y");
                     }
 
-                }, 3);
+                }, FunctionUtil.parallel(3));
 
     }
 
@@ -81,7 +81,7 @@ public class MultiThreadedFunctionExceptionSpec {
                         return t.contains("y");
                     }
 
-                }, 3);
+                }, FunctionUtil.parallel(3));
 
     }
 
@@ -100,7 +100,7 @@ public class MultiThreadedFunctionExceptionSpec {
                 if (item.equals(50)) throw new RuntimeException();
                 temp.add(item);
             }
-        }, 5);
+        }, FunctionUtil.parallel(5));
 
     }
 
@@ -122,7 +122,7 @@ public class MultiThreadedFunctionExceptionSpec {
                 return accumulator + element;
             }
 
-        }, 3);
+        }, FunctionUtil.parallel(3));
 
     }
 }

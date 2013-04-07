@@ -1,6 +1,4 @@
-package org.jhighfun.internal;
-
-import org.jhighfun.util.CollectionFunctionChain;
+package org.jhighfun.util;
 
 import java.util.Collection;
 

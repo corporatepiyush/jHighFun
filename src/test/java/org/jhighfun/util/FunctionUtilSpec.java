@@ -259,7 +259,7 @@ public class FunctionUtilSpec {
             public void process(Integer item) {
                 FunctionUtil.executeWithGlobalLock(spyBlock);
             }
-        }, 10);
+        }, FunctionUtil.parallel(10));
 
         verify(spyBlock, times(10)).execute();
 
