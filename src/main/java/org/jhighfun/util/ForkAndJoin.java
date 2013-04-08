@@ -8,7 +8,7 @@ import java.util.List;
 public class ForkAndJoin<T> {
 
     private CollectionFunctionChain<T> collectionFunctionChain;
-    private List<Task<Collection<T>>> taskList = new ArrayList<Task<Collection<T>>>();
+    private final List<Task<Collection<T>>> taskList = new ArrayList<Task<Collection<T>>>();
 
     public ForkAndJoin(CollectionFunctionChain<T> collectionFunctionChain) {
         this.collectionFunctionChain = collectionFunctionChain;

@@ -17,7 +17,7 @@ public class ObjectFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> toCollection() {
-        List<I> collection = new LinkedList<I>();
+        final List<I> collection = new LinkedList<I>();
         collection.add(object);
         return new CollectionFunctionChain<I>(collection);
     }

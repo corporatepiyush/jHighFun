@@ -4,7 +4,7 @@ import java.util.*;
 
 public class CollectionUtil {
     public static <T> List<T> List(T... args) {
-        List<T> argsList = new LinkedList<T>();
+        final List<T> argsList = new LinkedList<T>();
         for (T arg : args) {
             argsList.add(arg);
         }
@@ -12,7 +12,7 @@ public class CollectionUtil {
     }
 
     public static List List(List... listArgs) {
-        List flattenList = new LinkedList();
+        final List flattenList = new LinkedList();
         for (List list : listArgs) {
             for (Object obj : list) {
                 flattenList.add(obj);
@@ -22,7 +22,7 @@ public class CollectionUtil {
     }
 
     public static <T> Set<T> Set(T... args) {
-        Set<T> set = new HashSet<T>();
+        final Set<T> set = new HashSet<T>();
         for (T arg : args) {
             set.add(arg);
         }
@@ -30,7 +30,7 @@ public class CollectionUtil {
     }
 
     public static Set Set(Set... setArgs) {
-        Set flattenSet = new HashSet();
+        final Set flattenSet = new HashSet();
         for (Set list : setArgs) {
             for (Object obj : list) {
                 flattenSet.add(obj);
@@ -40,7 +40,7 @@ public class CollectionUtil {
     }
 
     public static <K, V> Map<K, V> Map(Entry<K, V>... entries) {
-        Map<K, V> map = new HashMap<K, V>();
+        final Map<K, V> map = new HashMap<K, V>();
         for (Entry<K, V> entry : entries) {
             map.put(entry.getKey(), entry.getValue());
         }
@@ -48,7 +48,7 @@ public class CollectionUtil {
     }
 
     public static Map Map(Map first, Map... maps) {
-        Map flattenMap = new HashMap();
+        final Map flattenMap = new HashMap();
         flattenMap.putAll(first);
         for (Map map : maps) {
             flattenMap.putAll(map);

@@ -36,7 +36,7 @@ public class CacheObject<T> {
 
     @Override
     public int hashCode() {
-        T t = softCacheObject != null ? softCacheObject.get() : null;
+        final T t = softCacheObject != null ? softCacheObject.get() : null;
         int result = t != null ? t.hashCode() : 0;
         result = 31 * result
                 + (cacheObject != null ? cacheObject.hashCode() : 0);

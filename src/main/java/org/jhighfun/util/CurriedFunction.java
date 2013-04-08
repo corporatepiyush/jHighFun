@@ -8,8 +8,8 @@ import static org.jhighfun.util.CollectionUtil.List;
 
 public final class CurriedFunction<I, O> {
 
-    private List<I> fixedInputs;
-    private Function<I, O> function;
+    private final List<I> fixedInputs;
+    private final Function<I, O> function;
 
     public CurriedFunction(Function<I, O> function, List<I> fixedInputs) {
         this.function = function;
@@ -22,7 +22,7 @@ public final class CurriedFunction<I, O> {
 
     public CurriedFunction curry(I... dynamicInputs) {
 
-        List<I> argList = new ArrayList<I>();
+        final List<I> argList = new ArrayList<I>();
 
         if (fixedInputs != null) {
             for (I i : fixedInputs) {
@@ -41,7 +41,7 @@ public final class CurriedFunction<I, O> {
 
     public O call(List<I> dynamicInputs) {
 
-        List<I> argList = new ArrayList<I>();
+        final List<I> argList = new ArrayList<I>();
 
         if (fixedInputs != null) {
             for (I i : fixedInputs) {
@@ -60,7 +60,7 @@ public final class CurriedFunction<I, O> {
 
     public O call(I... dynamicInputs) {
 
-        List<I> argList = new ArrayList<I>();
+        final List<I> argList = new ArrayList<I>();
 
         if (fixedInputs != null) {
             for (I i : fixedInputs) {

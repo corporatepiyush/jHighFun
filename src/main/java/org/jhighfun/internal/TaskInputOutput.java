@@ -3,7 +3,7 @@ package org.jhighfun.internal;
 
 public final class TaskInputOutput<I, O> {
 
-    private I input;
+    private final I input;
     private O output;
 
     public TaskInputOutput(I input) {

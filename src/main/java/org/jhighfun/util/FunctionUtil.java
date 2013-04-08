@@ -20,10 +20,10 @@ public class FunctionUtil {
     private static ExecutorService mediumPriorityAsyncTaskThreadPool = ThreadPoolFactory.getMediumPriorityAsyncTaskThreadPool();
     private static ExecutorService lowPriorityAsyncTaskThreadPool = ThreadPoolFactory.getLowPriorityAsyncTaskThreadPool();
 
-    private static Lock globalLock = new ReentrantLock(true);
+    private static final Lock globalLock = new ReentrantLock(true);
 
     public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
-        List<O> outputList = new LinkedList<O>();
+        final List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
             outputList.add(converter.convert(i));
@@ -32,7 +32,7 @@ public class FunctionUtil {
     }
 
     public static <I, O> Collection<O> map(Collection<I> inputList, Converter<I, O> converter) {
-        List<O> outputList = new LinkedList<O>();
+        final List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
             outputList.add(converter.convert(i));
@@ -137,7 +137,7 @@ public class FunctionUtil {
 
     public static <T> List<T> filter(List<T> inputList, Predicate<T> predicate) {
 
-        List<T> outputList = new LinkedList<T>();
+        final List<T> outputList = new LinkedList<T>();
 
         for (T i : inputList) {
             if (predicate.evaluate(i))
@@ -148,7 +148,7 @@ public class FunctionUtil {
 
     public static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate) {
 
-        Set<T> outputSet = new HashSet<T>();
+        final Set<T> outputSet = new HashSet<T>();
 
         for (T i : inputSet) {
             if (predicate.evaluate(i))
@@ -159,7 +159,7 @@ public class FunctionUtil {
 
     public static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate) {
 
-        List<T> outputList = new LinkedList<T>();
+        final List<T> outputList = new LinkedList<T>();
 
         for (T i : inputList) {
             if (predicate.evaluate(i))
@@ -298,20 +298,20 @@ public class FunctionUtil {
     public static <ACCUM, EL> ACCUM foldRight(Collection<EL> list, ACCUM accum,
                                               Accumulator<ACCUM, EL> accumulator) {
 
-        LinkedList<EL> reverselist = new LinkedList<EL>();
+        final LinkedList<EL> reverseList = new LinkedList<EL>();
 
         for (EL element : list) {
-            reverselist.addFirst(element);
+            reverseList.addFirst(element);
         }
 
-        return foldLeft(reverselist, accum, accumulator);
+        return foldLeft(reverseList, accum, accumulator);
     }
 
     public static <T> T reduce(Collection<T> list,
                                Accumulator<T, T> accumulator) {
         T current, accum = null;
 
-        Iterator<T> iterator = list.iterator();
+        final Iterator<T> iterator = list.iterator();
 
         if (iterator.hasNext()) {
             accum = iterator.next();
@@ -413,7 +413,7 @@ public class FunctionUtil {
 
     public static <T> Collection<T> sortWith(Collection<T> inputList, final Comparator<T> comparator) {
 
-        List<T> outList = new ArrayList<T>(inputList.size());
+        final List<T> outList = new ArrayList<T>(inputList.size());
 
         for (T element : inputList) {
             outList.add(element);
@@ -434,24 +434,24 @@ public class FunctionUtil {
 
     public static <T> Collection<T> sortBy(Collection<T> inputList, String member, String... members) {
 
-        List<String> memberVars = new LinkedList<String>();
+        final List<String> memberVars = new LinkedList<String>();
         memberVars.add(member);
         for (String memberVar : members) {
             memberVars.add(memberVar);
         }
 
-        Iterator<T> iterator = inputList.iterator();
+        final Iterator<T> iterator = inputList.iterator();
         final List<Field> fieldList = new ArrayList<Field>();
-        List<T> list = new LinkedList<T>();
+        final List<T> list = new LinkedList<T>();
 
         if (iterator.hasNext()) {
-            T t = iterator.next();
+            final T t = iterator.next();
             list.add(t);
             Class<?> tClass = t.getClass();
 
             for (String memberVar : memberVars) {
                 try {
-                    Field field = tClass.getDeclaredField(memberVar);
+                    final Field field = tClass.getDeclaredField(memberVar);
 
                     if (field != null) {
                         field.setAccessible(true);
@@ -527,10 +527,10 @@ public class FunctionUtil {
 
     public static <T> Collection<Collection<T>> split(Collection<T> input, Predicate<T> predicate) {
 
-        Collection<T> list1 = new LinkedList<T>();
-        Collection<T> list2 = new LinkedList<T>();
+        final Collection<T> list1 = new LinkedList<T>();
+        final Collection<T> list2 = new LinkedList<T>();
 
-        Collection<Collection<T>> out = new LinkedList<Collection<T>>();
+        final Collection<Collection<T>> out = new LinkedList<Collection<T>>();
 
         for (T t : input) {
             if (predicate.evaluate(t))
@@ -639,7 +639,7 @@ public class FunctionUtil {
         return new CurriedFunction<I, O>(function, Arrays.asList(fixedInputs));
     }
 
-    public static <I> void executeAsync(final Block codeBlock) {
+    public static void executeAsync(final Block codeBlock) {
         mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
                 codeBlock.execute();
@@ -669,12 +669,12 @@ public class FunctionUtil {
         final Map<CacheObject<I>, CacheObject<O>> memo = new ConcurrentHashMap<CacheObject<I>, CacheObject<O>>();
         return new Converter<I, O>() {
             public O convert(I input) {
-                CacheObject<I> iCacheObject = new CacheObject<I>(input);
-                CacheObject<O> memoizedOutput = memo.get(iCacheObject);
+                final CacheObject<I> iCacheObject = new CacheObject<I>(input);
+                final CacheObject<O> memoizedOutput = memo.get(iCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
-                    O output = converter.convert(input);
+                    final O output = converter.convert(input);
                     memo.put(iCacheObject, new CacheObject<O>(new SoftReference<O>(output)));
                     return output;
                 }
@@ -688,12 +688,12 @@ public class FunctionUtil {
         final Map<CacheObject<T>, Boolean> memo = new ConcurrentHashMap<CacheObject<T>, Boolean>();
         return new Predicate<T>() {
             public boolean evaluate(T input) {
-                CacheObject<T> tCacheObject = new CacheObject<T>(input);
-                Boolean memoizedOutput = memo.get(tCacheObject);
+                final CacheObject<T> tCacheObject = new CacheObject<T>(input);
+                final Boolean memoizedOutput = memo.get(tCacheObject);
                 if (memoizedOutput != null) {
                     return memoizedOutput;
                 } else {
-                    boolean output = predicate.evaluate(input);
+                    final boolean output = predicate.evaluate(input);
                     memo.put(tCacheObject, output);
                     return output;
                 }
@@ -705,12 +705,12 @@ public class FunctionUtil {
         final Map<CacheObject<Collection<I>>, CacheObject<O>> memo = new ConcurrentHashMap<CacheObject<Collection<I>>, CacheObject<O>>();
         return new Function<I, O>() {
             public O execute(Collection<I> input) {
-                CacheObject<Collection<I>> listCacheObject = new CacheObject<Collection<I>>(input);
-                CacheObject<O> memoizedOutput = memo.get(listCacheObject);
+                final CacheObject<Collection<I>> listCacheObject = new CacheObject<Collection<I>>(input);
+                final CacheObject<O> memoizedOutput = memo.get(listCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
-                    O output = function.execute(input);
+                    final O output = function.execute(input);
                     memo.put(listCacheObject, new CacheObject<O>(output));
                     return output;
                 }
@@ -723,12 +723,12 @@ public class FunctionUtil {
         final Map<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>> memo = new ConcurrentHashMap<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>>();
         return new Accumulator<ACCUM, EL>() {
             public ACCUM accumulate(ACCUM accum, EL el) {
-                CacheObject<Entry<ACCUM, EL>> pairCacheObject = new CacheObject<Entry<ACCUM, EL>>(new Entry<ACCUM, EL>(accum, el));
-                CacheObject<ACCUM> memoizedOutput = memo.get(pairCacheObject);
+                final CacheObject<Entry<ACCUM, EL>> pairCacheObject = new CacheObject<Entry<ACCUM, EL>>(new Entry<ACCUM, EL>(accum, el));
+                final CacheObject<ACCUM> memoizedOutput = memo.get(pairCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
-                    ACCUM output = accumulator.accumulate(accum, el);
+                    final ACCUM output = accumulator.accumulate(accum, el);
                     memo.put(pairCacheObject, new CacheObject<ACCUM>(output));
                     return output;
                 }
@@ -763,9 +763,9 @@ public class FunctionUtil {
 
     public static <T> void divideAndConquer(Collection<T> collection, Chunks chunks, final Task<Collection<T>> task) {
 
-        List<List<T>> collections = new LinkedList<List<T>>();
+        final List<List<T>> collections = new LinkedList<List<T>>();
 
-        int chunkSize = chunks.getChunkSize();
+        final int chunkSize = chunks.getChunkSize();
         int counter = chunkSize;
         int collectionsIndex = 0;
 
@@ -793,9 +793,9 @@ public class FunctionUtil {
 
     public static <T> void divideAndConquer(Collection<T> collection, Partitions partitions, final Task<Collection<T>> task) {
 
-        int partitionSize = partitions.getPartitionSize();
+        final int partitionSize = partitions.getPartitionSize();
 
-        List<List<T>> collections = new LinkedList<List<T>>();
+        final List<List<T>> collections = new LinkedList<List<T>>();
 
         int counter = partitionSize > collection.size() ? collection.size() : partitionSize;
         int collectionsIndex = 0;
@@ -831,7 +831,7 @@ public class FunctionUtil {
 }
 
 class Chunks {
-    private int size;
+    private final int size;
 
     public Chunks(int size) {
         this.size = size;
@@ -844,7 +844,7 @@ class Chunks {
 
 
 class Partitions {
-    private int size;
+    private final int size;
 
     public Partitions(int size) {
         this.size = size;
@@ -856,12 +856,13 @@ class Partitions {
 }
 
 class Parallel {
-    private static int affinity = Runtime.getRuntime().availableProcessors();
+    private static final int affinity = Runtime.getRuntime().availableProcessors();
 
-    private int threads = affinity;
+    private final int threads;
 
     public Parallel() {
         super();
+        threads = affinity;
     }
 
     public Parallel(int threads) {

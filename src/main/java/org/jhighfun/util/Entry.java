@@ -2,8 +2,8 @@ package org.jhighfun.util;
 
 
 public final class Entry<K, V> {
-    private K key;
-    private V value;
+    private final K key;
+    private final V value;
 
     public Entry(K key, V value) {
         this.key = key;
