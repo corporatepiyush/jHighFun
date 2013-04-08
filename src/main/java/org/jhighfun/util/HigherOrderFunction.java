@@ -24,19 +24,19 @@ public interface HigherOrderFunction<I> {
 
     CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor, Parallel parallel);
 
-    <ACCUM> ACCUM foldLeft(ACCUM accum,
-                           Accumulator<ACCUM, I> accumulator);
+    <ACCUM> ObjectFunctionChain<ACCUM> foldLeft(ACCUM accum,
+                                                Accumulator<ACCUM, I> accumulator);
 
-    <ACCUM> ACCUM foldRight(ACCUM accum,
-                            Accumulator<ACCUM, I> accumulator);
+    <ACCUM> ObjectFunctionChain<ACCUM> foldRight(ACCUM accum,
+                                                 Accumulator<ACCUM, I> accumulator);
 
-    I reduce(Accumulator<I, I> accumulator);
+    ObjectFunctionChain<I> reduce(Accumulator<I, I> accumulator);
 
-    I reduce(Accumulator<I, I> accumulator, Parallel parallel);
+    ObjectFunctionChain<I> reduce(Accumulator<I, I> accumulator, Parallel parallel);
 
-    boolean every(Predicate<I> predicate);
+    ObjectFunctionChain<Boolean> every(Predicate<I> predicate);
 
-    boolean any(Predicate<I> predicate);
+    ObjectFunctionChain<Boolean> any(Predicate<I> predicate);
 
-    int count(Predicate<I> predicate);
+    ObjectFunctionChain<Integer> count(Predicate<I> predicate);
 }

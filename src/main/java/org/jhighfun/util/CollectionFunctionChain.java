@@ -58,34 +58,34 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return this;
     }
 
-    public <ACCUM> ACCUM foldLeft(ACCUM accum,
-                                  Accumulator<ACCUM, I> accumulator) {
-        return FunctionUtil.foldLeft(this.collection, accum, accumulator);
+    public <ACCUM> ObjectFunctionChain<ACCUM> foldLeft(ACCUM accum,
+                                                       Accumulator<ACCUM, I> accumulator) {
+        return new ObjectFunctionChain<ACCUM>(FunctionUtil.foldLeft(this.collection, accum, accumulator));
     }
 
-    public <ACCUM> ACCUM foldRight(ACCUM accum,
-                                   Accumulator<ACCUM, I> accumulator) {
-        return FunctionUtil.foldRight(this.collection, accum, accumulator);
+    public <ACCUM> ObjectFunctionChain<ACCUM> foldRight(ACCUM accum,
+                                                        Accumulator<ACCUM, I> accumulator) {
+        return new ObjectFunctionChain<ACCUM>(FunctionUtil.foldRight(this.collection, accum, accumulator));
     }
 
-    public I reduce(Accumulator<I, I> accumulator) {
-        return FunctionUtil.reduce(this.collection, accumulator);
+    public ObjectFunctionChain<I> reduce(Accumulator<I, I> accumulator) {
+        return new ObjectFunctionChain<I>(FunctionUtil.reduce(this.collection, accumulator));
     }
 
-    public I reduce(Accumulator<I, I> accumulator, Parallel parallel) {
-        return FunctionUtil.reduce(this.collection, accumulator, parallel);
+    public ObjectFunctionChain<I> reduce(Accumulator<I, I> accumulator, Parallel parallel) {
+        return new ObjectFunctionChain<I>(FunctionUtil.reduce(this.collection, accumulator, parallel));
     }
 
-    public boolean every(Predicate<I> predicate) {
-        return FunctionUtil.every(this.collection, predicate);
+    public ObjectFunctionChain<Boolean> every(Predicate<I> predicate) {
+        return new ObjectFunctionChain<Boolean>(FunctionUtil.every(this.collection, predicate));
     }
 
-    public boolean any(Predicate<I> predicate) {
-        return FunctionUtil.any(this.collection, predicate);
+    public ObjectFunctionChain<Boolean> any(Predicate<I> predicate) {
+        return new ObjectFunctionChain<Boolean>(FunctionUtil.any(this.collection, predicate));
     }
 
-    public int count(Predicate<I> predicate) {
-        return FunctionUtil.count(this.collection, predicate);
+    public ObjectFunctionChain<Integer> count(Predicate<I> predicate) {
+        return new ObjectFunctionChain<Integer>(FunctionUtil.count(this.collection, predicate));
     }
 
     public CollectionFunctionChain<I> plus(Collection<I> collection) {

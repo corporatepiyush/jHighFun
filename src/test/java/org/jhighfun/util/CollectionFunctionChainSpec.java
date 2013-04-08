@@ -339,7 +339,7 @@ public class CollectionFunctionChainSpec {
                 return accumulator.append(element);
             }
 
-        });
+        }).extract();
 
         assertTrue(foldLeft.toString().equals("Java Rocks!"));
 
@@ -365,7 +365,7 @@ public class CollectionFunctionChainSpec {
                 return accumulator.append(element);
             }
 
-        });
+        }).extract();
 
         assertTrue(foldRight.toString().equals("!Rocks Java"));
 
@@ -389,7 +389,7 @@ public class CollectionFunctionChainSpec {
                 return accumulator + element;
             }
 
-        });
+        }).extract();
 
         assertTrue(foldLeft == 10);
 
@@ -414,7 +414,7 @@ public class CollectionFunctionChainSpec {
                 return accumulator + element;
             }
 
-        }, FunctionUtil.parallel(2));
+        }, FunctionUtil.parallel(2)).extract();
 
         assertTrue(foldLeft == 10);
 
@@ -438,7 +438,7 @@ public class CollectionFunctionChainSpec {
             public boolean evaluate(String string) {
                 return string.contains("v");
             }
-        });
+        }).extract();
 
         assertTrue(!bool);
 
@@ -447,7 +447,7 @@ public class CollectionFunctionChainSpec {
             public boolean evaluate(String string) {
                 return string.contains("a");
             }
-        });
+        }).extract();
 
         assertTrue(bool);
     }
@@ -468,7 +468,7 @@ public class CollectionFunctionChainSpec {
             public boolean evaluate(String string) {
                 return string.contains("R");
             }
-        });
+        }).extract();
 
         assertTrue(!bool);
 
@@ -477,7 +477,7 @@ public class CollectionFunctionChainSpec {
             public boolean evaluate(String string) {
                 return string.contains("a");
             }
-        });
+        }).extract();
 
         assertTrue(bool);
     }
@@ -495,7 +495,7 @@ public class CollectionFunctionChainSpec {
             public boolean evaluate(String s) {
                 return s.contains("Scala");
             }
-        });
+        }).extract();
 
         assertEquals(count, 1);
     }
