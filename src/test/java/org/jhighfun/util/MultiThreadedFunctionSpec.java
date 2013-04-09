@@ -177,7 +177,7 @@ public class MultiThreadedFunctionSpec {
 
         Task<Collection<Integer>> mockTask = mock(Task.class);
 
-        FunctionUtil.divideAndConquer(list, FunctionUtil.chunks(2), mockTask);
+        FunctionUtil.divideAndConquer(list, FunctionUtil.batch(2), mockTask);
 
         Collection<Integer> chunk1 = new LinkedList<Integer>();
         chunk1.add(1);
@@ -205,7 +205,7 @@ public class MultiThreadedFunctionSpec {
 
         Task<Collection<Integer>> mockTask = mock(Task.class);
 
-        FunctionUtil.divideAndConquer(list, FunctionUtil.partitions(3), mockTask);
+        FunctionUtil.divideAndConquer(list, FunctionUtil.parallel(3), mockTask);
 
         Collection<Integer> partition1 = new LinkedList<Integer>();
         partition1.add(1);

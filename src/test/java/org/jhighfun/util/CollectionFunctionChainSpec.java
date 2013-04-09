@@ -669,7 +669,7 @@ public class CollectionFunctionChainSpec {
 
         Task<Collection<Integer>> mockTask = mock(Task.class);
 
-        new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.chunks(2), mockTask);
+        new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.batch(2), mockTask);
 
         Collection<Integer> chunk1 = new LinkedList<Integer>();
         chunk1.add(1);
@@ -697,7 +697,7 @@ public class CollectionFunctionChainSpec {
 
         Task<Collection<Integer>> mockTask = mock(Task.class);
 
-        new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.partitions(3), mockTask);
+        new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.parallel(3), mockTask);
 
         Collection<Integer> partition1 = new LinkedList<Integer>();
         partition1.add(1);

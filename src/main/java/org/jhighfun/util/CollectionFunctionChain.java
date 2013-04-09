@@ -135,13 +135,13 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return new ForkAndJoin<I>(this);
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Chunks chunks, Task<Collection<I>> task) {
-        FunctionUtil.divideAndConquer(this.collection, chunks, task);
+    public CollectionFunctionChain<I> divideAndConquer(Batch batch, Task<Collection<I>> task) {
+        FunctionUtil.divideAndConquer(this.collection, batch, task);
         return this;
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Partitions partitions, Task<Collection<I>> task) {
-        FunctionUtil.divideAndConquer(this.collection, partitions, task);
+    public CollectionFunctionChain<I> divideAndConquer(Parallel partition, Task<Collection<I>> task) {
+        FunctionUtil.divideAndConquer(this.collection, partition, task);
         return this;
     }
 

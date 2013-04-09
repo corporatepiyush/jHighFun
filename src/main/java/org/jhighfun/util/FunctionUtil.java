@@ -43,21 +43,21 @@ public class FunctionUtil {
     public static <I, O> List<O> map(List<I> inputList,
                                      final Converter<I, O> converter, Parallel parallel) {
 
-        if (parallel.getThreads() < 2)
+        if (parallel.getDegree() < 2)
             return map(inputList, converter);
 
         return mapParallel(inputList, converter,
-                parallel.getThreads());
+                parallel.getDegree());
     }
 
     public static <I, O> Collection<O> map(Collection<I> inputList,
                                            final Converter<I, O> converter, Parallel parallel) {
 
-        if (parallel.getThreads() < 2)
+        if (parallel.getDegree() < 2)
             return map(inputList, converter);
 
         return mapParallel(inputList, converter,
-                parallel.getThreads());
+                parallel.getDegree());
     }
 
     private static <I, O> List<O> mapParallel(Collection<I> inputList,
@@ -171,22 +171,22 @@ public class FunctionUtil {
     public static <T> List<T> filter(List<T> inputList, Predicate<T> predicate,
                                      Parallel parallel) {
 
-        if (parallel.getThreads() < 2)
+        if (parallel.getDegree() < 2)
             return filter(inputList, predicate);
 
         return (List<T>) filterParallel(inputList,
-                predicate, parallel.getThreads(), List.class);
+                predicate, parallel.getDegree(), List.class);
 
     }
 
     public static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate,
                                     Parallel parallel) {
 
-        if (parallel.getThreads() < 2)
+        if (parallel.getDegree() < 2)
             return filter(inputSet, predicate);
 
         return (Set<T>) filterParallel(inputSet,
-                predicate, parallel.getThreads(), Set.class);
+                predicate, parallel.getDegree(), Set.class);
 
 
     }
@@ -194,11 +194,11 @@ public class FunctionUtil {
     public static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate,
                                            Parallel parallel) {
 
-        if (parallel.getThreads() < 2)
+        if (parallel.getDegree() < 2)
             return filter(inputList, predicate);
 
         return filterParallel(inputList,
-                predicate, parallel.getThreads(), List.class);
+                predicate, parallel.getDegree(), List.class);
 
     }
 
@@ -328,7 +328,7 @@ public class FunctionUtil {
 
     public static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, Parallel parallel) {
 
-        int noOfThread = parallel.getThreads();
+        int noOfThread = parallel.getDegree();
 
         final int size = inputList.size();
 
@@ -567,7 +567,7 @@ public class FunctionUtil {
         final int size = inputList.size();
         final List<List<T>> taskList = new ArrayList<List<T>>();
 
-        int noOfThread = parallel.getThreads();
+        int noOfThread = parallel.getDegree();
 
         if (noOfThread > size)
             noOfThread = size;
@@ -737,12 +737,8 @@ public class FunctionUtil {
 
     }
 
-    public static Chunks chunks(int chunkSize) {
-        return new Chunks(chunkSize);
-    }
-
-    public static Partitions partitions(int partitionSize) {
-        return new Partitions(partitionSize);
+    public static Batch batch(int batchSize) {
+        return new Batch(batchSize);
     }
 
     public static Parallel parallel() {
@@ -761,11 +757,11 @@ public class FunctionUtil {
         }
     }
 
-    public static <T> void divideAndConquer(Collection<T> collection, Chunks chunks, final Task<Collection<T>> task) {
+    public static <T> void divideAndConquer(Collection<T> collection, Batch batch, final Task<Collection<T>> task) {
 
-        final List<List<T>> collections = new LinkedList<List<T>>();
+        final List<List<T>> collections = new ArrayList<List<T>>();
 
-        final int chunkSize = chunks.getChunkSize();
+        final int chunkSize = batch.getDegree();
         int counter = chunkSize;
         int collectionsIndex = 0;
 
@@ -791,11 +787,11 @@ public class FunctionUtil {
 
     }
 
-    public static <T> void divideAndConquer(Collection<T> collection, Partitions partitions, final Task<Collection<T>> task) {
+    public static <T> void divideAndConquer(Collection<T> collection, Parallel partition, final Task<Collection<T>> task) {
 
-        final int partitionSize = partitions.getPartitionSize();
+        final int partitionSize = partition.getDegree();
 
-        final List<List<T>> collections = new LinkedList<List<T>>();
+        final List<List<T>> collections = new ArrayList<List<T>>();
 
         int counter = partitionSize > collection.size() ? collection.size() : partitionSize;
         int collectionsIndex = 0;
@@ -830,33 +826,20 @@ public class FunctionUtil {
 
 }
 
-class Chunks {
+class Batch {
     private final int size;
 
-    public Chunks(int size) {
+    public Batch(int size) {
         this.size = size;
     }
 
-    public int getChunkSize() {
-        return size;
-    }
-}
-
-
-class Partitions {
-    private final int size;
-
-    public Partitions(int size) {
-        this.size = size;
-    }
-
-    public int getPartitionSize() {
+    public int getDegree() {
         return size;
     }
 }
 
 class Parallel {
-    private static final int affinity = Runtime.getRuntime().availableProcessors();
+    protected static final int affinity = Runtime.getRuntime().availableProcessors();
 
     private final int threads;
 
@@ -869,7 +852,7 @@ class Parallel {
         this.threads = threads;
     }
 
-    public int getThreads() {
+    public int getDegree() {
         return this.threads;
     }
 }
