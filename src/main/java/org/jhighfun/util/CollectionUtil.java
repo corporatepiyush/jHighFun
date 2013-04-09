@@ -1,6 +1,8 @@
 package org.jhighfun.util;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CollectionUtil {
     public static <T> List<T> List(T... args) {
@@ -11,10 +13,18 @@ public class CollectionUtil {
         return argsList;
     }
 
-    public static List List(List... listArgs) {
+    public static <T> List<T> SafeList(T... args) {
+        final List<T> argsList = new CopyOnWriteArrayList<T>();
+        for (T arg : args) {
+            argsList.add(arg);
+        }
+        return argsList;
+    }
+
+    public static List List(Collection... listArgs) {
         final List flattenList = new LinkedList();
-        for (List list : listArgs) {
-            for (Object obj : list) {
+        for (Collection collection : listArgs) {
+            for (Object obj : collection) {
                 flattenList.add(obj);
             }
         }
@@ -29,10 +39,10 @@ public class CollectionUtil {
         return set;
     }
 
-    public static Set Set(Set... setArgs) {
+    public static Set Set(Collection... setArgs) {
         final Set flattenSet = new HashSet();
-        for (Set list : setArgs) {
-            for (Object obj : list) {
+        for (Collection collection : setArgs) {
+            for (Object obj : collection) {
                 flattenSet.add(obj);
             }
         }
@@ -41,6 +51,14 @@ public class CollectionUtil {
 
     public static <K, V> Map<K, V> Map(Entry<K, V>... entries) {
         final Map<K, V> map = new HashMap<K, V>();
+        for (Entry<K, V> entry : entries) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+        return map;
+    }
+
+    public static <K, V> Map<K, V> SafeMap(Entry<K, V>... entries) {
+        final Map<K, V> map = new ConcurrentHashMap<K, V>();
         for (Entry<K, V> entry : entries) {
             map.put(entry.getKey(), entry.getValue());
         }
