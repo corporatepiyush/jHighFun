@@ -22,6 +22,10 @@ public class ObjectFunctionChain<I> {
         return new CollectionFunctionChain<I>(collection);
     }
 
+    public ObjectForkAndJoin<I> fork() {
+        return new ObjectForkAndJoin<I>(this);
+    }
+
     public ObjectFunctionChain<I> execute(final Task<I> task) {
         task.execute(object);
         return this;

@@ -131,8 +131,8 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return new CollectionFunctionChain<I>(sliced);
     }
 
-    public ForkAndJoin<I> fork() {
-        return new ForkAndJoin<I>(this);
+    public CollectionForkAndJoin<I> fork() {
+        return new CollectionForkAndJoin<I>(this);
     }
 
     public CollectionFunctionChain<I> divideAndConquer(Batch batch, Task<Collection<I>> task) {

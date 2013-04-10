@@ -655,7 +655,7 @@ public class CollectionFunctionChainSpec {
         list.add("Ruby");
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
-        assertTrue(chain.fork().getClass() == ForkAndJoin.class);
+        assertTrue(chain.fork().getClass() == CollectionForkAndJoin.class);
 
     }
 

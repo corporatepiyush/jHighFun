@@ -167,8 +167,9 @@ public class MultiThreadedFunctionSpec {
 
     }
 
+
     @Test
-    public void testDivideAndConquerWithChunks() {
+    public void testDivideAndConquerWithBatch() {
         List<Integer> list = new LinkedList<Integer>();
         list.add(1);
         list.add(2);

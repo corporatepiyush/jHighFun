@@ -757,6 +757,10 @@ public class FunctionUtil {
         }
     }
 
+    public static <T> ForkAndJoin<T> fork(T object){
+         return new ForkAndJoin<T>(object);
+    }
+
     public static <T> void divideAndConquer(Collection<T> collection, Batch batch, final Task<Collection<T>> task) {
 
         final List<List<T>> collections = new ArrayList<List<T>>();

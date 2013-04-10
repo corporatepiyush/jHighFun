@@ -12,9 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -53,13 +51,13 @@ public class ObjectFunctionChainSpec {
 
 
     @Test
-    public void testExtract(){
+    public void testExtract() {
         Object object = new Object();
-        assertTrue(new ObjectFunctionChain<Object>(object).extract()== object);
+        assertTrue(new ObjectFunctionChain<Object>(object).extract() == object);
     }
 
     @Test
-    public void testTransform(){
+    public void testTransform() {
         Object object = new Object();
         ObjectFunctionChain<Object> chain = new ObjectFunctionChain<Object>(object);
 
@@ -70,7 +68,7 @@ public class ObjectFunctionChainSpec {
     }
 
     @Test
-    public void testToCollection(){
+    public void testToCollection() {
         Object object = new Object();
         ObjectFunctionChain<Object> objectFunctionChain = new ObjectFunctionChain<Object>(object);
 
@@ -78,12 +76,12 @@ public class ObjectFunctionChainSpec {
 
         Collection<Object> objectCollection = collectionFunctionChain.extract();
 
-        assertTrue(objectCollection.size()==1);
+        assertTrue(objectCollection.size() == 1);
         assertTrue(objectCollection.contains(object));
     }
 
     @Test
-    public void testExecute(){
+    public void testExecute() {
 
         Object object = new Object();
         ObjectFunctionChain<Object> objectFunctionChain = new ObjectFunctionChain<Object>(object);
@@ -95,7 +93,7 @@ public class ObjectFunctionChainSpec {
     }
 
     @Test
-    public void testExecuteAsync(){
+    public void testExecuteAsync() {
 
         ObjectFunctionChain<String> chain = new ObjectFunctionChain<String>("Scala");
         Task<String> mockTask = mock(Task.class);
@@ -113,7 +111,7 @@ public class ObjectFunctionChainSpec {
     }
 
     @Test
-    public void testExecuteLater(){
+    public void testExecuteLater() {
 
         ObjectFunctionChain<String> chain = new ObjectFunctionChain<String>("Scala");
         Task<String> mockTask = mock(Task.class);
@@ -128,6 +126,15 @@ public class ObjectFunctionChainSpec {
 
         verify(mockTask, times(1)).execute("Scala");
         verify(spyLowPriorityAsyncTaskThreadPool, times(1)).submit(any((Runnable.class)));
+    }
+
+    public void testFork() {
+
+        String object = "Scala";
+
+        ObjectFunctionChain<String> chain = new ObjectFunctionChain<String>(object);
+        assertTrue(chain.fork().getClass() == ObjectForkAndJoin.class);
+
     }
 
     @Test

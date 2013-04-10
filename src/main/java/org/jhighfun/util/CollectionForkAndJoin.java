@@ -5,16 +5,16 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ForkAndJoin<T> {
+public class CollectionForkAndJoin<T> {
 
     private CollectionFunctionChain<T> collectionFunctionChain;
     private final List<Task<Collection<T>>> taskList = new ArrayList<Task<Collection<T>>>();
 
-    public ForkAndJoin(CollectionFunctionChain<T> collectionFunctionChain) {
+    public CollectionForkAndJoin(CollectionFunctionChain<T> collectionFunctionChain) {
         this.collectionFunctionChain = collectionFunctionChain;
     }
 
-    public ForkAndJoin execute(Task<Collection<T>> task) {
+    public CollectionForkAndJoin execute(Task<Collection<T>> task) {
         taskList.add(task);
         return this;
     }
