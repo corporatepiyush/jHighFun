@@ -272,21 +272,31 @@ public class FunctionUtilSpec {
         Integer second = 2;
         Double third = 3.0;
         Object fourth = new Object();
+        Float fifth = 5.5f;
 
         Pair<String, Integer> pair = FunctionUtil.tuple(first, second);
-        assertEquals(pair._first, "first");
-        assertEquals(pair._second, new Integer(2));
+        assertEquals(pair._1, "first");
+        assertEquals(pair._2, new Integer(2));
 
         Triplet<String, Integer, Double> triplet = FunctionUtil.tuple(first, second, third);
-        assertEquals(triplet._first, "first");
-        assertEquals(triplet._second, new Integer(2));
-        assertEquals(triplet._third, new Double(3));
+        assertEquals(triplet._1, "first");
+        assertEquals(triplet._2, new Integer(2));
+        assertEquals(triplet._3, new Double(3));
 
         Quadruplet<String, Integer, Double, Object> quadruplet = FunctionUtil.tuple(first, second, third, fourth);
-        assertEquals(quadruplet._first, "first");
-        assertEquals(quadruplet._second, new Integer(2));
-        assertEquals(quadruplet._third, new Double(3));
-        assertEquals(quadruplet._fourth, fourth);
+        assertEquals(quadruplet._1, "first");
+        assertEquals(quadruplet._2, new Integer(2));
+        assertEquals(quadruplet._3, new Double(3));
+        assertEquals(quadruplet._4, fourth);
+
+
+        Quintuplet<String, Integer, Double, Object, Float> quintuplet = FunctionUtil.tuple(first, second, third, fourth, fifth);
+        assertEquals(quintuplet._1, "first");
+        assertEquals(quintuplet._2, new Integer(2));
+        assertEquals(quintuplet._3, new Double(3));
+        assertEquals(quintuplet._4, fourth);
+        assertEquals(quintuplet._5, fifth);
+
     }
 
 }

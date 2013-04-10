@@ -824,6 +824,10 @@ public class FunctionUtil {
         return new Quadruplet<F, S, T, FO>(first, second, third, fourth);
     }
 
+    public static <F, S, T, FO, FI> Quintuplet<F, S, T, FO, FI> tuple(F first, S second, T third, FO fourth, FI fifth) {
+        return new Quintuplet<F, S, T, FO, FI>(first, second, third, fourth, fifth);
+    }
+
 }
 
 class Batch {
