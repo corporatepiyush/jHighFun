@@ -77,4 +77,21 @@ public class CollectionUtil {
     public static <K, V> Entry<K, V> Entry(K key, V value) {
         return new Entry<K, V>(key, value);
     }
+
+    public static <F, S> Pair<F, S> tuple(F first, S second) {
+        return new Pair<F, S>(first, second);
+    }
+
+    public static <F, S, T> Triplet<F, S, T> tuple(F first, S second, T third) {
+        return new Triplet<F, S, T>(first, second, third);
+    }
+
+    public static <F, S, T, FO> Quadruplet<F, S, T, FO> tuple(F first, S second, T third, FO fourth) {
+        return new Quadruplet<F, S, T, FO>(first, second, third, fourth);
+    }
+
+    public static <F, S, T, FO, FI> Quintuplet<F, S, T, FO, FI> tuple(F first, S second, T third, FO fourth, FI fifth) {
+        return new Quintuplet<F, S, T, FO, FI>(first, second, third, fourth, fifth);
+    }
+
 }
