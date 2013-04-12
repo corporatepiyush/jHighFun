@@ -109,23 +109,23 @@ public class CollectionUtilSpec {
         Object fourth = new Object();
         Float fifth = 5.5f;
 
-        Pair<String, Integer> pair = tuple(first, second);
-        assertEquals(pair._1, "first");
-        assertEquals(pair._2, new Integer(2));
+        Tuple2<String, Integer> tuple2 = tuple(first, second);
+        assertEquals(tuple2._1, "first");
+        assertEquals(tuple2._2, new Integer(2));
 
-        Triplet<String, Integer, Double> triplet = tuple(first, second, third);
+        Tuple3<String, Integer, Double> triplet = tuple(first, second, third);
         assertEquals(triplet._1, "first");
         assertEquals(triplet._2, new Integer(2));
         assertEquals(triplet._3, new Double(3));
 
-        Quadruplet<String, Integer, Double, Object> quadruplet = tuple(first, second, third, fourth);
+        Tuple4<String, Integer, Double, Object> quadruplet = tuple(first, second, third, fourth);
         assertEquals(quadruplet._1, "first");
         assertEquals(quadruplet._2, new Integer(2));
         assertEquals(quadruplet._3, new Double(3));
         assertEquals(quadruplet._4, fourth);
 
 
-        Quintuplet<String, Integer, Double, Object, Float> quintuplet = tuple(first, second, third, fourth, fifth);
+        Tuple5<String, Integer, Double, Object, Float> quintuplet = tuple(first, second, third, fourth, fifth);
         assertEquals(quintuplet._1, "first");
         assertEquals(quintuplet._2, new Integer(2));
         assertEquals(quintuplet._3, new Double(3));

@@ -4,9 +4,9 @@ import java.util.*;
 
 public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFunction<I> {
 
-    private Collection<I> collection;
+    private List<I> collection;
 
-    public CollectionFunctionChain(Collection<I> collection) {
+    public CollectionFunctionChain(List<I> collection) {
         this.collection = collection;
     }
 
@@ -29,17 +29,17 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
     }
 
     public CollectionFunctionChain<I> sortWith(Comparator<I> comparator) {
-        this.collection = FunctionUtil.sortWith(this.collection, comparator);
+        this.collection = (List<I>)FunctionUtil.sortWith(this.collection, comparator);
         return this;
     }
 
     public CollectionFunctionChain<I> sort() {
-        this.collection = FunctionUtil.sort(this.collection);
+        this.collection = (List<I>)FunctionUtil.sort(this.collection);
         return this;
     }
 
     public CollectionFunctionChain<I> sortBy(String memberVar, String... memberVars) {
-        this.collection = FunctionUtil.sortBy(this.collection, memberVar, memberVars);
+        this.collection = (List<I>)FunctionUtil.sortBy(this.collection, memberVar, memberVars);
         return this;
     }
 
@@ -110,7 +110,7 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
 
 
     public CollectionFunctionChain<I> intersect(Collection<I> collection) {
-        final Collection<I> commonElements = getCollection();
+        final List<I> commonElements = getCollection();
         for (I item : this.collection) {
             if (collection.contains(item))
                 commonElements.add(item);
@@ -120,7 +120,7 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
 
 
     public CollectionFunctionChain<I> slice(int from, int to) {
-        final Collection<I> sliced = getCollection();
+        final List<I> sliced = getCollection();
         int index = 0;
         for (I item : this.collection) {
             if (index >= from && index <= to) {
@@ -145,7 +145,7 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return this;
     }
 
-    public CollectionFunctionChain<I> execute(Task<Collection<I>> task) {
+    public CollectionFunctionChain<I> execute(Task<List<I>> task) {
         task.execute(this.collection);
         return this;
     }
@@ -172,7 +172,7 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return this;
     }
 
-    public CollectionFunctionChain<I> executeWithGlobalLock(final Task<Collection<I>> task) {
+    public CollectionFunctionChain<I> executeWithGlobalLock(final Task<List<I>> task) {
         FunctionUtil.executeWithGlobalLock(new Block() {
             public void execute() {
                 task.execute(collection);
@@ -181,12 +181,8 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return this;
     }
 
-    private Collection<I> getCollection() {
-        if (this.collection instanceof Set) {
-            return new LinkedHashSet<I>();
-        } else {
+    private List<I> getCollection() {
             return new LinkedList<I>();
-        }
     }
 
     public Collection<I> extract() {

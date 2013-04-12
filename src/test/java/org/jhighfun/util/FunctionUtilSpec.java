@@ -55,11 +55,11 @@ public class FunctionUtilSpec {
         set.add("Scala");
         set.add("Java");
 
-        CollectionFunctionChain<String> chain = FunctionUtil.chain(set);
+        CollectionFunctionChain<String> chain = FunctionUtil.chain(List(set));
 
         Collection<String> expected = chain.extract();
 
-        assertEquals(set, expected);
+        assertEquals(List(set), expected);
     }
 
     @Test

@@ -215,7 +215,7 @@ public class CollectionFunctionChainSpec {
         set.add(2);
         set.add(3);
 
-        assertTrue(new CollectionFunctionChain<Integer>(set).sort().extract().toString().equals("[1, 2, 3, 4]"));
+        assertTrue(new CollectionFunctionChain<Integer>(List(set)).sort().extract().toString().equals("[1, 2, 3, 4]"));
 
     }
 
@@ -489,7 +489,7 @@ public class CollectionFunctionChainSpec {
         set.add("Scala");
         set.add("Java");
 
-        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(set);
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(List(set));
 
         int count = chain.count(new Predicate<String>() {
             public boolean evaluate(String s) {
@@ -731,7 +731,7 @@ public class CollectionFunctionChainSpec {
         list.add("Ruby");
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
-        Task<Collection<String>> mockTask = mock(Task.class);
+        Task<List<String>> mockTask = mock(Task.class);
 
         chain.execute(mockTask);
 
@@ -805,8 +805,8 @@ public class CollectionFunctionChainSpec {
 
         new CollectionFunctionChain<Integer>(load).each(new RecordProcessor<Integer>() {
             public void process(Integer item) {
-                new CollectionFunctionChain<Integer>(list).executeWithGlobalLock(new Task<Collection<Integer>>() {
-                    public void execute(Collection<Integer> input) {
+                new CollectionFunctionChain<Integer>(list).executeWithGlobalLock(new Task<List<Integer>>() {
+                    public void execute(List<Integer> input) {
                         spyBlock.execute();
                     }
                 });

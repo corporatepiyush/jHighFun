@@ -627,7 +627,7 @@ public class FunctionUtil {
             throw new RuntimeException(exception.get(0));
     }
 
-    public static <I> CollectionFunctionChain<I> chain(Collection<I> collection) {
+    public static <I> CollectionFunctionChain<I> chain(List<I> collection) {
         return new CollectionFunctionChain<I>(collection);
     }
 
