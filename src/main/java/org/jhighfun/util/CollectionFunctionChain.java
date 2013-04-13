@@ -29,17 +29,17 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
     }
 
     public CollectionFunctionChain<I> sortWith(Comparator<I> comparator) {
-        this.collection = (List<I>)FunctionUtil.sortWith(this.collection, comparator);
+        this.collection = FunctionUtil.sortWith(this.collection, comparator);
         return this;
     }
 
     public CollectionFunctionChain<I> sort() {
-        this.collection = (List<I>)FunctionUtil.sort(this.collection);
+        this.collection = FunctionUtil.sort(this.collection);
         return this;
     }
 
     public CollectionFunctionChain<I> sortBy(String memberVar, String... memberVars) {
-        this.collection = (List<I>)FunctionUtil.sortBy(this.collection, memberVar, memberVars);
+        this.collection = FunctionUtil.sortBy(this.collection, memberVar, memberVars);
         return this;
     }
 

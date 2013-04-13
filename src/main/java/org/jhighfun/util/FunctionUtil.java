@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -411,7 +412,7 @@ public class FunctionUtil {
         return reduce(outList, accumulator);
     }
 
-    public static <T> Collection<T> sortWith(Collection<T> inputList, final Comparator<T> comparator) {
+    public static <T> List<T> sortWith(Collection<T> inputList, final Comparator<T> comparator) {
 
         final List<T> outList = new ArrayList<T>(inputList.size());
 
@@ -424,7 +425,7 @@ public class FunctionUtil {
         return outList;
     }
 
-    public static <T> Collection<T> sort(Collection<T> inputList) {
+    public static <T> List<T> sort(Collection<T> inputList) {
         return sortWith(inputList, new Comparator<T>() {
             public int compare(T o1, T o2) {
                 return ((Comparable) o1).compareTo(o2);
@@ -432,7 +433,7 @@ public class FunctionUtil {
         });
     }
 
-    public static <T> Collection<T> sortBy(Collection<T> inputList, String member, String... members) {
+    public static <T> List<T> sortBy(Collection<T> inputList, String member, String... members) {
 
         final List<String> memberVars = new LinkedList<String>();
         memberVars.add(member);
@@ -525,7 +526,7 @@ public class FunctionUtil {
         return count;
     }
 
-    public static <T> Collection<Collection<T>> split(Collection<T> input, Predicate<T> predicate) {
+    public static <T> Tuple2<Collection<T>,Collection<T>> partition(Collection<T> input, Predicate<T> predicate) {
 
         final Collection<T> list1 = new LinkedList<T>();
         final Collection<T> list2 = new LinkedList<T>();
@@ -541,7 +542,7 @@ public class FunctionUtil {
 
         out.add(list1);
         out.add(list1);
-        return out;
+        return new Tuple2<Collection<T>,Collection<T>>(list1, list2);
     }
 
     public static <K, V> void each(Map<K, V> map, KeyValueRecordProcessor<K, V> keyValueRecordProcessor) {
@@ -666,16 +667,18 @@ public class FunctionUtil {
 
     public static <I, O> Converter<I, O> memoize(final Converter<I, O> converter) {
 
-        final Map<CacheObject<I>, CacheObject<O>> memo = new ConcurrentHashMap<CacheObject<I>, CacheObject<O>>();
+
+
+        final AtomicReference<Map<CacheObject<I>, CacheObject<O>>> memo = new AtomicReference<Map<CacheObject<I>, CacheObject<O>>>(new ConcurrentHashMap<CacheObject<I>, CacheObject<O>>());
         return new Converter<I, O>() {
             public O convert(I input) {
                 final CacheObject<I> iCacheObject = new CacheObject<I>(input);
-                final CacheObject<O> memoizedOutput = memo.get(iCacheObject);
+                final CacheObject<O> memoizedOutput = memo.get().get(iCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
                     final O output = converter.convert(input);
-                    memo.put(iCacheObject, new CacheObject<O>(new SoftReference<O>(output)));
+                    memo.get().put(iCacheObject, new CacheObject<O>(new SoftReference<O>(output)));
                     return output;
                 }
             }
@@ -685,16 +688,16 @@ public class FunctionUtil {
 
     public static <T> Predicate<T> memoize(final Predicate<T> predicate) {
 
-        final Map<CacheObject<T>, Boolean> memo = new ConcurrentHashMap<CacheObject<T>, Boolean>();
+        final AtomicReference<Map<CacheObject<T>, Boolean>> memo = new AtomicReference<Map<CacheObject<T>, Boolean>>(new ConcurrentHashMap<CacheObject<T>, Boolean>());
         return new Predicate<T>() {
             public boolean evaluate(T input) {
                 final CacheObject<T> tCacheObject = new CacheObject<T>(input);
-                final Boolean memoizedOutput = memo.get(tCacheObject);
+                final Boolean memoizedOutput = memo.get().get(tCacheObject);
                 if (memoizedOutput != null) {
                     return memoizedOutput;
                 } else {
                     final boolean output = predicate.evaluate(input);
-                    memo.put(tCacheObject, output);
+                    memo.get().put(tCacheObject, output);
                     return output;
                 }
             }
@@ -702,16 +705,16 @@ public class FunctionUtil {
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function) {
-        final Map<CacheObject<Collection<I>>, CacheObject<O>> memo = new ConcurrentHashMap<CacheObject<Collection<I>>, CacheObject<O>>();
+        final AtomicReference<Map<CacheObject<Collection<I>>, CacheObject<O>>> memo = new AtomicReference<Map<CacheObject<Collection<I>>, CacheObject<O>>>(new ConcurrentHashMap<CacheObject<Collection<I>>, CacheObject<O>>());
         return new Function<I, O>() {
             public O execute(Collection<I> input) {
                 final CacheObject<Collection<I>> listCacheObject = new CacheObject<Collection<I>>(input);
-                final CacheObject<O> memoizedOutput = memo.get(listCacheObject);
+                final CacheObject<O> memoizedOutput = memo.get().get(listCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
                     final O output = function.execute(input);
-                    memo.put(listCacheObject, new CacheObject<O>(output));
+                    memo.get().put(listCacheObject, new CacheObject<O>(output));
                     return output;
                 }
             }
@@ -720,16 +723,16 @@ public class FunctionUtil {
 
     public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(final Accumulator<ACCUM, EL> accumulator) {
 
-        final Map<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>> memo = new ConcurrentHashMap<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>>();
+        final AtomicReference<Map<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>>> memo = new AtomicReference<Map<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>>>(new ConcurrentHashMap<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>>());
         return new Accumulator<ACCUM, EL>() {
             public ACCUM accumulate(ACCUM accum, EL el) {
                 final CacheObject<Entry<ACCUM, EL>> pairCacheObject = new CacheObject<Entry<ACCUM, EL>>(new Entry<ACCUM, EL>(accum, el));
-                final CacheObject<ACCUM> memoizedOutput = memo.get(pairCacheObject);
+                final CacheObject<ACCUM> memoizedOutput = memo.get().get(pairCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
                     final ACCUM output = accumulator.accumulate(accum, el);
-                    memo.put(pairCacheObject, new CacheObject<ACCUM>(output));
+                    memo.get().put(pairCacheObject, new CacheObject<ACCUM>(output));
                     return output;
                 }
             }

@@ -687,22 +687,14 @@ public class FunctionUtilSpec {
         set.add("Scala");
         set.add("Java");
 
-        final Set<String> temp = new HashSet<String>();
 
-        Collection<Collection<String>> splits = FunctionUtil.split(set, new Predicate<String>() {
+        Tuple2<Collection<String>,Collection<String>> tuple2 = FunctionUtil.partition(set, new Predicate<String>() {
             public boolean evaluate(String s) {
                 return s.contains("Scala");
             }
         });
-
-        int i = 0;
-        for (Collection<String> split : splits) {
-            if (i == 0) {
-                assertEquals(split.toString(), "[Scala]");
-            } else {
-                assertEquals(split.toString(), "[Java]");
-            }
-        }
+                assertEquals(tuple2._1.toString(), "[Scala]");
+                assertEquals(tuple2._2.toString(), "[Java]");
     }
 
     @Test
