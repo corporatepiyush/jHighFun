@@ -667,17 +667,17 @@ public class CollectionFunctionChainSpec {
         list.add(3);
         list.add(4);
 
-        Task<Collection<Integer>> mockTask = mock(Task.class);
+        Task<List<Integer>> mockTask = mock(Task.class);
 
         new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.batch(2), mockTask);
 
-        Collection<Integer> chunk1 = new LinkedList<Integer>();
+        List<Integer> chunk1 = new LinkedList<Integer>();
         chunk1.add(1);
         chunk1.add(2);
 
         verify(mockTask, times(1)).execute(chunk1);
 
-        Collection<Integer> chunk2 = new LinkedList<Integer>();
+        List<Integer> chunk2 = new LinkedList<Integer>();
         chunk2.add(3);
         chunk2.add(4);
 
@@ -695,23 +695,23 @@ public class CollectionFunctionChainSpec {
         list.add(4);
         list.add(5);
 
-        Task<Collection<Integer>> mockTask = mock(Task.class);
+        Task<List<Integer>> mockTask = mock(Task.class);
 
         new CollectionFunctionChain<Integer>(list).divideAndConquer(FunctionUtil.parallel(3), mockTask);
 
-        Collection<Integer> partition1 = new LinkedList<Integer>();
+        List<Integer> partition1 = new LinkedList<Integer>();
         partition1.add(1);
         partition1.add(4);
 
         verify(mockTask, times(1)).execute(partition1);
 
-        Collection<Integer> partition2 = new LinkedList<Integer>();
+        List<Integer> partition2 = new LinkedList<Integer>();
         partition2.add(2);
         partition2.add(5);
 
         verify(mockTask, times(1)).execute(partition2);
 
-        Collection<Integer> partitions3 = new LinkedList<Integer>();
+        List<Integer> partitions3 = new LinkedList<Integer>();
         partitions3.add(3);
 
         verify(mockTask, times(1)).execute(partitions3);
@@ -748,7 +748,7 @@ public class CollectionFunctionChainSpec {
         list.add("Ruby");
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
-        Task<Collection<String>> mockTask = mock(Task.class);
+        Task<List<String>> mockTask = mock(Task.class);
 
         chain.executeAsync(mockTask);
 
@@ -772,7 +772,7 @@ public class CollectionFunctionChainSpec {
         list.add("Ruby");
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
-        Task<Collection<String>> mockTask = mock(Task.class);
+        Task<List<String>> mockTask = mock(Task.class);
 
         chain.executeLater(mockTask);
 

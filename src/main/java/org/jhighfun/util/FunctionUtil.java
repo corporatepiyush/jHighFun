@@ -761,7 +761,7 @@ public class FunctionUtil {
          return new ForkAndJoin<T>(object);
     }
 
-    public static <T> void divideAndConquer(Collection<T> collection, Batch batch, final Task<Collection<T>> task) {
+    public static <T> void divideAndConquer(List<T> collection, Batch batch, final Task<List<T>> task) {
 
         final List<List<T>> collections = new ArrayList<List<T>>();
 
@@ -791,7 +791,7 @@ public class FunctionUtil {
 
     }
 
-    public static <T> void divideAndConquer(Collection<T> collection, Parallel partition, final Task<Collection<T>> task) {
+    public static <T> void divideAndConquer(List<T> collection, Parallel partition, final Task<List<T>> task) {
 
         final int partitionSize = partition.getDegree();
 

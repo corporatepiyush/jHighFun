@@ -135,12 +135,12 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return new CollectionForkAndJoin<I>(this);
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Batch batch, Task<Collection<I>> task) {
+    public CollectionFunctionChain<I> divideAndConquer(Batch batch, Task<List<I>> task) {
         FunctionUtil.divideAndConquer(this.collection, batch, task);
         return this;
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Parallel partition, Task<Collection<I>> task) {
+    public CollectionFunctionChain<I> divideAndConquer(Parallel partition, Task<List<I>> task) {
         FunctionUtil.divideAndConquer(this.collection, partition, task);
         return this;
     }
@@ -150,8 +150,8 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return this;
     }
 
-    public CollectionFunctionChain<I> executeAsync(final Task<Collection<I>> task) {
-        final Collection<I> collectionCopy = getCollection();
+    public CollectionFunctionChain<I> executeAsync(final Task<List<I>> task) {
+        final List<I> collectionCopy = getCollection();
         collectionCopy.addAll(this.collection);
         FunctionUtil.executeAsync(new Block() {
             public void execute() {
@@ -161,8 +161,8 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
         return this;
     }
 
-    public CollectionFunctionChain<I> executeLater(final Task<Collection<I>> task) {
-        final Collection<I> collectionCopy = getCollection();
+    public CollectionFunctionChain<I> executeLater(final Task<List<I>> task) {
+        final List<I> collectionCopy = getCollection();
         collectionCopy.addAll(this.collection);
         FunctionUtil.executeLater(new Block() {
             public void execute() {

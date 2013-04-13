@@ -8,20 +8,20 @@ import java.util.List;
 public class CollectionForkAndJoin<T> {
 
     private CollectionFunctionChain<T> collectionFunctionChain;
-    private final List<Task<Collection<T>>> taskList = new ArrayList<Task<Collection<T>>>();
+    private final List<Task<List<T>>> taskList = new ArrayList<Task<List<T>>>();
 
     public CollectionForkAndJoin(CollectionFunctionChain<T> collectionFunctionChain) {
         this.collectionFunctionChain = collectionFunctionChain;
     }
 
-    public CollectionForkAndJoin execute(Task<Collection<T>> task) {
+    public CollectionForkAndJoin execute(Task<List<T>> task) {
         taskList.add(task);
         return this;
     }
 
     public CollectionFunctionChain<T> join() {
-        FunctionUtil.each(taskList, new RecordProcessor<Task<Collection<T>>>() {
-            public void process(Task<Collection<T>> task) {
+        FunctionUtil.each(taskList, new RecordProcessor<Task<List<T>>>() {
+            public void process(Task<List<T>> task) {
                 task.execute(new LinkedList<T>(collectionFunctionChain.extract()));
             }
         }, FunctionUtil.parallel(taskList.size()));

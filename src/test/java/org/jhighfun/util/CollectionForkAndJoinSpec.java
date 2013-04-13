@@ -47,9 +47,9 @@ public class CollectionForkAndJoinSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        Task<Collection<String>> mockTask1 = mock(Task.class);
-        Task<Collection<String>> mockTask2 = mock(Task.class);
-        Task<Collection<String>> mockTask3 = mock(Task.class);
+        Task<List<String>> mockTask1 = mock(Task.class);
+        Task<List<String>> mockTask2 = mock(Task.class);
+        Task<List<String>> mockTask3 = mock(Task.class);
 
         CollectionForkAndJoin<String> collectionForkAndJoin = new CollectionForkAndJoin<String>(new CollectionFunctionChain<String>(list));
 
@@ -72,9 +72,9 @@ public class CollectionForkAndJoinSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        Task<Collection<String>> mockTask1 = mock(Task.class);
-        Task<Collection<String>> mockTask2 = mock(Task.class);
-        Task<Collection<String>> mockTask3 = mock(Task.class);
+        Task<List<String>> mockTask1 = mock(Task.class);
+        Task<List<String>> mockTask2 = mock(Task.class);
+        Task<List<String>> mockTask3 = mock(Task.class);
 
         CollectionForkAndJoin<String> collectionForkAndJoin = new CollectionForkAndJoin<String>(new CollectionFunctionChain<String>(list));
 
@@ -100,9 +100,9 @@ public class CollectionForkAndJoinSpec {
         list.add("Groovy");
         list.add("Ruby");
 
-        Task<Collection<String>> mockTask1 = mock(Task.class);
-        Task<Collection<String>> mockTask2 = mock(Task.class);
-        Task<Collection<String>> mockTask3 = mock(Task.class);
+        Task<List<String>> mockTask1 = mock(Task.class);
+        Task<List<String>> mockTask2 = mock(Task.class);
+        Task<List<String>> mockTask3 = mock(Task.class);
 
         CollectionForkAndJoin<String> collectionForkAndJoin = new CollectionForkAndJoin<String>(new CollectionFunctionChain<String>(list));
 
