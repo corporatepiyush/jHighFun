@@ -14,4 +14,29 @@ public class Tuple4<F, S, T, FO> {
         this._3 = third;
         this._4 = fourth;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tuple4)) return false;
+
+        Tuple4 tuple4 = (Tuple4) o;
+
+        if (_1 != null ? !_1.equals(tuple4._1) : tuple4._1 != null) return false;
+        if (_2 != null ? !_2.equals(tuple4._2) : tuple4._2 != null) return false;
+        if (_3 != null ? !_3.equals(tuple4._3) : tuple4._3 != null) return false;
+        if (_4 != null ? !_4.equals(tuple4._4) : tuple4._4 != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = _1 != null ? _1.hashCode() : 0;
+        result = 31 * result + (_2 != null ? _2.hashCode() : 0);
+        result = 31 * result + (_3 != null ? _3.hashCode() : 0);
+        result = 31 * result + (_4 != null ? _4.hashCode() : 0);
+        return result;
+    }
+
 }
