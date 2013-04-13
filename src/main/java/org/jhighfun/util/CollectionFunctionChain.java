@@ -10,6 +10,10 @@ public class CollectionFunctionChain<I> {
         this.collection = collection;
     }
 
+    public <O> ObjectFunctionChain<O> transform(Converter<List<I>, O> converter) {
+        return new ObjectFunctionChain<O>(converter.convert(this.collection));
+    }
+
     public <O> CollectionFunctionChain<O> map(Converter<I, O> converter) {
         return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter));
     }

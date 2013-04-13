@@ -67,6 +67,22 @@ public class CollectionFunctionChainSpec {
         assertEquals(chain.extract(), list);
     }
 
+
+    @Test
+    public void testTransform() {
+        Object object = new Object();
+        CollectionFunctionChain<Object> chain = new CollectionFunctionChain<Object>(List(object));
+
+        Converter<List<Object>, Object> mockConverter = spy(new Converter<List<Object>, Object>() {
+            public Object convert(List<Object> input) {
+                return input.get(0);
+            }
+        });
+        assertEquals(chain.transform(mockConverter).extract(), object);
+        verify(mockConverter, times(1)).convert(List(object));
+
+    }
+
     @Test
     public void testMap() {
 
