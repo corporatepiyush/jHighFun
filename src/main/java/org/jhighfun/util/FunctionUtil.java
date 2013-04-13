@@ -529,7 +529,7 @@ public class FunctionUtil {
         return count;
     }
 
-    public static <T> Tuple2<Collection<T>,Collection<T>> partition(Collection<T> input, Predicate<T> predicate) {
+    public static <T> Tuple2<Collection<T>, Collection<T>> partition(Collection<T> input, Predicate<T> predicate) {
 
         final Collection<T> list1 = new LinkedList<T>();
         final Collection<T> list2 = new LinkedList<T>();
@@ -545,7 +545,7 @@ public class FunctionUtil {
 
         out.add(list1);
         out.add(list1);
-        return new Tuple2<Collection<T>,Collection<T>>(list1, list2);
+        return new Tuple2<Collection<T>, Collection<T>>(list1, list2);
     }
 
     public static <K, V> void each(Map<K, V> map, KeyValueRecordProcessor<K, V> keyValueRecordProcessor) {
@@ -659,27 +659,27 @@ public class FunctionUtil {
         });
     }
 
-    public static void executeWithLock(String lockIndentifier,final Block codeBlock){
+    public static void executeWithLock(String lockIndentifier, final Block codeBlock) {
 
         Lock lock = operationLockMap.get().get(lockIndentifier);
 
-        if(lock == null){
+        if (lock == null) {
 
             registerOperation.lock();
-            try{
+            try {
                 lock = operationLockMap.get().get(lockIndentifier);
-                if(lock == null)
+                if (lock == null)
                     operationLockMap.get().put(lockIndentifier, new ReentrantLock(true));
-            }  finally {
-               registerOperation.unlock();
+            } finally {
+                registerOperation.unlock();
             }
 
             executeWithLock(lockIndentifier, codeBlock);
-        }else{
+        } else {
             lock.lock();
             try {
                 codeBlock.execute();
-            }finally {
+            } finally {
                 lock.unlock();
             }
         }
@@ -787,8 +787,8 @@ public class FunctionUtil {
         }
     }
 
-    public static <T> ForkAndJoin<T> fork(T object){
-         return new ForkAndJoin<T>(object);
+    public static <T> ForkAndJoin<T> fork(T object) {
+        return new ForkAndJoin<T>(object);
     }
 
     public static <T> void divideAndConquer(List<T> collection, Batch batch, final Task<List<T>> task) {
@@ -851,8 +851,8 @@ public class FunctionUtil {
         List<T> outList = new LinkedList<T>();
         int index = 0;
 
-        for(T t : list){
-            if(predicate.evaluate(index++))
+        for (T t : list) {
+            if (predicate.evaluate(index++))
                 outList.add(t);
         }
         return outList;

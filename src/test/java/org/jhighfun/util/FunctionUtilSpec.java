@@ -229,7 +229,7 @@ public class FunctionUtilSpec {
 
         Block mockBlock = mock(Block.class);
 
-        FunctionUtil.executeWithLock("Operation",mockBlock);
+        FunctionUtil.executeWithLock("Operation", mockBlock);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -704,32 +704,32 @@ public class FunctionUtilSpec {
         set.add("Java");
 
 
-        Tuple2<Collection<String>,Collection<String>> tuple2 = FunctionUtil.partition(set, new Predicate<String>() {
+        Tuple2<Collection<String>, Collection<String>> tuple2 = FunctionUtil.partition(set, new Predicate<String>() {
             public boolean evaluate(String s) {
                 return s.contains("Scala");
             }
         });
-                assertEquals(tuple2._1.toString(), "[Scala]");
-                assertEquals(tuple2._2.toString(), "[Java]");
+        assertEquals(tuple2._1.toString(), "[Scala]");
+        assertEquals(tuple2._2.toString(), "[Java]");
     }
 
     @Test
-    public void testFork(){
-        String object = "someObject" ;
+    public void testFork() {
+        String object = "someObject";
 
         assertEquals(FunctionUtil.fork(object).getClass(), ForkAndJoin.class);
     }
 
     @Test
-    public void testWithIndex(){
+    public void testWithIndex() {
 
-         List<String> list = List("hello","Mr.", "FirstName", "LastName");
+        List<String> list = List("hello", "Mr.", "FirstName", "LastName");
 
-         List<String> outList = FunctionUtil.withIndex(list, new Predicate<Integer>(){
-             public boolean evaluate(Integer index) {
-                 return index % 2 ==0;
-             }
-         });
+        List<String> outList = FunctionUtil.withIndex(list, new Predicate<Integer>() {
+            public boolean evaluate(Integer index) {
+                return index % 2 == 0;
+            }
+        });
 
         assertEquals(outList, List("hello", "FirstName"));
 

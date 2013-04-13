@@ -1,6 +1,9 @@
 package org.jhighfun.util;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CollectionFunctionChain<I> {
 
@@ -189,7 +192,7 @@ public class CollectionFunctionChain<I> {
     }
 
     private List<I> getCollection() {
-            return new LinkedList<I>();
+        return new LinkedList<I>();
     }
 
     public List<I> extract() {
