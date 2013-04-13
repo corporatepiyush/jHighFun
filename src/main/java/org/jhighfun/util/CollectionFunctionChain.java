@@ -108,12 +108,10 @@ public class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> union(Collection<I> inputCollection) {
-        final Collection<I> extraElements = new LinkedList<I>();
         for (I item : inputCollection) {
             if (!this.collection.contains(item))
-                extraElements.add(item);
+                this.collection.add(item);
         }
-        this.collection.addAll(extraElements);
         return this;
     }
 
