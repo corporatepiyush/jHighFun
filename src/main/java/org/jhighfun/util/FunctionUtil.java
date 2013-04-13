@@ -22,6 +22,9 @@ public class FunctionUtil {
     private static ExecutorService lowPriorityAsyncTaskThreadPool = ThreadPoolFactory.getLowPriorityAsyncTaskThreadPool();
 
     private static final Lock globalLock = new ReentrantLock(true);
+    private static final Lock registerOperation = new ReentrantLock(true);
+    private static final AtomicReference<ConcurrentHashMap<String, Lock>> operationLockMap = new AtomicReference<ConcurrentHashMap<String, Lock>>(new ConcurrentHashMap<String, Lock>());
+
 
     public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
@@ -656,7 +659,33 @@ public class FunctionUtil {
         });
     }
 
-    public static void executeWithGlobalLock(Block codeBlock) {
+    public static void executeWithLock(String lockIndentifier,final Block codeBlock){
+
+        Lock lock = operationLockMap.get().get(lockIndentifier);
+
+        if(lock == null){
+
+            registerOperation.lock();
+            try{
+                lock = operationLockMap.get().get(lockIndentifier);
+                if(lock == null)
+                    operationLockMap.get().put(lockIndentifier, new ReentrantLock(true));
+            }  finally {
+               registerOperation.unlock();
+            }
+
+            executeWithLock(lockIndentifier, codeBlock);
+        }else{
+            lock.lock();
+            try {
+                codeBlock.execute();
+            }finally {
+                lock.unlock();
+            }
+        }
+    }
+
+    public static void executeAtomic(Block codeBlock) {
         globalLock.lock();
         try {
             codeBlock.execute();
@@ -666,8 +695,6 @@ public class FunctionUtil {
     }
 
     public static <I, O> Converter<I, O> memoize(final Converter<I, O> converter) {
-
-
 
         final AtomicReference<Map<CacheObject<I>, CacheObject<O>>> memo = new AtomicReference<Map<CacheObject<I>, CacheObject<O>>>(new ConcurrentHashMap<CacheObject<I>, CacheObject<O>>());
         return new Converter<I, O>() {

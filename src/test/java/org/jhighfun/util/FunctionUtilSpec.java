@@ -225,11 +225,27 @@ public class FunctionUtilSpec {
 
 
     @Test
+    public void testExecuteWithLockWithSingleThread() {
+
+        Block mockBlock = mock(Block.class);
+
+        FunctionUtil.executeWithLock("Operation",mockBlock);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        verify(mockBlock, times(1)).execute();
+    }
+
+
+    @Test
     public void testExecuteWithGlobalLockWithSingleThread() {
 
         Block mockBlock = mock(Block.class);
 
-        FunctionUtil.executeWithGlobalLock(mockBlock);
+        FunctionUtil.executeAtomic(mockBlock);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -258,7 +274,7 @@ public class FunctionUtilSpec {
 
         FunctionUtil.each(load, new RecordProcessor<Integer>() {
             public void process(Integer item) {
-                FunctionUtil.executeWithGlobalLock(spyBlock);
+                FunctionUtil.executeAtomic(spyBlock);
             }
         }, FunctionUtil.parallel(10));
 

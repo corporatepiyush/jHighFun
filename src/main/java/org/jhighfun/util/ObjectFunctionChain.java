@@ -49,8 +49,8 @@ public class ObjectFunctionChain<I> {
         return this;
     }
 
-    public ObjectFunctionChain<I> executeWithGlobalLock(final Task<I> task) {
-        FunctionUtil.executeWithGlobalLock(new Block() {
+    public ObjectFunctionChain<I> executeAtomic(final Task<I> task) {
+        FunctionUtil.executeAtomic(new Block() {
             public void execute() {
                 task.execute(object);
             }

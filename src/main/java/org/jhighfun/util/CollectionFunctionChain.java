@@ -181,8 +181,8 @@ public class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> executeWithGlobalLock(final Task<List<I>> task) {
-        FunctionUtil.executeWithGlobalLock(new Block() {
+    public CollectionFunctionChain<I> executeAtomic(final Task<List<I>> task) {
+        FunctionUtil.executeAtomic(new Block() {
             public void execute() {
                 task.execute(collection);
             }
