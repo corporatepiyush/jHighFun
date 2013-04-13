@@ -819,6 +819,18 @@ public class FunctionUtil {
         }, parallel(partitionSize));
     }
 
+    public static <T> List<T> withIndex(List<T> list, Predicate<Integer> predicate) {
+
+        List<T> outList = new LinkedList<T>();
+        int index = 0;
+
+        for(T t : list){
+            if(predicate.evaluate(index++))
+                outList.add(t);
+        }
+        return outList;
+    }
+
 }
 
 class Batch {

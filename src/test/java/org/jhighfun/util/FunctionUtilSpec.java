@@ -704,4 +704,18 @@ public class FunctionUtilSpec {
         assertEquals(FunctionUtil.fork(object).getClass(), ForkAndJoin.class);
     }
 
+    @Test
+    public void testWithIndex(){
+
+         List<String> list = List("hello","Mr.", "FirstName", "LastName");
+
+         List<String> outList = FunctionUtil.withIndex(list, new Predicate<Integer>(){
+             public boolean evaluate(Integer index) {
+                 return index % 2 ==0;
+             }
+         });
+
+        assertEquals(outList, List("hello", "FirstName"));
+
+    }
 }

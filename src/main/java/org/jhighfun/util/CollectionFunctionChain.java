@@ -2,7 +2,7 @@ package org.jhighfun.util;
 
 import java.util.*;
 
-public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTheoryFunction<I> {
+public class CollectionFunctionChain<I> {
 
     private List<I> collection;
 
@@ -86,6 +86,11 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
 
     public ObjectFunctionChain<Integer> count(Predicate<I> predicate) {
         return new ObjectFunctionChain<Integer>(FunctionUtil.count(this.collection, predicate));
+    }
+
+    public CollectionFunctionChain<I> withIndex(Predicate<Integer> predicate) {
+        this.collection = FunctionUtil.withIndex(this.collection, predicate);
+        return this;
     }
 
     public CollectionFunctionChain<I> plus(Collection<I> collection) {
@@ -185,7 +190,7 @@ public class CollectionFunctionChain<I> implements HigherOrderFunction<I>, SetTh
             return new LinkedList<I>();
     }
 
-    public Collection<I> extract() {
+    public List<I> extract() {
         return this.collection;
     }
 

@@ -453,6 +453,21 @@ public class CollectionFunctionChainSpec {
     }
 
     @Test
+    public void testWithIndex(){
+
+        List<String> list = List("hello","Mr.", "FirstName", "LastName");
+
+        List<String> outList = new CollectionFunctionChain(list).withIndex(new Predicate<Integer>(){
+            public boolean evaluate(Integer index) {
+                return index % 2 ==0;
+            }
+        }).extract();
+
+        assertEquals(outList, List("hello", "FirstName"));
+
+    }
+
+    @Test
     public void testSomeFunction() {
 
         List<String> list = new LinkedList<String>();
