@@ -1,6 +1,7 @@
 package org.jhighfun.util;
 
 import org.jhighfun.internal.CacheObject;
+import org.jhighfun.internal.Config;
 import org.jhighfun.internal.TaskInputOutput;
 import org.jhighfun.internal.ThreadPoolFactory;
 
@@ -873,7 +874,7 @@ class Batch {
 }
 
 class Parallel {
-    protected static final int affinity = Runtime.getRuntime().availableProcessors();
+    protected static final int affinity = Config.getParallelDegree();
 
     private final int threads;
 
