@@ -836,7 +836,7 @@ public class CollectionFunctionChainSpec {
 
         new CollectionFunctionChain<Integer>(load).each(new RecordProcessor<Integer>() {
             public void process(Integer item) {
-                new CollectionFunctionChain<Integer>(list).executeAtomic(new Task<List<Integer>>() {
+                new CollectionFunctionChain<Integer>(list).executeWithGlobalLock(new Task<List<Integer>>() {
                     public void execute(List<Integer> input) {
                         spyBlock.execute();
                     }

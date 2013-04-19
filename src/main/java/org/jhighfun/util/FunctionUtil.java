@@ -24,7 +24,7 @@ public class FunctionUtil {
 
     private static final Lock globalLock = new ReentrantLock(true);
     private static final Lock registerOperation = new ReentrantLock(true);
-    private static final AtomicReference<ConcurrentHashMap<String, Lock>> operationLockMap = new AtomicReference<ConcurrentHashMap<String, Lock>>(new ConcurrentHashMap<String, Lock>());
+    private static final AtomicReference<ConcurrentHashMap<Operation, Lock>> operationLockMap = new AtomicReference<ConcurrentHashMap<Operation, Lock>>(new ConcurrentHashMap<Operation, Lock>());
 
 
     public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
@@ -660,7 +660,7 @@ public class FunctionUtil {
         });
     }
 
-    public static void executeWithLock(String lockIndentifier, final Block codeBlock) {
+    public static void executeWithLock(Operation lockIndentifier, final Block codeBlock) {
 
         Lock lock = operationLockMap.get().get(lockIndentifier);
 
@@ -686,7 +686,7 @@ public class FunctionUtil {
         }
     }
 
-    public static void executeAtomic(Block codeBlock) {
+    public static void executeWithGlobalLock(Block codeBlock) {
         globalLock.lock();
         try {
             codeBlock.execute();
@@ -778,6 +778,10 @@ public class FunctionUtil {
 
     public static Parallel parallel(int threads) {
         return new Parallel(threads);
+    }
+
+    public static Operation operation(String operationIdentifier){
+        return new Operation(operationIdentifier);
     }
 
     private static <I> Collection<I> getCollection(Collection<I> collection) {
@@ -889,5 +893,32 @@ class Parallel {
 
     public int getDegree() {
         return this.threads;
+    }
+}
+
+class Operation {
+
+    private final String operationIdentifier;
+
+    public Operation(String operationIdentifier){
+         this.operationIdentifier = operationIdentifier;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Operation)) return false;
+
+        Operation operation = (Operation) o;
+
+        if (operationIdentifier != null ? !operationIdentifier.equals(operation.operationIdentifier) : operation.operationIdentifier != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return operationIdentifier != null ? operationIdentifier.hashCode() : 0;
     }
 }

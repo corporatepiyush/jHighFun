@@ -50,7 +50,7 @@ public class ObjectFunctionChain<I> {
     }
 
     public ObjectFunctionChain<I> executeAtomic(final Task<I> task) {
-        FunctionUtil.executeAtomic(new Block() {
+        FunctionUtil.executeWithGlobalLock(new Block() {
             public void execute() {
                 task.execute(object);
             }

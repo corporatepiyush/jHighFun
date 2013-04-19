@@ -229,7 +229,7 @@ public class FunctionUtilSpec {
 
         Block mockBlock = mock(Block.class);
 
-        FunctionUtil.executeWithLock("Operation", mockBlock);
+        FunctionUtil.executeWithLock(FunctionUtil.operation("Operation"), mockBlock);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -245,7 +245,7 @@ public class FunctionUtilSpec {
 
         Block mockBlock = mock(Block.class);
 
-        FunctionUtil.executeAtomic(mockBlock);
+        FunctionUtil.executeWithGlobalLock(mockBlock);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -274,7 +274,7 @@ public class FunctionUtilSpec {
 
         FunctionUtil.each(load, new RecordProcessor<Integer>() {
             public void process(Integer item) {
-                FunctionUtil.executeAtomic(spyBlock);
+                FunctionUtil.executeWithGlobalLock(spyBlock);
             }
         }, FunctionUtil.parallel(10));
 
