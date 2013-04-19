@@ -8,10 +8,7 @@ import org.jhighfun.internal.ThreadPoolFactory;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -644,6 +641,19 @@ public class FunctionUtil {
         return new CurriedFunction<I, O>(function, Arrays.asList(fixedInputs));
     }
 
+    public static TaskExecutionHandle acceptTasks(List<Callable> futureTasks) {
+
+        List<Future> futureList = new ArrayList<Future>();
+
+        long startTime = System.nanoTime();
+
+        for (Callable callable : futureTasks) {
+            futureList.add(highPriorityTaskThreadPool.submit(callable));
+        }
+
+        return new TaskExecutionHandle(futureList, startTime);
+    }
+
     public static void executeAsync(final Block codeBlock) {
         mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
@@ -780,7 +790,7 @@ public class FunctionUtil {
         return new Parallel(threads);
     }
 
-    public static Operation operation(String operationIdentifier){
+    public static Operation operation(String operationIdentifier) {
         return new Operation(operationIdentifier);
     }
 
@@ -900,8 +910,8 @@ class Operation {
 
     private final String operationIdentifier;
 
-    public Operation(String operationIdentifier){
-         this.operationIdentifier = operationIdentifier;
+    public Operation(String operationIdentifier) {
+        this.operationIdentifier = operationIdentifier;
     }
 
     @Override
