@@ -47,4 +47,14 @@ public class TaskExecutionHandle {
             }
         }
     }
+
+    public int totalTasksCompleted() {
+        int count = 0;
+        for (Future future : futureList) {
+            if (future.isDone()) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

@@ -156,7 +156,7 @@ public class ObjectFunctionChainSpec {
 
         FunctionUtil.each(load, new RecordProcessor<Integer>() {
             public void process(Integer item) {
-                new ObjectFunctionChain<Integer>(1).executeAtomic(new Task<Integer>() {
+                new ObjectFunctionChain<Integer>(1).executeWithGlobalLock(new Task<Integer>() {
                     public void execute(Integer input) {
                         spyBlock.execute();
                     }

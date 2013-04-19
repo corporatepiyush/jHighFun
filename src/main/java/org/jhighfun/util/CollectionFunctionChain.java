@@ -191,6 +191,15 @@ public class CollectionFunctionChain<I> {
         return this;
     }
 
+    public CollectionFunctionChain<I> executeWithLock(Operation operation, final Task<List<I>> task) {
+        FunctionUtil.executeWithLock(operation, new Block() {
+            public void execute() {
+                task.execute(collection);
+            }
+        });
+        return this;
+    }
+
     private List<I> getCollection() {
         return new LinkedList<I>();
     }

@@ -670,22 +670,22 @@ public class FunctionUtil {
         });
     }
 
-    public static void executeWithLock(Operation lockIndentifier, final Block codeBlock) {
+    public static void executeWithLock(Operation operation, final Block codeBlock) {
 
-        Lock lock = operationLockMap.get().get(lockIndentifier);
+        Lock lock = operationLockMap.get().get(operation);
 
         if (lock == null) {
 
             registerOperation.lock();
             try {
-                lock = operationLockMap.get().get(lockIndentifier);
+                lock = operationLockMap.get().get(operation);
                 if (lock == null)
-                    operationLockMap.get().put(lockIndentifier, new ReentrantLock(true));
+                    operationLockMap.get().put(operation, new ReentrantLock(true));
             } finally {
                 registerOperation.unlock();
             }
 
-            executeWithLock(lockIndentifier, codeBlock);
+            executeWithLock(operation, codeBlock);
         } else {
             lock.lock();
             try {
