@@ -9,9 +9,9 @@ import static org.jhighfun.util.CollectionUtil.List;
 public final class CurriedFunction<I, O> {
 
     private final List<I> fixedInputs;
-    private final Function<I, O> function;
+    private final Function<List<I>, O> function;
 
-    public CurriedFunction(Function<I, O> function, List<I> fixedInputs) {
+    public CurriedFunction(Function<List<I>, O> function, List<I> fixedInputs) {
         this.function = function;
         this.fixedInputs = fixedInputs;
     }

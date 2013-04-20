@@ -633,11 +633,11 @@ public class FunctionUtil {
         return new CollectionFunctionChain<I>(collection);
     }
 
-    public static <I, O> CurriedFunction<I, O> curry(Function<I, O> function, List<I> fixedInputs) {
+    public static <I, O> CurriedFunction<I, O> curry(Function<List<I>, O> function, List<I> fixedInputs) {
         return new CurriedFunction<I, O>(function, fixedInputs);
     }
 
-    public static <I, O> CurriedFunction<I, O> curry(Function<I, O> function, I... fixedInputs) {
+    public static <I, O> CurriedFunction<I, O> curry(Function<List<I>, O> function, I... fixedInputs) {
         return new CurriedFunction<I, O>(function, Arrays.asList(fixedInputs));
     }
 
@@ -743,10 +743,10 @@ public class FunctionUtil {
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function) {
-        final AtomicReference<Map<CacheObject<Collection<I>>, CacheObject<O>>> memo = new AtomicReference<Map<CacheObject<Collection<I>>, CacheObject<O>>>(new ConcurrentHashMap<CacheObject<Collection<I>>, CacheObject<O>>());
+        final AtomicReference<Map<CacheObject<I>, CacheObject<O>>> memo = new AtomicReference<Map<CacheObject<I>, CacheObject<O>>>(new ConcurrentHashMap<CacheObject<I>, CacheObject<O>>());
         return new Function<I, O>() {
-            public O execute(Collection<I> input) {
-                final CacheObject<Collection<I>> listCacheObject = new CacheObject<Collection<I>>(input);
+            public O execute(I input) {
+                final CacheObject<I> listCacheObject = new CacheObject<I>(input);
                 final CacheObject<O> memoizedOutput = memo.get().get(listCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();

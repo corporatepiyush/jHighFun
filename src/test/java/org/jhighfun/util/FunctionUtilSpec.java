@@ -65,8 +65,8 @@ public class FunctionUtilSpec {
     @Test
     public void testCurry() {
 
-        CurriedFunction<Integer, Integer> addToFive = FunctionUtil.curry(new Function<Integer, Integer>() {
-            public Integer execute(Collection<Integer> integers) {
+        CurriedFunction<Integer, Integer> addToFive = FunctionUtil.curry(new Function<List<Integer>, Integer>() {
+            public Integer execute(List<Integer> integers) {
                 int sum = 0;
                 for (Integer i : integers) {
                     sum = sum + i;
@@ -80,8 +80,8 @@ public class FunctionUtilSpec {
         assertTrue(addToFive.call(10) == 15);
         assertTrue(addToFive.call(10, 15) == 30);
 
-        CurriedFunction<Integer, Integer> addToZero = FunctionUtil.curry(new Function<Integer, Integer>() {
-            public Integer execute(Collection<Integer> integers) {
+        CurriedFunction<Integer, Integer> addToZero = FunctionUtil.curry(new Function<List<Integer>, Integer>() {
+            public Integer execute(List<Integer> integers) {
                 int sum = 0;
                 for (Integer i : integers) {
                     sum = sum + i;
@@ -147,9 +147,9 @@ public class FunctionUtilSpec {
 
         final List<String> spyInjection = new LinkedList<String>();
 
-        Function<String, String> memoizedFunction = FunctionUtil.memoize(new Function<String, String>() {
+        Function<List<String>, String> memoizedFunction = FunctionUtil.memoize(new Function<List<String>, String>() {
 
-            public String execute(Collection<String> args) {
+            public String execute(List<String> args) {
                 spyInjection.add(args.toString());
                 StringBuilder builder = new StringBuilder();
                 for (String string : args) {
