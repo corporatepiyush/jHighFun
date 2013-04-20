@@ -15,13 +15,6 @@ public class CacheObjectSpec {
         new CacheObject(null);
     }
 
-    @Test
-    public void testGetForSoftObject() {
-        Object object = new Object();
-        SoftReference softReference = new SoftReference(object);
-        CacheObject cacheObject = new CacheObject(softReference);
-        assertTrue(cacheObject.get() == object);
-    }
 
     @Test
     public void testGetForObject() {
