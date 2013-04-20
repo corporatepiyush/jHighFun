@@ -104,19 +104,19 @@ public class FunctionUtilSpec {
         final String inputCheckValue = "today";
         final Date outputCheckValue = new Date();
 
-        Converter<String, Date> memoizedFunction = FunctionUtil.memoize(new Converter<String, Date>() {
+        Function<String, Date> memoizedFunction = FunctionUtil.memoize(new Function<String, Date>() {
 
-            public Date convert(String input) {
+            public Date execute(String input) {
                 spyInjection.add(input);
                 return input.equals("today") ? outputCheckValue : null;
             }
         });
 
         assertEquals(spyInjection.size(), 0);
-        assertEquals(memoizedFunction.convert(inputCheckValue), outputCheckValue);
+        assertEquals(memoizedFunction.execute(inputCheckValue), outputCheckValue);
         assertEquals(spyInjection.size(), 1);
 
-        assertEquals(memoizedFunction.convert(inputCheckValue), outputCheckValue);
+        assertEquals(memoizedFunction.execute(inputCheckValue), outputCheckValue);
         assertEquals(spyInjection.size(), 1);
     }
 
@@ -296,9 +296,9 @@ public class FunctionUtilSpec {
         }
 
         List<Character> list1 = FunctionUtil.map(list,
-                new Converter<String, Character>() {
+                new Function<String, Character>() {
 
-                    public Character convert(String input) {
+                    public Character execute(String input) {
                         try {
                             Thread.currentThread().sleep(1);
                         } catch (InterruptedException e) {

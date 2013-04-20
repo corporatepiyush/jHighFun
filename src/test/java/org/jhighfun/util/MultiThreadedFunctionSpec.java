@@ -48,9 +48,9 @@ public class MultiThreadedFunctionSpec {
         }
 
         List<Character> list1 = FunctionUtil.map(list,
-                new Converter<String, Character>() {
+                new Function<String, Character>() {
 
-                    public Character convert(String input) {
+                    public Character execute(String input) {
                         try {
                             Thread.currentThread().sleep(1);
                         } catch (InterruptedException e) {

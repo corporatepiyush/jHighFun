@@ -27,9 +27,9 @@ public class MultiThreadedFunctionExceptionSpec {
         }
 
         FunctionUtil.map(list,
-                new Converter<String, Character>() {
+                new Function<String, Character>() {
 
-                    public Character convert(String input) {
+                    public Character execute(String input) {
                         try {
                             Thread.currentThread().sleep(10);
                         } catch (InterruptedException e) {

@@ -5,7 +5,6 @@ import org.jhighfun.internal.Config;
 import org.jhighfun.internal.TaskInputOutput;
 import org.jhighfun.internal.ThreadPoolFactory;
 
-import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
@@ -24,26 +23,26 @@ public class FunctionUtil {
     private static final AtomicReference<ConcurrentHashMap<Operation, Lock>> operationLockMap = new AtomicReference<ConcurrentHashMap<Operation, Lock>>(new ConcurrentHashMap<Operation, Lock>());
 
 
-    public static <I, O> List<O> map(List<I> inputList, Converter<I, O> converter) {
+    public static <I, O> List<O> map(List<I> inputList, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
-            outputList.add(converter.convert(i));
+            outputList.add(converter.execute(i));
         }
         return outputList;
     }
 
-    public static <I, O> Collection<O> map(Collection<I> inputList, Converter<I, O> converter) {
+    public static <I, O> Collection<O> map(Collection<I> inputList, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
-            outputList.add(converter.convert(i));
+            outputList.add(converter.execute(i));
         }
         return outputList;
     }
 
     public static <I, O> List<O> map(List<I> inputList,
-                                     final Converter<I, O> converter, Parallel parallel) {
+                                     final Function<I, O> converter, Parallel parallel) {
 
         if (parallel.getDegree() < 2)
             return map(inputList, converter);
@@ -53,7 +52,7 @@ public class FunctionUtil {
     }
 
     public static <I, O> Collection<O> map(Collection<I> inputList,
-                                           final Converter<I, O> converter, Parallel parallel) {
+                                           final Function<I, O> converter, Parallel parallel) {
 
         if (parallel.getDegree() < 2)
             return map(inputList, converter);
@@ -63,7 +62,7 @@ public class FunctionUtil {
     }
 
     private static <I, O> List<O> mapParallel(Collection<I> inputList,
-                                              final Converter<I, O> converter, int noOfThread) {
+                                              final Function<I, O> converter, int noOfThread) {
         final int size = inputList.size();
         final List<List<TaskInputOutput<I, O>>> taskList = new ArrayList<List<TaskInputOutput<I, O>>>();
 
@@ -97,7 +96,7 @@ public class FunctionUtil {
                     for (TaskInputOutput<I, O> taskInputOutput : list2) {
                         if (exception.size() == 0) {
                             try {
-                                taskInputOutput.setOutput(converter.convert(taskInputOutput.getInput()));
+                                taskInputOutput.setOutput(converter.execute(taskInputOutput.getInput()));
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -703,25 +702,6 @@ public class FunctionUtil {
         } finally {
             globalLock.unlock();
         }
-    }
-
-    public static <I, O> Converter<I, O> memoize(final Converter<I, O> converter) {
-
-        final AtomicReference<Map<CacheObject<I>, CacheObject<O>>> memo = new AtomicReference<Map<CacheObject<I>, CacheObject<O>>>(new ConcurrentHashMap<CacheObject<I>, CacheObject<O>>());
-        return new Converter<I, O>() {
-            public O convert(I input) {
-                final CacheObject<I> iCacheObject = new CacheObject<I>(input);
-                final CacheObject<O> memoizedOutput = memo.get().get(iCacheObject);
-                if (memoizedOutput != null && memoizedOutput.get() != null) {
-                    return memoizedOutput.get();
-                } else {
-                    final O output = converter.convert(input);
-                    memo.get().put(iCacheObject, new CacheObject<O>(new SoftReference<O>(output)));
-                    return output;
-                }
-            }
-        };
-
     }
 
     public static <T> Predicate<T> memoize(final Predicate<T> predicate) {

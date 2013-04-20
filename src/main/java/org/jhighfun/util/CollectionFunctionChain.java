@@ -13,15 +13,15 @@ public class CollectionFunctionChain<I> {
         this.collection = collection;
     }
 
-    public <O> ObjectFunctionChain<O> transform(Converter<List<I>, O> converter) {
-        return new ObjectFunctionChain<O>(converter.convert(this.collection));
+    public <O> ObjectFunctionChain<O> transform(Function<List<I>, O> converter) {
+        return new ObjectFunctionChain<O>(converter.execute(this.collection));
     }
 
-    public <O> CollectionFunctionChain<O> map(Converter<I, O> converter) {
+    public <O> CollectionFunctionChain<O> map(Function<I, O> converter) {
         return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter));
     }
 
-    public <O> CollectionFunctionChain<O> map(Converter<I, O> converter, Parallel parallel) {
+    public <O> CollectionFunctionChain<O> map(Function<I, O> converter, Parallel parallel) {
         return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter, parallel));
     }
 

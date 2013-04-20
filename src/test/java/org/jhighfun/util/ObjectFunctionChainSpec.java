@@ -61,9 +61,9 @@ public class ObjectFunctionChainSpec {
         Object object = new Object();
         ObjectFunctionChain<Object> chain = new ObjectFunctionChain<Object>(object);
 
-        Converter mockConverter = mock(Converter.class);
+        Function mockConverter = mock(Function.class);
         chain.transform(mockConverter);
-        verify(mockConverter, times(1)).convert(object);
+        verify(mockConverter, times(1)).execute(object);
 
     }
 

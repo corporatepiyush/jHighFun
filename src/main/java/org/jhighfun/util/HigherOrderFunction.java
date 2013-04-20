@@ -4,9 +4,9 @@ import java.util.Comparator;
 
 public interface HigherOrderFunction<I> {
 
-    <O> CollectionFunctionChain<O> map(Converter<I, O> converter);
+    <O> CollectionFunctionChain<O> map(Function<I, O> converter);
 
-    <O> CollectionFunctionChain<O> map(Converter<I, O> converter, Parallel parallel);
+    <O> CollectionFunctionChain<O> map(Function<I, O> converter, Parallel parallel);
 
     CollectionFunctionChain<I> filter(Predicate<I> predicate);
 

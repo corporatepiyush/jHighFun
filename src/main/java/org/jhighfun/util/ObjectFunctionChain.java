@@ -12,8 +12,8 @@ public class ObjectFunctionChain<I> {
         this.object = object;
     }
 
-    public <O> ObjectFunctionChain<O> transform(Converter<I, O> converter) {
-        return new ObjectFunctionChain<O>(converter.convert(object));
+    public <O> ObjectFunctionChain<O> transform(Function<I, O> converter) {
+        return new ObjectFunctionChain<O>(converter.execute(object));
     }
 
     public CollectionFunctionChain<I> toCollection() {
