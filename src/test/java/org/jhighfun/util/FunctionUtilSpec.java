@@ -66,7 +66,7 @@ public class FunctionUtilSpec {
     public void testCurry() {
 
         CurriedFunction<Integer, Integer> addToFive = FunctionUtil.curry(new Function<List<Integer>, Integer>() {
-            public Integer execute(List<Integer> integers) {
+            public Integer apply(List<Integer> integers) {
                 int sum = 0;
                 for (Integer i : integers) {
                     sum = sum + i;
@@ -81,7 +81,7 @@ public class FunctionUtilSpec {
         assertTrue(addToFive.call(10, 15) == 30);
 
         CurriedFunction<Integer, Integer> addToZero = FunctionUtil.curry(new Function<List<Integer>, Integer>() {
-            public Integer execute(List<Integer> integers) {
+            public Integer apply(List<Integer> integers) {
                 int sum = 0;
                 for (Integer i : integers) {
                     sum = sum + i;
@@ -106,17 +106,17 @@ public class FunctionUtilSpec {
 
         Function<String, Date> memoizedFunction = FunctionUtil.memoize(new Function<String, Date>() {
 
-            public Date execute(String input) {
+            public Date apply(String input) {
                 spyInjection.add(input);
                 return input.equals("today") ? outputCheckValue : null;
             }
         });
 
         assertEquals(spyInjection.size(), 0);
-        assertEquals(memoizedFunction.execute(inputCheckValue), outputCheckValue);
+        assertEquals(memoizedFunction.apply(inputCheckValue), outputCheckValue);
         assertEquals(spyInjection.size(), 1);
 
-        assertEquals(memoizedFunction.execute(inputCheckValue), outputCheckValue);
+        assertEquals(memoizedFunction.apply(inputCheckValue), outputCheckValue);
         assertEquals(spyInjection.size(), 1);
     }
 
@@ -149,7 +149,7 @@ public class FunctionUtilSpec {
 
         Function<List<String>, String> memoizedFunction = FunctionUtil.memoize(new Function<List<String>, String>() {
 
-            public String execute(List<String> args) {
+            public String apply(List<String> args) {
                 spyInjection.add(args.toString());
                 StringBuilder builder = new StringBuilder();
                 for (String string : args) {
@@ -160,10 +160,10 @@ public class FunctionUtilSpec {
         });
 
         assertEquals(spyInjection.size(), 0);
-        assertEquals(memoizedFunction.execute(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
+        assertEquals(memoizedFunction.apply(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
         assertEquals(spyInjection.size(), 1);
 
-        assertEquals(memoizedFunction.execute(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
+        assertEquals(memoizedFunction.apply(List("I", "am", "the", "Almighty")), "IamtheAlmighty");
         assertEquals(spyInjection.size(), 1);
     }
 
@@ -298,7 +298,7 @@ public class FunctionUtilSpec {
         List<Character> list1 = FunctionUtil.map(list,
                 new Function<String, Character>() {
 
-                    public Character execute(String input) {
+                    public Character apply(String input) {
                         try {
                             Thread.currentThread().sleep(1);
                         } catch (InterruptedException e) {

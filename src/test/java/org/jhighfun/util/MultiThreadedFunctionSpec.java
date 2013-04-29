@@ -50,7 +50,7 @@ public class MultiThreadedFunctionSpec {
         List<Character> list1 = FunctionUtil.map(list,
                 new Function<String, Character>() {
 
-                    public Character execute(String input) {
+                    public Character apply(String input) {
                         try {
                             Thread.currentThread().sleep(1);
                         } catch (InterruptedException e) {

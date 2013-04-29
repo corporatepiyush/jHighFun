@@ -55,7 +55,7 @@ public final class CurriedFunction<I, O> {
             }
         }
 
-        return function.execute(argList);
+        return function.apply(argList);
     }
 
     public O call(I... dynamicInputs) {
@@ -74,7 +74,7 @@ public final class CurriedFunction<I, O> {
             }
         }
 
-        return function.execute(argList);
+        return function.apply(argList);
 
     }
 

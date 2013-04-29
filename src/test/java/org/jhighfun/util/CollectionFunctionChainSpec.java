@@ -74,12 +74,12 @@ public class CollectionFunctionChainSpec {
         CollectionFunctionChain<Object> chain = new CollectionFunctionChain<Object>(List(object));
 
         Function<List<Object>, Object> mockConverter = spy(new Function<List<Object>, Object>() {
-            public Object execute(List<Object> input) {
+            public Object apply(List<Object> input) {
                 return input.get(0);
             }
         });
         assertEquals(chain.transform(mockConverter).extract(), object);
-        verify(mockConverter, times(1)).execute(List(object));
+        verify(mockConverter, times(1)).apply(List(object));
 
     }
 
@@ -97,7 +97,7 @@ public class CollectionFunctionChainSpec {
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<Character> mapList = chain.map(new Function<String, Character>() {
-            public Character execute(String input) {
+            public Character apply(String input) {
                 return input.charAt(0);
             }
         }).extract();
@@ -128,7 +128,7 @@ public class CollectionFunctionChainSpec {
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
         Collection<Character> mapList = chain.map(new Function<String, Character>() {
-            public Character execute(String input) {
+            public Character apply(String input) {
                 return input.charAt(0);
             }
         }, FunctionUtil.parallel(3)).extract();

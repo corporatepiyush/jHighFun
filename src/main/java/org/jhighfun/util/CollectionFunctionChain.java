@@ -14,7 +14,7 @@ public class CollectionFunctionChain<I> {
     }
 
     public <O> ObjectFunctionChain<O> transform(Function<List<I>, O> converter) {
-        return new ObjectFunctionChain<O>(converter.execute(this.collection));
+        return new ObjectFunctionChain<O>(converter.apply(this.collection));
     }
 
     public <O> CollectionFunctionChain<O> map(Function<I, O> converter) {

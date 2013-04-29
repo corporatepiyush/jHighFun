@@ -63,7 +63,7 @@ public class ObjectFunctionChainSpec {
 
         Function mockConverter = mock(Function.class);
         chain.transform(mockConverter);
-        verify(mockConverter, times(1)).execute(object);
+        verify(mockConverter, times(1)).apply(object);
 
     }
 

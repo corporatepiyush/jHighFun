@@ -13,7 +13,7 @@ public class ObjectFunctionChain<I> {
     }
 
     public <O> ObjectFunctionChain<O> transform(Function<I, O> converter) {
-        return new ObjectFunctionChain<O>(converter.execute(object));
+        return new ObjectFunctionChain<O>(converter.apply(object));
     }
 
     public CollectionFunctionChain<I> toCollection() {

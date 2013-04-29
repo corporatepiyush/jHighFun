@@ -16,7 +16,7 @@ public class CurriedFunctionSpec {
     @Before
     public void before() {
         curriedFunction = new CurriedFunction<Character, String>(new Function<List<Character>, String>() {
-            public String execute(List<Character> args) {
+            public String apply(List<Character> args) {
                 StringBuilder string = new StringBuilder();
                 for (Character character : args) {
                     string.append(character);

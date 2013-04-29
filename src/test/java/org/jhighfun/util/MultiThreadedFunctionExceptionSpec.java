@@ -29,7 +29,7 @@ public class MultiThreadedFunctionExceptionSpec {
         FunctionUtil.map(list,
                 new Function<String, Character>() {
 
-                    public Character execute(String input) {
+                    public Character apply(String input) {
                         try {
                             Thread.currentThread().sleep(10);
                         } catch (InterruptedException e) {

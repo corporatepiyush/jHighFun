@@ -27,7 +27,7 @@ public class FunctionUtil {
         final List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
-            outputList.add(converter.execute(i));
+            outputList.add(converter.apply(i));
         }
         return outputList;
     }
@@ -36,7 +36,7 @@ public class FunctionUtil {
         final List<O> outputList = new LinkedList<O>();
 
         for (I i : inputList) {
-            outputList.add(converter.execute(i));
+            outputList.add(converter.apply(i));
         }
         return outputList;
     }
@@ -96,7 +96,7 @@ public class FunctionUtil {
                     for (TaskInputOutput<I, O> taskInputOutput : list2) {
                         if (exception.size() == 0) {
                             try {
-                                taskInputOutput.setOutput(converter.execute(taskInputOutput.getInput()));
+                                taskInputOutput.setOutput(converter.apply(taskInputOutput.getInput()));
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -725,13 +725,13 @@ public class FunctionUtil {
     public static <I, O> Function<I, O> memoize(final Function<I, O> function) {
         final AtomicReference<Map<CacheObject<I>, CacheObject<O>>> memo = new AtomicReference<Map<CacheObject<I>, CacheObject<O>>>(new ConcurrentHashMap<CacheObject<I>, CacheObject<O>>());
         return new Function<I, O>() {
-            public O execute(I input) {
+            public O apply(I input) {
                 final CacheObject<I> listCacheObject = new CacheObject<I>(input);
                 final CacheObject<O> memoizedOutput = memo.get().get(listCacheObject);
                 if (memoizedOutput != null && memoizedOutput.get() != null) {
                     return memoizedOutput.get();
                 } else {
-                    final O output = function.execute(input);
+                    final O output = function.apply(input);
                     memo.get().put(listCacheObject, new CacheObject<O>(output));
                     return output;
                 }
