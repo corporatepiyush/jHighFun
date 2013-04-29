@@ -705,35 +705,60 @@ public class FunctionUtil {
     }
 
     public static <T> Predicate<T> memoize(final Predicate<T> predicate) {
-
-        final AtomicReference<Map<CacheObject<T>, Boolean>> memo = new AtomicReference<Map<CacheObject<T>, Boolean>>(new ConcurrentHashMap<CacheObject<T>, Boolean>());
+        final Map<CacheObject<T>, Future<Boolean>> memo = new ConcurrentHashMap<CacheObject<T>, Future<Boolean>>();
         return new Predicate<T>() {
-            public boolean evaluate(T input) {
-                final CacheObject<T> tCacheObject = new CacheObject<T>(input);
-                final Boolean memoizedOutput = memo.get().get(tCacheObject);
-                if (memoizedOutput != null) {
-                    return memoizedOutput;
-                } else {
-                    final boolean output = predicate.evaluate(input);
-                    memo.get().put(tCacheObject, output);
-                    return output;
+
+            public boolean evaluate(final T input) {
+
+                final CacheObject<T> inputCacheObject = new CacheObject<T>(input);
+                final Future<Boolean> memoizedOutput = memo.get(inputCacheObject);
+                try {
+                    if (memoizedOutput != null && memoizedOutput.get() != null) {
+                        return memoizedOutput.get();
+                    } else {
+
+                        FutureTask<Boolean> futureTask = new FutureTask<Boolean>(new Callable<Boolean>() {
+                            public Boolean call() throws Exception {
+                                return predicate.evaluate(input);
+                            }
+                        });
+
+                        memo.put(inputCacheObject, futureTask);
+                        futureTask.run();
+                        return memo.get(inputCacheObject).get();
+                    }
+                } catch (Exception e) {
+                    return predicate.evaluate(input);
                 }
             }
         };
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function) {
-        final AtomicReference<Map<CacheObject<I>, CacheObject<O>>> memo = new AtomicReference<Map<CacheObject<I>, CacheObject<O>>>(new ConcurrentHashMap<CacheObject<I>, CacheObject<O>>());
+        final Map<CacheObject<I>, Future<CacheObject<O>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<O>>>();
         return new Function<I, O>() {
-            public O apply(I input) {
-                final CacheObject<I> listCacheObject = new CacheObject<I>(input);
-                final CacheObject<O> memoizedOutput = memo.get().get(listCacheObject);
-                if (memoizedOutput != null && memoizedOutput.get() != null) {
-                    return memoizedOutput.get();
-                } else {
-                    final O output = function.apply(input);
-                    memo.get().put(listCacheObject, new CacheObject<O>(output));
-                    return output;
+
+            public O apply(final I input) {
+
+                final CacheObject<I> inputCacheObject = new CacheObject<I>(input);
+                final Future<CacheObject<O>> memoizedOutput = memo.get(inputCacheObject);
+                try {
+                    if (memoizedOutput != null && memoizedOutput.get() != null) {
+                        return memoizedOutput.get().get();
+                    } else {
+
+                        FutureTask<CacheObject<O>> futureTask = new FutureTask<CacheObject<O>>(new Callable<CacheObject<O>>() {
+                            public CacheObject<O> call() throws Exception {
+                                return new CacheObject<O>(function.apply(input));
+                            }
+                        });
+
+                        memo.put(inputCacheObject, futureTask);
+                        futureTask.run();
+                        return memo.get(inputCacheObject).get().get();
+                    }
+                } catch (Exception e) {
+                    return function.apply(input);
                 }
             }
         };
@@ -741,17 +766,28 @@ public class FunctionUtil {
 
     public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(final Accumulator<ACCUM, EL> accumulator) {
 
-        final AtomicReference<Map<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>>> memo = new AtomicReference<Map<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>>>(new ConcurrentHashMap<CacheObject<Entry<ACCUM, EL>>, CacheObject<ACCUM>>());
+        final Map<CacheObject<Entry<ACCUM, EL>>, Future<CacheObject<ACCUM>>> memo = new ConcurrentHashMap<CacheObject<Entry<ACCUM, EL>>, Future<CacheObject<ACCUM>>>();
         return new Accumulator<ACCUM, EL>() {
-            public ACCUM accumulate(ACCUM accum, EL el) {
+            public ACCUM accumulate(final ACCUM accum, final EL el) {
                 final CacheObject<Entry<ACCUM, EL>> pairCacheObject = new CacheObject<Entry<ACCUM, EL>>(new Entry<ACCUM, EL>(accum, el));
-                final CacheObject<ACCUM> memoizedOutput = memo.get().get(pairCacheObject);
-                if (memoizedOutput != null && memoizedOutput.get() != null) {
-                    return memoizedOutput.get();
-                } else {
-                    final ACCUM output = accumulator.accumulate(accum, el);
-                    memo.get().put(pairCacheObject, new CacheObject<ACCUM>(output));
-                    return output;
+                final Future<CacheObject<ACCUM>> memoizedOutput = memo.get(pairCacheObject);
+                try {
+                    if (memoizedOutput != null && memoizedOutput.get() != null) {
+                        return memoizedOutput.get().get();
+                    } else {
+
+                        FutureTask<CacheObject<ACCUM>> futureTask = new FutureTask<CacheObject<ACCUM>>(new Callable<CacheObject<ACCUM>>() {
+                            public CacheObject<ACCUM> call() throws Exception {
+                                return new CacheObject<ACCUM>(accumulator.accumulate(accum, el));
+                            }
+                        });
+
+                        memo.put(pairCacheObject, futureTask);
+                        futureTask.run();
+                        return memo.get(pairCacheObject).get().get();
+                    }
+                } catch (Exception e) {
+                    return accumulator.accumulate(accum, el);
                 }
             }
         };

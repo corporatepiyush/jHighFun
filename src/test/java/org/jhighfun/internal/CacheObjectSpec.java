@@ -2,8 +2,6 @@ package org.jhighfun.internal;
 
 import org.junit.Test;
 
-import java.lang.ref.SoftReference;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
