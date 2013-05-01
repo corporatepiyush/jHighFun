@@ -725,7 +725,7 @@ public class FunctionUtil {
 
                         memo.put(inputCacheObject, futureTask);
                         futureTask.run();
-                        return memo.get(inputCacheObject).get();
+                        return futureTask.get();
                     }
                 } catch (Exception e) {
                     return predicate.evaluate(input);
@@ -755,7 +755,43 @@ public class FunctionUtil {
 
                         memo.put(inputCacheObject, futureTask);
                         futureTask.run();
-                        return memo.get(inputCacheObject).get().get();
+                        return futureTask.get().get();
+                    }
+                } catch (Exception e) {
+                    return function.apply(input);
+                }
+            }
+        };
+    }
+
+    public static <I, O> Function<I, O> memoize(final Function<I, O> function, final MemoizeConfig config) {
+        final Map<CacheObject<I>, Future<CacheObject<Entry<Long,O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Entry<Long,O>>>>();
+        final Long maxPersistenceTime = config.getTimeUnit().toMillis(config.getUnitValue());
+        return new Function<I, O>() {
+
+            public O apply(final I input) {
+
+                final CacheObject<I> inputCacheObject = new CacheObject<I>(input);
+                final long currentTimeinMillis = System.currentTimeMillis();
+
+                try {
+                    final Future<CacheObject<Entry<Long,O>>> memoizedFutureOutput = memo.get(inputCacheObject);
+                    final CacheObject<Entry<Long,O>> memoizedOutput;
+                    if (memoizedFutureOutput != null
+                            && (memoizedOutput = memoizedFutureOutput.get()) != null
+                            && (currentTimeinMillis - memoizedOutput.get().getKey()) <= maxPersistenceTime ) {
+                        return memoizedOutput.get().getValue();
+                    } else {
+
+                        FutureTask<CacheObject<Entry<Long,O>>> futureTask = new FutureTask<CacheObject<Entry<Long,O>>>(new Callable<CacheObject<Entry<Long,O>>>() {
+                            public CacheObject<Entry<Long,O>> call() throws Exception {
+                                return new CacheObject<Entry<Long,O>>(new Entry<Long, O>(currentTimeinMillis,function.apply(input)));
+                            }
+                        });
+
+                        memo.put(inputCacheObject, futureTask);
+                        futureTask.run();
+                        return futureTask.get().get().getValue();
                     }
                 } catch (Exception e) {
                     return function.apply(input);
@@ -784,7 +820,7 @@ public class FunctionUtil {
 
                         memo.put(pairCacheObject, futureTask);
                         futureTask.run();
-                        return memo.get(pairCacheObject).get().get();
+                        return futureTask.get().get();
                     }
                 } catch (Exception e) {
                     return accumulator.accumulate(accum, el);
