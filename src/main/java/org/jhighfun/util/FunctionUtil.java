@@ -22,7 +22,6 @@ public class FunctionUtil {
     private static final Lock registerOperation = new ReentrantLock(true);
     private static final AtomicReference<ConcurrentHashMap<Operation, Lock>> operationLockMap = new AtomicReference<ConcurrentHashMap<Operation, Lock>>(new ConcurrentHashMap<Operation, Lock>());
 
-
     public static <I, O> List<O> map(List<I> inputList, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
 
@@ -765,7 +764,7 @@ public class FunctionUtil {
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final MemoizeConfig config) {
-        final Map<CacheObject<I>, Future<CacheObject<Entry<Long,O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Entry<Long,O>>>>();
+        final Map<CacheObject<I>, Future<CacheObject<Entry<Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Entry<Long, O>>>>();
         final Long maxPersistenceTime = config.getTimeUnit().toMillis(config.getUnitValue());
         return new Function<I, O>() {
 
@@ -775,17 +774,17 @@ public class FunctionUtil {
                 final long currentTimeinMillis = System.currentTimeMillis();
 
                 try {
-                    final Future<CacheObject<Entry<Long,O>>> memoizedFutureOutput = memo.get(inputCacheObject);
-                    final CacheObject<Entry<Long,O>> memoizedOutput;
+                    final Future<CacheObject<Entry<Long, O>>> memoizedFutureOutput = memo.get(inputCacheObject);
+                    final CacheObject<Entry<Long, O>> memoizedOutput;
                     if (memoizedFutureOutput != null
                             && (memoizedOutput = memoizedFutureOutput.get()) != null
-                            && (currentTimeinMillis - memoizedOutput.get().getKey()) <= maxPersistenceTime ) {
+                            && (currentTimeinMillis - memoizedOutput.get().getKey()) <= maxPersistenceTime) {
                         return memoizedOutput.get().getValue();
                     } else {
 
-                        FutureTask<CacheObject<Entry<Long,O>>> futureTask = new FutureTask<CacheObject<Entry<Long,O>>>(new Callable<CacheObject<Entry<Long,O>>>() {
-                            public CacheObject<Entry<Long,O>> call() throws Exception {
-                                return new CacheObject<Entry<Long,O>>(new Entry<Long, O>(currentTimeinMillis,function.apply(input)));
+                        FutureTask<CacheObject<Entry<Long, O>>> futureTask = new FutureTask<CacheObject<Entry<Long, O>>>(new Callable<CacheObject<Entry<Long, O>>>() {
+                            public CacheObject<Entry<Long, O>> call() throws Exception {
+                                return new CacheObject<Entry<Long, O>>(new Entry<Long, O>(currentTimeinMillis, function.apply(input)));
                             }
                         });
 
@@ -829,6 +828,29 @@ public class FunctionUtil {
         };
 
     }
+
+
+    public static <I, O> Function<I, O> memoize(final Function<I, O> function, final ManagedCache managedCache) {
+        return new Function<I, O>() {
+
+            public O apply(final I input) {
+
+                final O memoizedOutput = (O) managedCache.get(input);
+                try {
+                    if (memoizedOutput != null) {
+                        return memoizedOutput;
+                    } else {
+                        O output = function.apply(input);
+                        managedCache.put(input, output);
+                        return output;
+                    }
+                } catch (Exception e) {
+                    return function.apply(input);
+                }
+            }
+        };
+    }
+
 
     public static Batch batch(int batchSize) {
         return new Batch(batchSize);

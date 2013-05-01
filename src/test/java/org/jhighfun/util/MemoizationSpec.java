@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 public class MemoizationSpec {
 
@@ -80,7 +80,7 @@ public class MemoizationSpec {
                 }
                 return builder.toString();
             }
-        },new MemoizeConfig(100, TimeUnit.MILLISECONDS));
+        }, new MemoizeConfig(100, TimeUnit.MILLISECONDS));
 
         assertEquals(spyInjection.size(), 0);
         assertEquals(memoizedFunction.apply(CollectionUtil.List("I", "am", "the", "Almighty")), "IamtheAlmighty");
@@ -93,12 +93,30 @@ public class MemoizationSpec {
             assertEquals(spyInjection.size(), 1);
         }
 
-        Thread.sleep(100 - (System.currentTimeMillis() - initialCachingTime) );
+        Thread.sleep(100 - (System.currentTimeMillis() - initialCachingTime));
 
         assertEquals(memoizedFunction.apply(CollectionUtil.List("I", "am", "the", "Almighty")), "IamtheAlmighty");
         assertEquals(spyInjection.size(), 2);
     }
 
+
+    @Test
+    public void testMemoizeForFunctionWithManagedCache() throws InterruptedException {
+
+        ManagedCache managedCache = mock(ManagedCache.class);
+
+        Function<String, String> function = mock(Function.class);
+
+        Function<String, String> memoizedFunction = FunctionUtil.memoize(function, managedCache);
+
+        when(function.apply("input")).thenReturn("output");
+
+        memoizedFunction.apply("input");
+        verify(managedCache).put("input", "output");
+
+        when(managedCache.get("input")).thenReturn("output");
+        memoizedFunction.apply("input");
+    }
 
     @Test
     public void testMemoizeForFunctionUnderHighLoadWhenInitialCallInProgress() {
@@ -111,7 +129,7 @@ public class MemoizationSpec {
 
             public String apply(List<String> args) {
 
-                if(spyInjection.isEmpty()){
+                if (spyInjection.isEmpty()) {
                     spyInjection.add(args.toString());
                     try {
                         Thread.sleep(1000);

@@ -8,7 +8,7 @@ public class MemoizeConfig {
     private final long unitValue;
     private final TimeUnit timeUnit;
 
-    public MemoizeConfig(long unitValue, TimeUnit timeUnit){
+    public MemoizeConfig(long unitValue, TimeUnit timeUnit) {
         this.unitValue = unitValue;
         this.timeUnit = timeUnit;
     }
