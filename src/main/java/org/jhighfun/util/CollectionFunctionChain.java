@@ -141,6 +141,10 @@ public class CollectionFunctionChain<I> {
         return new CollectionFunctionChain<I>(sliced);
     }
 
+    public CollectionFunctionChain<I> limit(int to) {
+        return slice(0, to);
+    }
+
     public CollectionForkAndJoin<I> fork() {
         return new CollectionForkAndJoin<I>(this);
     }
