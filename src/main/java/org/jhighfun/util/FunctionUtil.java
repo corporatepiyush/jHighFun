@@ -8,7 +8,7 @@ import org.jhighfun.internal.ThreadPoolFactory;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -20,7 +20,7 @@ public class FunctionUtil {
 
     private static final Lock globalLock = new ReentrantLock(true);
     private static final Lock registerOperation = new ReentrantLock(true);
-    private static final AtomicReference<ConcurrentHashMap<Operation, Lock>> operationLockMap = new AtomicReference<ConcurrentHashMap<Operation, Lock>>(new ConcurrentHashMap<Operation, Lock>());
+    private static final ConcurrentHashMap<Operation, Lock> operationLockMap = new ConcurrentHashMap<Operation, Lock>();
 
     public static <I, O> List<O> map(List<I> inputList, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
@@ -670,15 +670,15 @@ public class FunctionUtil {
 
     public static void executeWithLock(Operation operation, final Block codeBlock) {
 
-        Lock lock = operationLockMap.get().get(operation);
+        Lock lock = operationLockMap.get(operation);
 
         if (lock == null) {
 
             registerOperation.lock();
             try {
-                lock = operationLockMap.get().get(operation);
+                lock = operationLockMap.get(operation);
                 if (lock == null)
-                    operationLockMap.get().put(operation, new ReentrantLock(true));
+                    operationLockMap.put(operation, new ReentrantLock(true));
             } finally {
                 registerOperation.unlock();
             }
@@ -764,8 +764,10 @@ public class FunctionUtil {
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final MemoizeConfig config) {
-        final Map<CacheObject<I>, Future<CacheObject<Entry<Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Entry<Long, O>>>>();
+        final Map<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>();
         final Long maxPersistenceTime = config.getTimeUnit().toMillis(config.getUnitValue());
+        final AtomicBoolean isLRUInPorgress = new AtomicBoolean(false);
+
         return new Function<I, O>() {
 
             public O apply(final I input) {
@@ -774,26 +776,68 @@ public class FunctionUtil {
                 final long currentTimeinMillis = System.currentTimeMillis();
 
                 try {
-                    final Future<CacheObject<Entry<Long, O>>> memoizedFutureOutput = memo.get(inputCacheObject);
-                    final CacheObject<Entry<Long, O>> memoizedOutput;
+                    final Future<CacheObject<Tuple3<Long, Long, O>>> memoizedFutureOutput = memo.get(inputCacheObject);
+                    final CacheObject<Tuple3<Long, Long, O>> memoizedOutput;
                     if (memoizedFutureOutput != null
                             && (memoizedOutput = memoizedFutureOutput.get()) != null
-                            && (currentTimeinMillis - memoizedOutput.get().getKey()) <= maxPersistenceTime) {
-                        return memoizedOutput.get().getValue();
+                            && (currentTimeinMillis - memoizedOutput.get()._1) <= maxPersistenceTime) {
+
+                        memoizedOutput.get()._2 = currentTimeinMillis;
+
+                        if (memo.size() > config.getSize() && !isLRUInPorgress.get()) {
+                            highPriorityTaskThreadPool.submit(new Runnable() {
+                                public void run() {
+                                    isLRUInPorgress.set(true);
+                                    while (memo.size() > config.getSize()) {
+                                        removeLeastRecentlyUsedRecord();
+                                    }
+                                    isLRUInPorgress.set(false);
+                                }
+                            });
+                        }
+
+                        return memoizedOutput.get()._3;
                     } else {
 
-                        FutureTask<CacheObject<Entry<Long, O>>> futureTask = new FutureTask<CacheObject<Entry<Long, O>>>(new Callable<CacheObject<Entry<Long, O>>>() {
-                            public CacheObject<Entry<Long, O>> call() throws Exception {
-                                return new CacheObject<Entry<Long, O>>(new Entry<Long, O>(currentTimeinMillis, function.apply(input)));
+                        FutureTask<CacheObject<Tuple3<Long, Long, O>>> futureTask = new FutureTask<CacheObject<Tuple3<Long, Long, O>>>(new Callable<CacheObject<Tuple3<Long, Long, O>>>() {
+                            public CacheObject<Tuple3<Long, Long, O>> call() throws Exception {
+                                return new CacheObject<Tuple3<Long, Long, O>>(new Tuple3<Long, Long, O>(currentTimeinMillis, currentTimeinMillis, function.apply(input)));
                             }
                         });
 
                         memo.put(inputCacheObject, futureTask);
                         futureTask.run();
-                        return futureTask.get().get().getValue();
+                        return futureTask.get().get()._3;
                     }
                 } catch (Exception e) {
                     return function.apply(input);
+                }
+            }
+
+            private void removeLeastRecentlyUsedRecord() {
+                try {
+                    Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> toBeRemoved = reduce(memo.entrySet(), new Accumulator<Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>, Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>>() {
+                        public Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> accumulate(Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> former, Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> latter) {
+
+                            try {
+                                final Long lastAccessTimeFormer = former.getValue().get().get()._2;
+                                final Long lastAccessTimeLatter = latter.getValue().get().get()._2;
+
+                                if (lastAccessTimeFormer <= lastAccessTimeLatter) {
+                                    return former;
+                                } else {
+                                    return latter;
+                                }
+
+                            } catch (Throwable e) {
+                                return former;
+                            }
+                        }
+                    });
+
+                    memo.remove(toBeRemoved.getKey());
+                } catch (Throwable e) {
+                    e.printStackTrace();
                 }
             }
         };
@@ -801,10 +845,10 @@ public class FunctionUtil {
 
     public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(final Accumulator<ACCUM, EL> accumulator) {
 
-        final Map<CacheObject<Entry<ACCUM, EL>>, Future<CacheObject<ACCUM>>> memo = new ConcurrentHashMap<CacheObject<Entry<ACCUM, EL>>, Future<CacheObject<ACCUM>>>();
+        final Map<CacheObject<Pair<ACCUM, EL>>, Future<CacheObject<ACCUM>>> memo = new ConcurrentHashMap<CacheObject<Pair<ACCUM, EL>>, Future<CacheObject<ACCUM>>>();
         return new Accumulator<ACCUM, EL>() {
             public ACCUM accumulate(final ACCUM accum, final EL el) {
-                final CacheObject<Entry<ACCUM, EL>> pairCacheObject = new CacheObject<Entry<ACCUM, EL>>(new Entry<ACCUM, EL>(accum, el));
+                final CacheObject<Pair<ACCUM, EL>> pairCacheObject = new CacheObject<Pair<ACCUM, EL>>(new Pair<ACCUM, EL>(accum, el));
                 final Future<CacheObject<ACCUM>> memoizedOutput = memo.get(pairCacheObject);
                 try {
                     if (memoizedOutput != null && memoizedOutput.get() != null) {
@@ -880,7 +924,7 @@ public class FunctionUtil {
         return new ForkAndJoin<T>(object);
     }
 
-    public static <T> void divideAndConquer(List<T> collection, Batch batch, final Task<List<T>> task) {
+    public static <T> void divideAndConquer(List<T> collection, final Task<List<T>> task, Batch batch) {
 
         final List<List<T>> collections = new ArrayList<List<T>>();
 
@@ -910,7 +954,7 @@ public class FunctionUtil {
 
     }
 
-    public static <T> void divideAndConquer(List<T> collection, Parallel partition, final Task<List<T>> task) {
+    public static <T> void divideAndConquer(List<T> collection, final Task<List<T>> task, Parallel partition) {
 
         final int partitionSize = partition.getDegree();
 
