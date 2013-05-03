@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class CollectionForkAndJoinSpec {
 
     @Spy
-    ExecutorService spyHighPriorityTaskThreadPool = new ThreadPoolExecutor(1, 100, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+    ExecutorService spyHighPriorityTaskThreadPool = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     @Before
     public void before() {

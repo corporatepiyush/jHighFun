@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static org.jhighfun.util.CollectionUtil.Entry;
 import static org.jhighfun.util.CollectionUtil.*;
 import static org.junit.Assert.assertEquals;
 
@@ -48,9 +47,9 @@ public class CollectionUtilSpec {
     @Test
     public void testEntry() {
 
-        Entry<Integer, Integer> entry = Entry(1, 2);
-        assertEquals(entry.getKey(), new Integer(1));
-        assertEquals(entry.getValue(), new Integer(2));
+        Pair<Integer, Integer> pair = Entry(1, 2);
+        assertEquals(pair.getKey(), new Integer(1));
+        assertEquals(pair.getValue(), new Integer(2));
 
     }
 

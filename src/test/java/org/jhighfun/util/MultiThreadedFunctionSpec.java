@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class MultiThreadedFunctionSpec {
 
     @Spy
-    ExecutorService spyHighPriorityTaskThreadPool = new ThreadPoolExecutor(1, 100, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+    ExecutorService spyHighPriorityTaskThreadPool = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     @Before
     public void before() {
@@ -181,7 +181,7 @@ public class MultiThreadedFunctionSpec {
 
         Task<List<Integer>> mockTask = mock(Task.class);
 
-        FunctionUtil.divideAndConquer(list, FunctionUtil.batch(2), mockTask);
+        FunctionUtil.divideAndConquer(list, mockTask, FunctionUtil.batch(2));
 
         List<Integer> chunk1 = new LinkedList<Integer>();
         chunk1.add(1);
@@ -209,7 +209,7 @@ public class MultiThreadedFunctionSpec {
 
         Task<List<Integer>> mockTask = mock(Task.class);
 
-        FunctionUtil.divideAndConquer(list, FunctionUtil.parallel(3), mockTask);
+        FunctionUtil.divideAndConquer(list, mockTask, FunctionUtil.parallel(3));
 
         List<Integer> partition1 = new LinkedList<Integer>();
         partition1.add(1);
