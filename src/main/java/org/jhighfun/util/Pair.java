@@ -1,11 +1,11 @@
 package org.jhighfun.util;
 
 
-public final class Entry<K, V> {
+public final class Pair<K, V> {
     private final K key;
     private final V value;
 
-    public Entry(K key, V value) {
+    public Pair(K key, V value) {
         this.key = key;
         this.value = value;
     }
@@ -21,12 +21,12 @@ public final class Entry<K, V> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Entry)) return false;
+        if (!(o instanceof Pair)) return false;
 
-        Entry entry = (Entry) o;
+        Pair pair = (Pair) o;
 
-        if (key != null ? !key.equals(entry.key) : entry.key != null) return false;
-        if (value != null ? !value.equals(entry.value) : entry.value != null) return false;
+        if (key != null ? !key.equals(pair.key) : pair.key != null) return false;
+        if (value != null ? !value.equals(pair.value) : pair.value != null) return false;
 
         return true;
     }

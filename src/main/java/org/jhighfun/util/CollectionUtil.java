@@ -49,18 +49,18 @@ public class CollectionUtil {
         return flattenSet;
     }
 
-    public static <K, V> Map<K, V> Map(Entry<K, V>... entries) {
+    public static <K, V> Map<K, V> Map(Pair<K, V>... entries) {
         final Map<K, V> map = new HashMap<K, V>();
-        for (Entry<K, V> entry : entries) {
-            map.put(entry.getKey(), entry.getValue());
+        for (Pair<K, V> pair : entries) {
+            map.put(pair.getKey(), pair.getValue());
         }
         return map;
     }
 
-    public static <K, V> Map<K, V> SafeMap(Entry<K, V>... entries) {
+    public static <K, V> Map<K, V> SafeMap(Pair<K, V>... entries) {
         final Map<K, V> map = new ConcurrentHashMap<K, V>();
-        for (Entry<K, V> entry : entries) {
-            map.put(entry.getKey(), entry.getValue());
+        for (Pair<K, V> pair : entries) {
+            map.put(pair.getKey(), pair.getValue());
         }
         return map;
     }
@@ -74,8 +74,8 @@ public class CollectionUtil {
         return flattenMap;
     }
 
-    public static <K, V> Entry<K, V> Entry(K key, V value) {
-        return new Entry<K, V>(key, value);
+    public static <K, V> Pair<K, V> Entry(K key, V value) {
+        return new Pair<K, V>(key, value);
     }
 
     public static <F, S> Tuple2<F, S> tuple(F first, S second) {
