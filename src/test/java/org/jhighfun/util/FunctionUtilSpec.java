@@ -136,15 +136,32 @@ public class FunctionUtilSpec {
         Block mockBlock = mock(Block.class);
 
         FunctionUtil.executeWithLock(FunctionUtil.operation("Operation"), mockBlock);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         verify(mockBlock, times(1)).execute();
     }
 
+
+    @Test
+    public void testExecuteWithLockWithMultipleThreads() {
+
+        final List<Block> blockList = new LinkedList<Block>();
+
+        for (int i=0; i<1000; i++){
+            blockList.add(spy(new Block() {
+                public void execute() {
+                    for (Block block : blockList) ;
+                }
+            }));
+        }
+
+        // should not throw concurrent modification exception
+        FunctionUtil.each(blockList, new RecordProcessor<Block>() {
+            public void process(Block block) {
+                FunctionUtil.executeWithLock(FunctionUtil.operation("Operation"), block);
+            }
+        }, FunctionUtil.parallel(blockList.size()));
+
+    }
 
     @Test
     public void testExecuteWithGlobalLockWithSingleThread() {
