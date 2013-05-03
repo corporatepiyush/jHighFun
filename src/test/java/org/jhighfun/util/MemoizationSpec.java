@@ -66,7 +66,7 @@ public class MemoizationSpec {
 
 
     @Test
-    public void testMemoizeForFunctionWithConfig() throws InterruptedException {
+    public void testMemoizeForFunctionWithConfigForMaxPersistenceTime() throws InterruptedException {
 
         final List<String> spyInjection = new LinkedList<String>();
 
@@ -80,7 +80,7 @@ public class MemoizationSpec {
                 }
                 return builder.toString();
             }
-        }, new MemoizeConfig(100, TimeUnit.MILLISECONDS));
+        }, new MemoizeConfig(100, TimeUnit.MILLISECONDS, 10));
 
         assertEquals(spyInjection.size(), 0);
         assertEquals(memoizedFunction.apply(CollectionUtil.List("I", "am", "the", "Almighty")), "IamtheAlmighty");
@@ -95,8 +95,41 @@ public class MemoizationSpec {
 
         Thread.sleep(100 - (System.currentTimeMillis() - initialCachingTime));
 
-        assertEquals(memoizedFunction.apply(CollectionUtil.List("I", "am", "the", "Almighty")), "IamtheAlmighty");
+        assertEquals(memoizedFunction.apply(CollectionUtil.List("I", "am", "the", "King")), "IamtheKing");
         assertEquals(spyInjection.size(), 2);
+    }
+
+    @Test
+    public void testMemoizeForFunctionWithConfigForCacheSize() throws InterruptedException {
+
+        Function<String, String> mockFunction = mock(Function.class);
+
+        final int cacheSize = 100;
+
+        Function<String, String> memoizedFunction = FunctionUtil.memoize(mockFunction, new MemoizeConfig(100, TimeUnit.MILLISECONDS, cacheSize));
+
+        //set expectation
+        for (int i = 1; i <= cacheSize; i++) {
+            when(mockFunction.apply(String.valueOf(i))).thenReturn(String.valueOf(i));
+        }
+
+        when(mockFunction.apply(String.valueOf(1000))).thenReturn(String.valueOf(1000));
+
+        //call explicitly
+        for (int i = 1; i <= cacheSize; i++) {
+            memoizedFunction.apply(String.valueOf(i));
+        }
+
+        verify(mockFunction, times(1)).apply(String.valueOf(1));
+
+        memoizedFunction.apply(String.valueOf(1000));
+        // wait for LRU to operate so that entry for "1" is removed
+        Thread.sleep(100);
+
+        //call again for "1"
+        memoizedFunction.apply(String.valueOf(1));
+        verify(mockFunction, times(2)).apply(String.valueOf(1));
+
     }
 
 
@@ -123,7 +156,7 @@ public class MemoizationSpec {
 
         final List<String> spyInjection = new CopyOnWriteArrayList<String>();
 
-        final int load = 10000;
+        final int load = 1000;
 
         Function<List<String>, String> spyFunction = spy(new Function<List<String>, String>() {
 
