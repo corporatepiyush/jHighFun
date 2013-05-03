@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ForkAndJoin<T> {
+public final class ForkAndJoin<T> {
 
     private T object;
     private final List<Task<T>> taskList = new ArrayList<Task<T>>();

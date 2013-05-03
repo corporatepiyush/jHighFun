@@ -1,7 +1,7 @@
 package org.jhighfun.util;
 
 
-public class Tuple2<F, S> {
+public final class Tuple2<F, S> {
 
     public F _1;
     public S _2;

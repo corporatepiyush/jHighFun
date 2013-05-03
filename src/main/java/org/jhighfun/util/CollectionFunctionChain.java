@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CollectionFunctionChain<I> {
+public final class CollectionFunctionChain<I> {
 
     private List<I> collection;
 

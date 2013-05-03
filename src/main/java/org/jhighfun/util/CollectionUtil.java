@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class CollectionUtil {
+public final class CollectionUtil {
     public static <T> List<T> List(T... args) {
         final List<T> argsList = new LinkedList<T>();
         for (T arg : args) {

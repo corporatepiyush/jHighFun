@@ -3,7 +3,7 @@ package org.jhighfun.util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectForkAndJoin<T> {
+public final class ObjectForkAndJoin<T> {
 
     private ObjectFunctionChain<T> objectFunctionChain;
     private final List<Task<T>> taskList = new ArrayList<Task<T>>();

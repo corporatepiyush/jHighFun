@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CollectionForkAndJoin<T> {
+public final class CollectionForkAndJoin<T> {
 
     private CollectionFunctionChain<T> collectionFunctionChain;
     private final List<Task<List<T>>> taskList = new ArrayList<Task<List<T>>>();

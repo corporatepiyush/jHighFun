@@ -4,7 +4,7 @@ package org.jhighfun.util;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ObjectFunctionChain<I> {
+public final class ObjectFunctionChain<I> {
 
     private I object;
 

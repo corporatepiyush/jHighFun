@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
-public class TaskExecutionHandle {
+public final class TaskExecutionHandle {
 
     private final List<Future> futureList;
     private final List<Object> outList;

@@ -1,6 +1,6 @@
 package org.jhighfun.util;
 
-public class Tuple5<F, S, T, FO, FI> {
+public final class Tuple5<F, S, T, FO, FI> {
 
     public F _1;
     public S _2;

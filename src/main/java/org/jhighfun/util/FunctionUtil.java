@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class FunctionUtil {
+public final class FunctionUtil {
 
     private static ExecutorService highPriorityTaskThreadPool = ThreadPoolFactory.getHighPriorityTaskThreadPool();
     private static ExecutorService mediumPriorityAsyncTaskThreadPool = ThreadPoolFactory.getMediumPriorityAsyncTaskThreadPool();
@@ -993,7 +993,7 @@ public class FunctionUtil {
 
 }
 
-class Batch {
+final class Batch {
     private final int size;
 
     public Batch(int size) {
@@ -1005,7 +1005,7 @@ class Batch {
     }
 }
 
-class Parallel {
+final class Parallel {
     protected static final int affinity = Config.getParallelDegree();
 
     private final int threads;
@@ -1024,7 +1024,7 @@ class Parallel {
     }
 }
 
-class Operation {
+final class Operation {
 
     private final String operationIdentifier;
 

@@ -3,7 +3,7 @@ package org.jhighfun.util;
 
 import java.util.concurrent.TimeUnit;
 
-public class MemoizeConfig {
+public final class MemoizeConfig {
 
     private final long unitValue;
     private final TimeUnit timeUnit;
