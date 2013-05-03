@@ -149,13 +149,13 @@ public class CollectionFunctionChain<I> {
         return new CollectionForkAndJoin<I>(this);
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Batch batch, Task<List<I>> task) {
-        FunctionUtil.divideAndConquer(this.collection, batch, task);
+    public CollectionFunctionChain<I> divideAndConquer(Task<List<I>> task, Batch batch) {
+        FunctionUtil.divideAndConquer(this.collection, task, batch);
         return this;
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Parallel partition, Task<List<I>> task) {
-        FunctionUtil.divideAndConquer(this.collection, partition, task);
+    public CollectionFunctionChain<I> divideAndConquer(Task<List<I>> task, Parallel partition) {
+        FunctionUtil.divideAndConquer(this.collection, task, partition);
         return this;
     }
 
