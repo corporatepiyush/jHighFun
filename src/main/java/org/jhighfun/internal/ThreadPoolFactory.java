@@ -91,24 +91,24 @@ public class ThreadPoolFactory {
 
     private static ExecutorService getDefaultThreadPool(String priority) {
 
-        ThreadPoolExecutor asyncPool = null;
+        ThreadPoolExecutor executor = null;
 
         if (priority.equals("hp")) {
-            asyncPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
+            executor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
         } else if (priority.equals("mp")) {
-            asyncPool = new ThreadPoolExecutor(0, 100, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+            executor = new ThreadPoolExecutor(0, 100, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         } else if (priority.equals("lp")) {
-            asyncPool = new ThreadPoolExecutor(0, 5, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+            executor = new ThreadPoolExecutor(0, 5, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         }
 
-        final ThreadPoolExecutor asyncPoolDummy = asyncPool;
+        final ThreadPoolExecutor executorDummy = executor;
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                asyncPoolDummy.shutdownNow();
+                executorDummy.shutdownNow();
             }
         });
 
-        return asyncPool;
+        return executor;
     }
 }
