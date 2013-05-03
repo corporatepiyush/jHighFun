@@ -20,7 +20,7 @@ public final class FunctionUtil {
 
     private static final Lock globalLock = new ReentrantLock(true);
     private static final Lock registerOperation = new ReentrantLock(true);
-    private static final ConcurrentHashMap<Operation, Lock> operationLockMap = new ConcurrentHashMap<Operation, Lock>();
+    private static final ConcurrentHashMap<Operation, Lock> operationLockMap = new ConcurrentHashMap<Operation, Lock>(15, 0.9f, 32);
 
     public static <I, O> List<O> map(List<I> inputList, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
@@ -704,7 +704,7 @@ public final class FunctionUtil {
     }
 
     public static <T> Predicate<T> memoize(final Predicate<T> predicate) {
-        final Map<CacheObject<T>, Future<Boolean>> memo = new ConcurrentHashMap<CacheObject<T>, Future<Boolean>>();
+        final Map<CacheObject<T>, Future<Boolean>> memo = new ConcurrentHashMap<CacheObject<T>, Future<Boolean>>(100, 0.6f, 32);
         return new Predicate<T>() {
 
             public boolean evaluate(final T input) {
@@ -734,7 +734,7 @@ public final class FunctionUtil {
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function) {
-        final Map<CacheObject<I>, Future<CacheObject<O>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<O>>>();
+        final Map<CacheObject<I>, Future<CacheObject<O>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<O>>>(100, 0.6f, 32);
         return new Function<I, O>() {
 
             public O apply(final I input) {
@@ -764,7 +764,7 @@ public final class FunctionUtil {
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final MemoizeConfig config) {
-        final Map<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>();
+        final Map<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>(100, 0.6f, 32);
         final Long maxPersistenceTime = config.getTimeUnit().toMillis(config.getUnitValue());
         final AtomicBoolean isLRUInPorgress = new AtomicBoolean(false);
 
@@ -845,7 +845,7 @@ public final class FunctionUtil {
 
     public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(final Accumulator<ACCUM, EL> accumulator) {
 
-        final Map<CacheObject<Pair<ACCUM, EL>>, Future<CacheObject<ACCUM>>> memo = new ConcurrentHashMap<CacheObject<Pair<ACCUM, EL>>, Future<CacheObject<ACCUM>>>();
+        final Map<CacheObject<Pair<ACCUM, EL>>, Future<CacheObject<ACCUM>>> memo = new ConcurrentHashMap<CacheObject<Pair<ACCUM, EL>>, Future<CacheObject<ACCUM>>>(100, 0.6f, 32);
         return new Accumulator<ACCUM, EL>() {
             public ACCUM accumulate(final ACCUM accum, final EL el) {
                 final CacheObject<Pair<ACCUM, EL>> pairCacheObject = new CacheObject<Pair<ACCUM, EL>>(new Pair<ACCUM, EL>(accum, el));
