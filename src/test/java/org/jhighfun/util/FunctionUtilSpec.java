@@ -648,7 +648,7 @@ public class FunctionUtilSpec {
 
         List<String> list = List("hello", "Mr.", "FirstName", "LastName");
 
-        List<String> outList = FunctionUtil.withIndex(list, new Predicate<Integer>() {
+        List<String> outList = FunctionUtil.extractWithIndex(list, new Predicate<Integer>() {
             public boolean evaluate(Integer index) {
                 return index % 2 == 0;
             }

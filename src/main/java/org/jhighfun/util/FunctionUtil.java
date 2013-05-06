@@ -694,6 +694,14 @@ public final class FunctionUtil {
         }
     }
 
+    public static void executeWithThrottle(Operation operation, Block codeBlock){
+
+    }
+
+    public static void registerPoolSizeForOperationThrottle(Operation operation, int maxPoolSize){
+
+    }
+
     public static void executeWithGlobalLock(Block codeBlock) {
         globalLock.lock();
         try {
@@ -979,7 +987,7 @@ public final class FunctionUtil {
         }, parallel(partitionSize));
     }
 
-    public static <T> List<T> withIndex(List<T> list, Predicate<Integer> predicate) {
+    public static <T> List<T> extractWithIndex(List<T> list, Predicate<Integer> predicate) {
 
         List<T> outList = new LinkedList<T>();
         int index = 0;
@@ -989,6 +997,14 @@ public final class FunctionUtil {
                 outList.add(t);
         }
         return outList;
+    }
+
+    public static <T> void eachWithCondition(Collection<T> collection, Predicate predicate, RecordProcessor<T> recordProcessor){
+
+    }
+
+    public static <T> void eachWithConditionChain(Collection<T> collection, Tuple2<Predicate<T>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Predicate<T>, RecordProcessor<T>>... predicateRecordProcessors){
+
     }
 
 }

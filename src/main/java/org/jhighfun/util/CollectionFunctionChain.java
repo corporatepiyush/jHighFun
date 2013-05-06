@@ -95,8 +95,8 @@ public final class CollectionFunctionChain<I> {
         return new ObjectFunctionChain<Integer>(FunctionUtil.count(this.collection, predicate));
     }
 
-    public CollectionFunctionChain<I> withIndex(Predicate<Integer> predicate) {
-        this.collection = FunctionUtil.withIndex(this.collection, predicate);
+    public CollectionFunctionChain<I> extractWithIndex(Predicate<Integer> predicate) {
+        this.collection = FunctionUtil.extractWithIndex(this.collection, predicate);
         return this;
     }
 
