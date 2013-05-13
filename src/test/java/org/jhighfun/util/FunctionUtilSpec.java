@@ -146,7 +146,7 @@ public class FunctionUtilSpec {
 
         final List<Block> blockList = new LinkedList<Block>();
 
-        for (int i=0; i<1000; i++){
+        for (int i = 0; i < 1000; i++) {
             blockList.add(spy(new Block() {
                 public void execute() {
                     for (Block block : blockList) ;

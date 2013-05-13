@@ -21,8 +21,8 @@ public final class CollectionFunctionChain<I> {
         return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter));
     }
 
-    public <O> CollectionFunctionChain<O> map(Function<I, O> converter, Parallel parallel) {
-        return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter, parallel));
+    public <O> CollectionFunctionChain<O> map(Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
+        return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter, workDivisionStrategy));
     }
 
     public CollectionFunctionChain<I> filter(Predicate<I> predicate) {
@@ -30,8 +30,8 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> filter(Predicate<I> predicate, Parallel parallel) {
-        this.collection = FunctionUtil.filter(this.collection, predicate, parallel);
+    public CollectionFunctionChain<I> filter(Predicate<I> predicate, WorkDivisionStrategy workDivisionStrategy) {
+        this.collection = FunctionUtil.filter(this.collection, predicate, workDivisionStrategy);
         return this;
     }
 
@@ -60,8 +60,8 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor, Parallel parallel) {
-        FunctionUtil.each(this.collection, recordProcessor, parallel);
+    public CollectionFunctionChain<I> each(RecordProcessor<I> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
+        FunctionUtil.each(this.collection, recordProcessor, workDivisionStrategy);
         return this;
     }
 
@@ -79,8 +79,8 @@ public final class CollectionFunctionChain<I> {
         return new ObjectFunctionChain<I>(FunctionUtil.reduce(this.collection, accumulator));
     }
 
-    public ObjectFunctionChain<I> reduce(Accumulator<I, I> accumulator, Parallel parallel) {
-        return new ObjectFunctionChain<I>(FunctionUtil.reduce(this.collection, accumulator, parallel));
+    public ObjectFunctionChain<I> reduce(Accumulator<I, I> accumulator, WorkDivisionStrategy workDivisionStrategy) {
+        return new ObjectFunctionChain<I>(FunctionUtil.reduce(this.collection, accumulator, workDivisionStrategy));
     }
 
     public ObjectFunctionChain<Boolean> every(Predicate<I> predicate) {
@@ -154,7 +154,7 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Task<List<I>> task, Parallel partition) {
+    public CollectionFunctionChain<I> divideAndConquer(Task<List<I>> task, WorkDivisionStrategy partition) {
         FunctionUtil.divideAndConquer(this.collection, task, partition);
         return this;
     }

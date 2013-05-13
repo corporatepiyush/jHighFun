@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static org.jhighfun.util.CollectionUtil.Set;
+
 public final class FunctionUtil {
 
     private static ExecutorService highPriorityTaskThreadPool = ThreadPoolFactory.getHighPriorityTaskThreadPool();
@@ -41,47 +43,52 @@ public final class FunctionUtil {
     }
 
     public static <I, O> List<O> map(List<I> inputList,
-                                     final Function<I, O> converter, Parallel parallel) {
+                                     final Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
 
-        if (parallel.getDegree() < 2)
+        List<TaskInputOutput<I, O>> inputOutputs = map(inputList, new Function<I, TaskInputOutput<I, O>>() {
+            public TaskInputOutput<I, O> apply(I arg) {
+                return new TaskInputOutput<I, O>(arg);
+            }
+        });
+        List<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
+
+
+        if (dividedList.size() < 2)
             return map(inputList, converter);
 
-        return mapParallel(inputList, converter,
-                parallel.getDegree());
+        mapParallel(dividedList, converter);
+        return map(inputOutputs, new Function<TaskInputOutput<I, O>, O>() {
+            public O apply(TaskInputOutput<I, O> task) {
+                return task.getOutput();
+            }
+        });
     }
 
     public static <I, O> Collection<O> map(Collection<I> inputList,
-                                           final Function<I, O> converter, Parallel parallel) {
+                                           final Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
 
-        if (parallel.getDegree() < 2)
+        Collection<TaskInputOutput<I, O>> inputOutputs = map(inputList, new Function<I, TaskInputOutput<I, O>>() {
+            public TaskInputOutput<I, O> apply(I arg) {
+                return new TaskInputOutput<I, O>(arg);
+            }
+        });
+        List<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
+
+
+        if (dividedList.size() < 2)
             return map(inputList, converter);
 
-        return mapParallel(inputList, converter,
-                parallel.getDegree());
+        mapParallel(dividedList, converter);
+        return map(inputOutputs, new Function<TaskInputOutput<I, O>, O>() {
+            public O apply(TaskInputOutput<I, O> task) {
+                return task.getOutput();
+            }
+        });
     }
 
-    private static <I, O> List<O> mapParallel(Collection<I> inputList,
-                                              final Function<I, O> converter, int noOfThread) {
-        final int size = inputList.size();
-        final List<List<TaskInputOutput<I, O>>> taskList = new ArrayList<List<TaskInputOutput<I, O>>>();
-
-        final List<TaskInputOutput<I, O>> outList = new ArrayList<TaskInputOutput<I, O>>();
-
-        if (noOfThread > size)
-            noOfThread = size;
-
-        for (int i = 0; i < noOfThread; i++) {
-            taskList.add(new LinkedList<TaskInputOutput<I, O>>());
-        }
-
-        int index = 0;
-        TaskInputOutput<I, O> task = null;
-        for (I i : inputList) {
-            task = new TaskInputOutput<I, O>(i);
-            outList.add(task);
-            taskList.get(index % noOfThread).add(task);
-            index++;
-        }
+    private static <I, O> void mapParallel(List<Collection<TaskInputOutput<I, O>>> taskList,
+                                           final Function<I, O> converter) {
+        final int noOfThread = taskList.size();
 
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
@@ -89,7 +96,7 @@ public final class FunctionUtil {
         final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
 
         int i = 0;
-        for (final List<TaskInputOutput<I, O>> list2 : taskList) {
+        for (final Collection<TaskInputOutput<I, O>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
                     for (TaskInputOutput<I, O> taskInputOutput : list2) {
@@ -127,12 +134,6 @@ public final class FunctionUtil {
             throw new RuntimeException(exception.get(0));
         }
 
-        final List<O> outputList = new LinkedList<O>();
-
-        for (TaskInputOutput<I, O> taskInputOutput : outList) {
-            outputList.add(taskInputOutput.getOutput());
-        }
-        return outputList;
     }
 
     public static <T> List<T> filter(List<T> inputList, Predicate<T> predicate) {
@@ -169,68 +170,96 @@ public final class FunctionUtil {
     }
 
     public static <T> List<T> filter(List<T> inputList, Predicate<T> predicate,
-                                     Parallel parallel) {
+                                     WorkDivisionStrategy workDivisionStrategy) {
 
-        if (parallel.getDegree() < 2)
+        List<TaskInputOutput<T, Boolean>> inputOutputs = (List<TaskInputOutput<T, Boolean>>) map(inputList, new Function<T, TaskInputOutput<T, Boolean>>() {
+            public TaskInputOutput<T, Boolean> apply(T arg) {
+                return new TaskInputOutput<T, Boolean>(arg);
+            }
+        });
+        List<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
+
+        if (collectionList.size() < 2)
             return filter(inputList, predicate);
 
-        return (List<T>) filterParallel(inputList,
-                predicate, parallel.getDegree(), List.class);
+        filterParallel(collectionList, predicate, List.class);
+        return chain(inputOutputs)
+                .filter(new Predicate<TaskInputOutput<T, Boolean>>() {
+                    public boolean evaluate(TaskInputOutput<T, Boolean> task) {
+                        return task.getOutput();
+                    }
+                }).map(new Function<TaskInputOutput<T, Boolean>, T>() {
+                    public T apply(TaskInputOutput<T, Boolean> arg) {
+                        return arg.getInput();
+                    }
+                }).extract();
 
     }
 
     public static <T> Set<T> filter(Set<T> inputSet, Predicate<T> predicate,
-                                    Parallel parallel) {
+                                    WorkDivisionStrategy workDivisionStrategy) {
 
-        if (parallel.getDegree() < 2)
+        List<TaskInputOutput<T, Boolean>> inputOutputs = (List<TaskInputOutput<T, Boolean>>) map(inputSet, new Function<T, TaskInputOutput<T, Boolean>>() {
+            public TaskInputOutput<T, Boolean> apply(T arg) {
+                return new TaskInputOutput<T, Boolean>(arg);
+            }
+        });
+        List<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
+
+        if (collectionList.size() < 2)
             return filter(inputSet, predicate);
 
-        return (Set<T>) filterParallel(inputSet,
-                predicate, parallel.getDegree(), Set.class);
-
+        filterParallel(collectionList, predicate, List.class);
+        return chain(inputOutputs)
+                .filter(new Predicate<TaskInputOutput<T, Boolean>>() {
+                    public boolean evaluate(TaskInputOutput<T, Boolean> task) {
+                        return task.getOutput();
+                    }
+                }).foldLeft((Set<T>) Set(), new Accumulator<Set<T>, TaskInputOutput<T, Boolean>>() {
+                    public Set<T> accumulate(Set<T> accumulator, TaskInputOutput<T, Boolean> task) {
+                        accumulator.add(task.getInput());
+                        return accumulator;
+                    }
+                }).extract();
 
     }
 
     public static <T> Collection<T> filter(Collection<T> inputList, Predicate<T> predicate,
-                                           Parallel parallel) {
+                                           WorkDivisionStrategy workDivisionStrategy) {
 
-        if (parallel.getDegree() < 2)
+        List<TaskInputOutput<T, Boolean>> inputOutputs = (List<TaskInputOutput<T, Boolean>>) map(inputList, new Function<T, TaskInputOutput<T, Boolean>>() {
+            public TaskInputOutput<T, Boolean> apply(T arg) {
+                return new TaskInputOutput<T, Boolean>(arg);
+            }
+        });
+        List<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
+
+        if (collectionList.size() < 2)
             return filter(inputList, predicate);
 
-        return filterParallel(inputList,
-                predicate, parallel.getDegree(), List.class);
+        filterParallel(collectionList, predicate, List.class);
+        return chain(inputOutputs)
+                .filter(new Predicate<TaskInputOutput<T, Boolean>>() {
+                    public boolean evaluate(TaskInputOutput<T, Boolean> task) {
+                        return task.getOutput();
+                    }
+                }).map(new Function<TaskInputOutput<T, Boolean>, T>() {
+                    public T apply(TaskInputOutput<T, Boolean> arg) {
+                        return arg.getInput();
+                    }
+                }).extract();
 
     }
 
-    private static <T, DS> Collection<T> filterParallel(Collection<T> inputList,
-                                                        final Predicate<T> predicate, int noOfThread, Class<DS> expectedCollection) {
-        final int size = inputList.size();
-        final List<List<TaskInputOutput<T, Boolean>>> taskList = new ArrayList<List<TaskInputOutput<T, Boolean>>>();
-        final List<TaskInputOutput<T, Boolean>> outList = new LinkedList<TaskInputOutput<T, Boolean>>();
-
-        if (noOfThread > size)
-            noOfThread = size;
-
-        for (int i = 0; i < noOfThread; i++) {
-            taskList.add(new LinkedList<TaskInputOutput<T, Boolean>>());
-        }
-
-        int index = 0;
-        TaskInputOutput<T, Boolean> task = null;
-        for (T input : inputList) {
-            task = new TaskInputOutput<T, Boolean>(input);
-            outList.add(task);
-            taskList.get(index % noOfThread).add(task);
-            index++;
-        }
-
+    private static <T, DS> void filterParallel(List<Collection<TaskInputOutput<T, Boolean>>> taskList,
+                                               final Predicate<T> predicate, Class<DS> expectedCollection) {
+        final int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
-
         final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
 
         int i = 0;
-        for (final List<TaskInputOutput<T, Boolean>> list2 : taskList) {
+        for (final Collection<TaskInputOutput<T, Boolean>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
                     for (TaskInputOutput<T, Boolean> taskInputOutput : list2) {
@@ -268,21 +297,6 @@ public final class FunctionUtil {
         if (exception.size() > 0) {
             throw new RuntimeException(exception.get(0));
         }
-
-        Collection<T> outputList = null;
-
-        if (expectedCollection.getName().equals("java.util.List")) {
-            outputList = new LinkedList<T>();
-        } else {
-            outputList = new HashSet<T>();
-        }
-
-        for (TaskInputOutput<T, Boolean> taskInputOutput : outList) {
-            if (taskInputOutput.getOutput() != null && taskInputOutput.getOutput())
-                outputList.add(taskInputOutput.getInput());
-        }
-
-        return outputList;
     }
 
     public static <ACCUM, EL> ACCUM foldLeft(Collection<EL> list, ACCUM accum,
@@ -326,31 +340,15 @@ public final class FunctionUtil {
     }
 
 
-    public static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, Parallel parallel) {
+    public static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, WorkDivisionStrategy workDivisionStrategy) {
 
-        int noOfThread = parallel.getDegree();
-
-        final int size = inputList.size();
-
-        if (size < 2)
+        if (inputList.size() < 2)
             return reduce(inputList, accumulator);
 
-        final List<List<T>> taskList = new ArrayList<List<T>>();
+        final List<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
         final List<T> outList = new CopyOnWriteArrayList<T>();
 
-
-        if (noOfThread > size)
-            noOfThread = size;
-
-        for (int i = 0; i < noOfThread; i++) {
-            taskList.add(new LinkedList<T>());
-        }
-
-        int index = 0;
-        for (T input : inputList) {
-            taskList.get(index % noOfThread).add(input);
-            index++;
-        }
+        int noOfThread = taskList.size();
 
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
@@ -358,7 +356,7 @@ public final class FunctionUtil {
         final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
 
         int i = 0;
-        for (final List<T> list2 : taskList) {
+        for (final Collection<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
 
@@ -563,24 +561,10 @@ public final class FunctionUtil {
         }
     }
 
-    public static <T> void each(Collection<T> inputList, final RecordProcessor<T> recordProcessor, Parallel parallel) {
-        final int size = inputList.size();
-        final List<List<T>> taskList = new ArrayList<List<T>>();
+    public static <T> void each(Collection<T> inputList, final RecordProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
+        final List<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
 
-        int noOfThread = parallel.getDegree();
-
-        if (noOfThread > size)
-            noOfThread = size;
-
-        for (int i = 0; i < noOfThread; i++) {
-            taskList.add(new LinkedList<T>());
-        }
-
-        int index = 0;
-        for (T input : inputList) {
-            taskList.get(index % noOfThread).add(input);
-            index++;
-        }
+        final int noOfThread = taskList.size();
 
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
@@ -588,7 +572,7 @@ public final class FunctionUtil {
         final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
 
         int i = 0;
-        for (final List<T> list2 : taskList) {
+        for (final Collection<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
 
@@ -694,11 +678,11 @@ public final class FunctionUtil {
         }
     }
 
-    public static void executeWithThrottle(Operation operation, Block codeBlock){
+    public static void executeWithThrottle(Operation operation, Block codeBlock) {
 
     }
 
-    public static void registerPoolSizeForOperationThrottle(Operation operation, int maxPoolSize){
+    public static void registerPoolSizeForOperationThrottle(Operation operation, int maxPoolSize) {
 
     }
 
@@ -908,11 +892,11 @@ public final class FunctionUtil {
         return new Batch(batchSize);
     }
 
-    public static Parallel parallel() {
+    public static WorkDivisionStrategy parallel() {
         return new Parallel();
     }
 
-    public static Parallel parallel(int threads) {
+    public static WorkDivisionStrategy parallel(int threads) {
         return new Parallel(threads);
     }
 
@@ -932,59 +916,15 @@ public final class FunctionUtil {
         return new ForkAndJoin<T>(object);
     }
 
-    public static <T> void divideAndConquer(List<T> collection, final Task<List<T>> task, Batch batch) {
+    public static <T> void divideAndConquer(List<T> collection, final Task<List<T>> task, WorkDivisionStrategy partition) {
 
-        final List<List<T>> collections = new ArrayList<List<T>>();
+        final List<Collection<T>> collections = partition.divide(collection);
 
-        final int chunkSize = batch.getDegree();
-        int counter = chunkSize;
-        int collectionsIndex = 0;
-
-        collections.add(new LinkedList<T>());
-
-        for (T t : collection) {
-
-            if (counter == 0) {
-                collections.add(new LinkedList<T>());
-                collectionsIndex++;
-                counter = chunkSize;
+        each(collections, new RecordProcessor<Collection<T>>() {
+            public void process(Collection<T> items) {
+                task.execute((List<T>) items);
             }
-
-            collections.get(collectionsIndex).add(t);
-            counter--;
-        }
-
-        each(collections, new RecordProcessor<List<T>>() {
-            public void process(List<T> items) {
-                task.execute(items);
-            }
-        }, parallel(chunkSize));
-
-    }
-
-    public static <T> void divideAndConquer(List<T> collection, final Task<List<T>> task, Parallel partition) {
-
-        final int partitionSize = partition.getDegree();
-
-        final List<List<T>> collections = new ArrayList<List<T>>();
-
-        int counter = partitionSize > collection.size() ? collection.size() : partitionSize;
-        int collectionsIndex = 0;
-
-        for (int i = 0; i < counter; i++) {
-            collections.add(new LinkedList<T>());
-        }
-
-        for (T t : collection) {
-            collections.get(collectionsIndex % counter).add(t);
-            collectionsIndex++;
-        }
-
-        each(collections, new RecordProcessor<List<T>>() {
-            public void process(List<T> items) {
-                task.execute(items);
-            }
-        }, parallel(partitionSize));
+        }, parallel(collections.size()));
     }
 
     public static <T> List<T> extractWithIndex(List<T> list, Predicate<Integer> predicate) {
@@ -999,29 +939,48 @@ public final class FunctionUtil {
         return outList;
     }
 
-    public static <T> void eachWithCondition(Collection<T> collection, Predicate predicate, RecordProcessor<T> recordProcessor){
+    public static <T> void eachWithCondition(Collection<T> collection, Predicate predicate, RecordProcessor<T> recordProcessor) {
 
     }
 
-    public static <T> void eachWithConditionChain(Collection<T> collection, Tuple2<Predicate<T>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Predicate<T>, RecordProcessor<T>>... predicateRecordProcessors){
+    public static <T> void eachWithConditionChain(Collection<T> collection, Tuple2<Predicate<T>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Predicate<T>, RecordProcessor<T>>... predicateRecordProcessors) {
 
     }
 
 }
 
-final class Batch {
+final class Batch implements WorkDivisionStrategy {
     private final int size;
 
     public Batch(int size) {
         this.size = size;
     }
 
-    public int getDegree() {
-        return size;
+    public <T> List<Collection<T>> divide(Collection<T> work) {
+        int counter = size;
+        int collectionsIndex = 0;
+        final List<Collection<T>> workDivisor = new ArrayList<Collection<T>>();
+
+        workDivisor.add(new LinkedList<T>());
+
+        for (T t : work) {
+
+            if (counter == 0) {
+                workDivisor.add(new LinkedList<T>());
+                collectionsIndex++;
+                counter = size;
+            }
+
+            workDivisor.get(collectionsIndex).add(t);
+            counter--;
+        }
+
+        return workDivisor;
     }
 }
 
-final class Parallel {
+
+final class Parallel implements WorkDivisionStrategy {
     protected static final int affinity = Config.getParallelDegree();
 
     private final int threads;
@@ -1035,9 +994,24 @@ final class Parallel {
         this.threads = threads;
     }
 
-    public int getDegree() {
-        return this.threads;
+    public <T> List<Collection<T>> divide(Collection<T> work) {
+        final List<Collection<T>> workDivisor = new ArrayList<Collection<T>>();
+
+        int counter = threads > work.size() ? work.size() : threads;
+        int collectionsIndex = 0;
+
+        for (int i = 0; i < counter; i++) {
+            workDivisor.add(new LinkedList<T>());
+        }
+
+        for (T t : work) {
+            workDivisor.get(collectionsIndex % counter).add(t);
+            collectionsIndex++;
+        }
+
+        return workDivisor;
     }
+
 }
 
 final class Operation {
