@@ -204,6 +204,15 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
+    public CollectionFunctionChain<I> executeWithPool(Operation operation, final Task<List<I>> task) {
+        FunctionUtil.executeWithPool(operation, new Block() {
+            public void execute() {
+                task.execute(collection);
+            }
+        });
+        return this;
+    }
+
     private List<I> getCollection() {
         return new LinkedList<I>();
     }

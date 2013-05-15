@@ -8,6 +8,10 @@ import java.util.concurrent.*;
 
 public class ThreadPoolFactory {
 
+    private static String HIGH_PRIORITY = "hp";
+    private static String MEDIUM_PRIORITY = "mp";
+    private static String LOW_PRIORITY = "lp";
+
     public static ExecutorService getHighPriorityTaskThreadPool() {
         Context context = null;
         try {
@@ -26,11 +30,11 @@ public class ThreadPoolFactory {
                 if (managedThreadPool != null)
                     return managedThreadPool;
                 else
-                    return getDefaultThreadPool("hp");
+                    return getDefaultThreadPool(HIGH_PRIORITY);
             }
 
         } else {
-            return getDefaultThreadPool("hp");
+            return getDefaultThreadPool(HIGH_PRIORITY);
         }
 
     }
@@ -53,11 +57,11 @@ public class ThreadPoolFactory {
                 if (managedThreadPool != null)
                     return managedThreadPool;
                 else
-                    return getDefaultThreadPool("mp");
+                    return getDefaultThreadPool(MEDIUM_PRIORITY);
             }
 
         } else {
-            return getDefaultThreadPool("mp");
+            return getDefaultThreadPool(MEDIUM_PRIORITY);
         }
 
     }
@@ -80,11 +84,11 @@ public class ThreadPoolFactory {
                 if (managedThreadPool != null)
                     return managedThreadPool;
                 else
-                    return getDefaultThreadPool("lp");
+                    return getDefaultThreadPool(LOW_PRIORITY);
             }
 
         } else {
-            return getDefaultThreadPool("lp");
+            return getDefaultThreadPool(LOW_PRIORITY);
         }
 
     }
@@ -93,11 +97,11 @@ public class ThreadPoolFactory {
 
         ThreadPoolExecutor executor = null;
 
-        if (priority.equals("hp")) {
+        if (priority.equals(HIGH_PRIORITY)) {
             executor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
-        } else if (priority.equals("mp")) {
+        } else if (priority.equals(MEDIUM_PRIORITY)) {
             executor = new ThreadPoolExecutor(0, 100, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
-        } else if (priority.equals("lp")) {
+        } else if (priority.equals(LOW_PRIORITY)) {
             executor = new ThreadPoolExecutor(0, 5, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         }
 

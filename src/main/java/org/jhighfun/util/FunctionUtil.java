@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.jhighfun.util.CollectionUtil.Set;
+import static org.jhighfun.util.CollectionUtil.*;
 
 public final class FunctionUtil {
 
@@ -23,6 +23,8 @@ public final class FunctionUtil {
     private static final Lock globalLock = new ReentrantLock(true);
     private static final Lock registerOperation = new ReentrantLock(true);
     private static final ConcurrentHashMap<Operation, Lock> operationLockMap = new ConcurrentHashMap<Operation, Lock>(15, 0.9f, 32);
+
+    private static final Map<Operation, ExecutorService> operationPoolMap = new ConcurrentHashMap<Operation, ExecutorService>(15, 0.9f, 32);
 
     public static <I, O> List<O> map(List<I> inputList, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
@@ -186,7 +188,7 @@ public final class FunctionUtil {
         return chain(inputOutputs)
                 .filter(new Predicate<TaskInputOutput<T, Boolean>>() {
                     public boolean evaluate(TaskInputOutput<T, Boolean> task) {
-                        return task.getOutput();
+return task.getOutput();
                     }
                 }).map(new Function<TaskInputOutput<T, Boolean>, T>() {
                     public T apply(TaskInputOutput<T, Boolean> arg) {
@@ -615,6 +617,11 @@ public final class FunctionUtil {
         return new CollectionFunctionChain<I>(collection);
     }
 
+
+    public static <I> ObjectFunctionChain<I> chain(I object) {
+        return new ObjectFunctionChain<I>(object);
+    }
+
     public static <I, O> CurriedFunction<I, O> curry(Function<List<I>, O> function, List<I> fixedInputs) {
         return new CurriedFunction<I, O>(function, fixedInputs);
     }
@@ -678,12 +685,23 @@ public final class FunctionUtil {
         }
     }
 
-    public static void executeWithThrottle(Operation operation, Block codeBlock) {
+    public static void executeWithPool(Operation operation, Block codeBlock) {
+        ExecutorService executorService = operationPoolMap.get(operation);
 
+        if(executorService == null)
+            throw new RuntimeException("Please register the Thread Pool for operation["+operation.toString()+"]");
     }
 
-    public static void registerPoolSizeForOperationThrottle(Operation operation, int maxPoolSize) {
+    public static void registerPool(Operation operation, int maxPoolSize) {
+        if(operation == null)
+            throw new RuntimeException("Please provide operation for which you wish to create Thread pool.");
+        operationPoolMap.put(operation, Executors.newFixedThreadPool(maxPoolSize));
+    }
 
+    public static void registerPool(Operation operation, ExecutorService executorService) {
+        if(operation == null || executorService == null)
+            throw new RuntimeException("Please provide operation and Thread Pool service.");
+        operationPoolMap.put(operation, executorService);
     }
 
     public static void executeWithGlobalLock(Block codeBlock) {
@@ -865,7 +883,6 @@ public final class FunctionUtil {
 
     }
 
-
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final ManagedCache managedCache) {
         return new Function<I, O>() {
 
@@ -886,7 +903,6 @@ public final class FunctionUtil {
             }
         };
     }
-
 
     public static Batch batch(int batchSize) {
         return new Batch(batchSize);
@@ -939,14 +955,42 @@ public final class FunctionUtil {
         return outList;
     }
 
-    public static <T> void eachWithCondition(Collection<T> collection, Predicate predicate, RecordProcessor<T> recordProcessor) {
+    public static <T> void each(Collection<T> collection, Predicate predicate, RecordProcessor<T> recordProcessor) {
+        for (T t :collection){
+            if(predicate.evaluate(t)){
+                recordProcessor.process(t);
+            }
+        }
+    }
 
+    public static <I, O> void each(Collection<I> collection, Function<I, O> converter, RecordProcessor<O> recordProcessor) {
+        for (I input :collection){
+           recordProcessor.process(converter.apply(input));
+        }
     }
 
     public static <T> void eachWithConditionChain(Collection<T> collection, Tuple2<Predicate<T>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Predicate<T>, RecordProcessor<T>>... predicateRecordProcessors) {
-
+        List<Tuple2<Predicate<T>, RecordProcessor<T>>> predicateRecordProcessorList = List(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
+        for (T t :collection){
+            for(Tuple2<Predicate<T>, RecordProcessor<T>> tuple: predicateRecordProcessorList){
+                    if(tuple._1.evaluate(t)){
+                        tuple._2.process(t);
+                    }
+            }
+        }
     }
 
+    public static <T> void eachWithOptionChain(Collection<T> collection, Tuple2<Predicate<T>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Predicate<T>, RecordProcessor<T>>... predicateRecordProcessors) {
+        List<Tuple2<Predicate<T>, RecordProcessor<T>>> predicateRecordProcessorList = List(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
+        for (T t :collection){
+            for(Tuple2<Predicate<T>, RecordProcessor<T>> tuple: predicateRecordProcessorList){
+                if(tuple._1.evaluate(t)){
+                    tuple._2.process(t);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 final class Batch implements WorkDivisionStrategy {
@@ -978,7 +1022,6 @@ final class Batch implements WorkDivisionStrategy {
         return workDivisor;
     }
 }
-
 
 final class Parallel implements WorkDivisionStrategy {
     protected static final int affinity = Config.getParallelDegree();
@@ -1038,5 +1081,10 @@ final class Operation {
     @Override
     public int hashCode() {
         return operationIdentifier != null ? operationIdentifier.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return  operationIdentifier;
     }
 }

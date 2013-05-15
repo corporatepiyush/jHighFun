@@ -67,6 +67,15 @@ public final class ObjectFunctionChain<I> {
         return this;
     }
 
+    public ObjectFunctionChain<I> executeWithPool(Operation operation, final Task<I> task) {
+        FunctionUtil.executeWithPool(operation, new Block() {
+            public void execute() {
+                task.execute(object);
+            }
+        });
+        return this;
+    }
+
     public I extract() {
         return object;
     }
