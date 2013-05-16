@@ -25,12 +25,12 @@ public final class CollectionFunctionChain<I> {
         return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter, workDivisionStrategy));
     }
 
-    public CollectionFunctionChain<I> filter(Predicate<I> predicate) {
+    public CollectionFunctionChain<I> filter(Function<I, Boolean> predicate) {
         this.collection = FunctionUtil.filter(this.collection, predicate);
         return this;
     }
 
-    public CollectionFunctionChain<I> filter(Predicate<I> predicate, WorkDivisionStrategy workDivisionStrategy) {
+    public CollectionFunctionChain<I> filter(Function<I, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
         this.collection = FunctionUtil.filter(this.collection, predicate, workDivisionStrategy);
         return this;
     }
@@ -83,19 +83,19 @@ public final class CollectionFunctionChain<I> {
         return new ObjectFunctionChain<I>(FunctionUtil.reduce(this.collection, accumulator, workDivisionStrategy));
     }
 
-    public ObjectFunctionChain<Boolean> every(Predicate<I> predicate) {
+    public ObjectFunctionChain<Boolean> every(Function<I, Boolean> predicate) {
         return new ObjectFunctionChain<Boolean>(FunctionUtil.every(this.collection, predicate));
     }
 
-    public ObjectFunctionChain<Boolean> any(Predicate<I> predicate) {
+    public ObjectFunctionChain<Boolean> any(Function<I, Boolean> predicate) {
         return new ObjectFunctionChain<Boolean>(FunctionUtil.any(this.collection, predicate));
     }
 
-    public ObjectFunctionChain<Integer> count(Predicate<I> predicate) {
+    public ObjectFunctionChain<Integer> count(Function<I, Boolean> predicate) {
         return new ObjectFunctionChain<Integer>(FunctionUtil.count(this.collection, predicate));
     }
 
-    public CollectionFunctionChain<I> extractWithIndex(Predicate<Integer> predicate) {
+    public CollectionFunctionChain<I> extractWithIndex(Function<Integer, Boolean> predicate) {
         this.collection = FunctionUtil.extractWithIndex(this.collection, predicate);
         return this;
     }

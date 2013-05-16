@@ -247,9 +247,9 @@ public class FunctionUtilSpec {
         }
 
         List<String> list1 = FunctionUtil.filter(list,
-                new Predicate<String>() {
+                new Function<String, Boolean>() {
 
-                    public boolean evaluate(String t) {
+                    public Boolean apply(String t) {
                         return t.contains("y");
                     }
 
@@ -273,9 +273,9 @@ public class FunctionUtilSpec {
         }
 
         Set<String> list1 = FunctionUtil.filter(set,
-                new Predicate<String>() {
+                new Function<String, Boolean>() {
 
-                    public boolean evaluate(String t) {
+                    public Boolean apply(String t) {
                         return t.contains("y");
                     }
 
@@ -474,18 +474,18 @@ public class FunctionUtilSpec {
             list.add("Java");
         }
 
-        boolean bool = FunctionUtil.every(list, new Predicate<String>() {
+        boolean bool = FunctionUtil.every(list, new Function<String, Boolean>() {
 
-            public boolean evaluate(String string) {
+            public Boolean apply(String string) {
                 return string.contains("v");
             }
         });
 
         assertTrue(!bool);
 
-        bool = FunctionUtil.every(list, new Predicate<String>() {
+        bool = FunctionUtil.every(list, new Function<String, Boolean>() {
 
-            public boolean evaluate(String string) {
+            public Boolean apply(String string) {
                 return string.contains("a");
             }
         });
@@ -502,18 +502,18 @@ public class FunctionUtilSpec {
             list.add("Java");
         }
 
-        boolean bool = FunctionUtil.any(list, new Predicate<String>() {
+        boolean bool = FunctionUtil.any(list, new Function<String, Boolean>() {
 
-            public boolean evaluate(String string) {
+            public Boolean apply(String string) {
                 return string.contains("R");
             }
         });
 
         assertTrue(!bool);
 
-        bool = FunctionUtil.any(list, new Predicate<String>() {
+        bool = FunctionUtil.any(list, new Function<String, Boolean>() {
 
-            public boolean evaluate(String string) {
+            public Boolean apply(String string) {
                 return string.contains("a");
             }
         });
@@ -610,8 +610,8 @@ public class FunctionUtilSpec {
 
         final Set<String> temp = new HashSet<String>();
 
-        int count = FunctionUtil.count(set, new Predicate<String>() {
-            public boolean evaluate(String s) {
+        int count = FunctionUtil.count(set, new Function<String, Boolean>() {
+            public Boolean apply(String s) {
                 return s.contains("Scala");
             }
         });
@@ -627,8 +627,8 @@ public class FunctionUtilSpec {
         set.add("Java");
 
 
-        Tuple2<Collection<String>, Collection<String>> tuple2 = FunctionUtil.partition(set, new Predicate<String>() {
-            public boolean evaluate(String s) {
+        Tuple2<Collection<String>, Collection<String>> tuple2 = FunctionUtil.partition(set, new Function<String, Boolean>() {
+            public Boolean apply(String s) {
                 return s.contains("Scala");
             }
         });
@@ -648,8 +648,8 @@ public class FunctionUtilSpec {
 
         List<String> list = List("hello", "Mr.", "FirstName", "LastName");
 
-        List<String> outList = FunctionUtil.extractWithIndex(list, new Predicate<Integer>() {
-            public boolean evaluate(Integer index) {
+        List<String> outList = FunctionUtil.extractWithIndex(list, new Function<Integer, Boolean>() {
+            public Boolean apply(Integer index) {
                 return index % 2 == 0;
             }
         });

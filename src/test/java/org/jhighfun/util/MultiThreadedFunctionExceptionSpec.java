@@ -55,9 +55,9 @@ public class MultiThreadedFunctionExceptionSpec {
         }
 
         FunctionUtil.filter(list,
-                new Predicate<String>() {
+                new Function<String, Boolean>() {
 
-                    public boolean evaluate(String t) {
+                    public Boolean apply(String t) {
                         if (t.equals("Ruby")) throw new RuntimeException();
                         return t.contains("y");
                     }
@@ -74,9 +74,9 @@ public class MultiThreadedFunctionExceptionSpec {
         set.add("Ruby");
 
         FunctionUtil.filter(set,
-                new Predicate<String>() {
+                new Function<String, Boolean>() {
 
-                    public boolean evaluate(String t) {
+                    public Boolean apply(String t) {
                         if (t.equals("Ruby")) throw new RuntimeException();
                         return t.contains("y");
                     }

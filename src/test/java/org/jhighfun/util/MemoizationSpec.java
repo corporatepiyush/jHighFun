@@ -19,20 +19,20 @@ public class MemoizationSpec {
         final List<String> spyInjection = new LinkedList<String>();
         final String inputCheckValue = "today";
 
-        Predicate<String> memoizedFunction = FunctionUtil.memoize(new Predicate<String>() {
+        Function<String, Boolean> memoizedFunction = FunctionUtil.memoize(new Function<String, Boolean>() {
 
-            public boolean evaluate(String input) {
+            public Boolean apply(String input) {
                 spyInjection.add(input);
                 return input.equals("today") ? true : false;
             }
         });
 
         assertEquals(spyInjection.size(), 0);
-        assertEquals(memoizedFunction.evaluate(inputCheckValue), true);
+        assertEquals(memoizedFunction.apply(inputCheckValue), true);
         assertEquals(spyInjection.size(), 1);
 
         for (int i = 0; i < 100; i++) {
-            assertEquals(memoizedFunction.evaluate(inputCheckValue), true);
+            assertEquals(memoizedFunction.apply(inputCheckValue), true);
             assertEquals(spyInjection.size(), 1);
         }
     }

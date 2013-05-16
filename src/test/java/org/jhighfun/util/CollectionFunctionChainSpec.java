@@ -158,9 +158,9 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
-        Collection<String> filterList = chain.filter(new Predicate<String>() {
+        Collection<String> filterList = chain.filter(new Function<String, Boolean>() {
 
-            public boolean evaluate(String t) {
+            public Boolean apply(String t) {
                 return t.contains("y");
             }
 
@@ -185,9 +185,9 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
-        Collection<String> filterList = chain.filter(new Predicate<String>() {
+        Collection<String> filterList = chain.filter(new Function<String, Boolean>() {
 
-            public boolean evaluate(String t) {
+            public Boolean apply(String t) {
                 return t.contains("y");
             }
 
@@ -449,18 +449,18 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
-        boolean bool = chain.every(new Predicate<String>() {
+        boolean bool = chain.every(new Function<String, Boolean>() {
 
-            public boolean evaluate(String string) {
+            public Boolean apply(String string) {
                 return string.contains("v");
             }
         }).extract();
 
         assertTrue(!bool);
 
-        bool = chain.every(new Predicate<String>() {
+        bool = chain.every(new Function<String, Boolean>() {
 
-            public boolean evaluate(String string) {
+            public Boolean apply(String string) {
                 return string.contains("a");
             }
         }).extract();
@@ -473,8 +473,8 @@ public class CollectionFunctionChainSpec {
 
         List<String> list = List("hello", "Mr.", "FirstName", "LastName");
 
-        List<String> outList = new CollectionFunctionChain(list).extractWithIndex(new Predicate<Integer>() {
-            public boolean evaluate(Integer index) {
+        List<String> outList = new CollectionFunctionChain(list).extractWithIndex(new Function<Integer, Boolean>() {
+            public Boolean apply(Integer index) {
                 return index % 2 == 0;
             }
         }).extract();
@@ -494,18 +494,18 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
-        boolean bool = chain.any(new Predicate<String>() {
+        boolean bool = chain.any(new Function<String, Boolean>() {
 
-            public boolean evaluate(String string) {
+            public Boolean apply(String string) {
                 return string.contains("R");
             }
         }).extract();
 
         assertTrue(!bool);
 
-        bool = chain.any(new Predicate<String>() {
+        bool = chain.any(new Function<String, Boolean>() {
 
-            public boolean evaluate(String string) {
+            public Boolean apply(String string) {
                 return string.contains("a");
             }
         }).extract();
@@ -522,8 +522,8 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(List(set));
 
-        int count = chain.count(new Predicate<String>() {
-            public boolean evaluate(String s) {
+        int count = chain.count(new Function<String, Boolean>() {
+            public Boolean apply(String s) {
                 return s.contains("Scala");
             }
         }).extract();

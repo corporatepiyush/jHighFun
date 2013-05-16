@@ -80,9 +80,9 @@ public class MultiThreadedFunctionSpec {
         }
 
         List<String> list1 = FunctionUtil.filter(list,
-                new Predicate<String>() {
+                new Function<String, Boolean>() {
 
-                    public boolean evaluate(String t) {
+                    public Boolean apply(String t) {
                         return t.contains("y");
                     }
 
@@ -107,9 +107,9 @@ public class MultiThreadedFunctionSpec {
         }
 
         Set<String> set1 = FunctionUtil.filter(set,
-                new Predicate<String>() {
+                new Function<String, Boolean>() {
 
-                    public boolean evaluate(String t) {
+                    public Boolean apply(String t) {
                         return t.contains("y");
                     }
 
