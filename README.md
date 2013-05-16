@@ -4,24 +4,42 @@ jHighFun
 ***Multithreaded Higher Order Function Library for Java***
 
 ##Overview
-This library lets you use following functions. Function chaining is also supported
+This library is implememted to make concurrent programming as easy as possible by following best practices exists
+and abstracting out the finer interfaces to hide lots of boiler plate code needed in general.
 
- * map <br>
- * filter <br>
- * foldLeft <br>
- * foldRight <br>
- * reduce <br>
- * sort <br>
- * sortWith <br>
- * sortBy <br>
- * any <br>
- * every <br>
- * each <br>
- * eachWithIndex <br>
- * split <br>
- * curry <br>
- * chain <br>
- * memoize <br>
+The aim of this library is to help design any kind of business logic which is scalable on multiple CPU's.
+
+ jHighFun => (Higher order functions, function chaining) + (concurrency patterns)
+
+ ***Higher order functions***
+
+ * map
+ * filter
+ * foldLeft
+ * foldRight
+ * reduce
+ * sort
+ * sortWith
+ * sortBy
+ * any
+ * every
+ * each
+ * eachWithIndex
+ * split
+ * curry
+ * chain
+ * memoize
+
+
+***Concurrency patterns***
+
+ * forkAndJoin
+ * divideAndConquer
+ * executeAsync
+ * executeLater
+ * executeWithGlobalLock
+ * executeWithLock
+ * executeWithPool
 
 Just do static import for FunctionUtil.* into your java file start using them, be careful while using the overloaded methods which accepts "noOfThreads" as last argument and tries to execute function concurrently.
 

@@ -12,7 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.jhighfun.util.CollectionUtil.*;
+import static org.jhighfun.util.CollectionUtil.List;
+import static org.jhighfun.util.CollectionUtil.Set;
 
 public final class FunctionUtil {
 
@@ -174,7 +175,7 @@ public final class FunctionUtil {
     public static <T> List<T> filter(List<T> inputList, Function<T, Boolean> predicate,
                                      WorkDivisionStrategy workDivisionStrategy) {
 
-        List<TaskInputOutput<T, Boolean>> inputOutputs =  map(inputList, new Function<T, TaskInputOutput<T, Boolean>>() {
+        List<TaskInputOutput<T, Boolean>> inputOutputs = map(inputList, new Function<T, TaskInputOutput<T, Boolean>>() {
             public TaskInputOutput<T, Boolean> apply(T arg) {
                 return new TaskInputOutput<T, Boolean>(arg);
             }
@@ -188,7 +189,7 @@ public final class FunctionUtil {
         return chain(inputOutputs)
                 .filter(new Function<TaskInputOutput<T, Boolean>, Boolean>() {
                     public Boolean apply(TaskInputOutput<T, Boolean> task) {
-                            return task.getOutput();
+                        return task.getOutput();
                     }
                 }).map(new Function<TaskInputOutput<T, Boolean>, T>() {
                     public T apply(TaskInputOutput<T, Boolean> arg) {
@@ -213,7 +214,7 @@ public final class FunctionUtil {
 
         filterParallel(collectionList, predicate, List.class);
         return chain(inputOutputs)
-                .filter(new Function<TaskInputOutput<T,Boolean>, Boolean>() {
+                .filter(new Function<TaskInputOutput<T, Boolean>, Boolean>() {
                     public Boolean apply(TaskInputOutput<T, Boolean> task) {
                         return task.getOutput();
                     }
@@ -241,7 +242,7 @@ public final class FunctionUtil {
 
         filterParallel(collectionList, predicate, List.class);
         return chain(inputOutputs)
-                .filter(new Function<TaskInputOutput<T,Boolean>, Boolean>() {
+                .filter(new Function<TaskInputOutput<T, Boolean>, Boolean>() {
                     public Boolean apply(TaskInputOutput<T, Boolean> task) {
                         return task.getOutput();
                     }
@@ -688,8 +689,8 @@ public final class FunctionUtil {
     public static void executeWithPool(Operation operation, final Block codeBlock) {
         ExecutorService executorService = operationPoolMap.get(operation);
 
-        if(executorService == null)
-            throw new RuntimeException("Please register the Thread Pool for operation["+operation.toString()+"]");
+        if (executorService == null)
+            throw new RuntimeException("Please register the Thread Pool for operation[" + operation.toString() + "]");
 
         try {
             executorService.submit(new Runnable() {
@@ -704,13 +705,13 @@ public final class FunctionUtil {
     }
 
     public static void registerPool(Operation operation, int maxPoolSize) {
-        if(operation == null)
+        if (operation == null)
             throw new RuntimeException("Please provide operation for which you wish to create Thread pool.");
         operationPoolMap.put(operation, Executors.newFixedThreadPool(maxPoolSize));
     }
 
     public static void registerPool(Operation operation, ExecutorService executorService) {
-        if(operation == null || executorService == null)
+        if (operation == null || executorService == null)
             throw new RuntimeException("Please provide operation and Thread Pool service.");
         operationPoolMap.put(operation, executorService);
     }
@@ -938,20 +939,20 @@ public final class FunctionUtil {
 
     private static <T> void eachWithConditionChain(Collection<T> collection, Tuple2<Function<T, Boolean>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Function<T, Boolean>, RecordProcessor<T>>... predicateRecordProcessors) {
         List<Tuple2<Function<T, Boolean>, RecordProcessor<T>>> predicateRecordProcessorList = List(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
-        for (T t :collection){
-            for(Tuple2<Function<T, Boolean>, RecordProcessor<T>> tuple: predicateRecordProcessorList){
-                    if(tuple._1.apply(t)){
-                        tuple._2.process(t);
-                    }
+        for (T t : collection) {
+            for (Tuple2<Function<T, Boolean>, RecordProcessor<T>> tuple : predicateRecordProcessorList) {
+                if (tuple._1.apply(t)) {
+                    tuple._2.process(t);
+                }
             }
         }
     }
 
     private static <T> void eachWithOptionChain(Collection<T> collection, Tuple2<Function<T, Boolean>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Function<T, Boolean>, RecordProcessor<T>>... predicateRecordProcessors) {
         List<Tuple2<Function<T, Boolean>, RecordProcessor<T>>> predicateRecordProcessorList = List(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
-        for (T t :collection){
-            for(Tuple2<Function<T, Boolean>, RecordProcessor<T>> tuple: predicateRecordProcessorList){
-                if(tuple._1.apply(t)){
+        for (T t : collection) {
+            for (Tuple2<Function<T, Boolean>, RecordProcessor<T>> tuple : predicateRecordProcessorList) {
+                if (tuple._1.apply(t)) {
                     tuple._2.process(t);
                     break;
                 }
@@ -1052,6 +1053,6 @@ final class Operation {
 
     @Override
     public String toString() {
-        return  operationIdentifier;
+        return operationIdentifier;
     }
 }

@@ -44,6 +44,20 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifestEntries>
+                            <author>Piyush Katariya</author>
+                            <contact>corporate.piyush@gmail.com</contact>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
@@ -61,35 +75,35 @@
                     </includes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.5.2</version>
-                <configuration>
-                    <effort>Max</effort>
-                    <threshold>Normal</threshold>
-                    <xmlOutput>true</xmlOutput>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-pmd-plugin</artifactId>-->
-                <!--<version>2.5</version>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>findbugs-maven-plugin</artifactId>-->
+                <!--<version>2.5.2</version>-->
+                <!--<configuration>-->
+                    <!--<effort>Max</effort>-->
+                    <!--<threshold>Normal</threshold>-->
+                    <!--<xmlOutput>true</xmlOutput>-->
+                <!--</configuration>-->
                 <!--<executions>-->
                     <!--<execution>-->
                         <!--<goals>-->
                             <!--<goal>check</goal>-->
-                            <!--<goal>cpd-check</goal>-->
                         <!--</goals>-->
                     <!--</execution>-->
                 <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-pmd-plugin</artifactId>-->
+            <!--<version>2.5</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<goals>-->
+            <!--<goal>check</goal>-->
+            <!--<goal>cpd-check</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
             <!--</plugin>-->
         </plugins>
     </build>
