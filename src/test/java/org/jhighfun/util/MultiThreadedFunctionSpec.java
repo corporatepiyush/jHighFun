@@ -7,10 +7,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 
 import static org.junit.Assert.assertEquals;
@@ -179,7 +176,7 @@ public class MultiThreadedFunctionSpec {
         list.add(3);
         list.add(4);
 
-        Task<List<Integer>> mockTask = mock(Task.class);
+        Task<Collection<Integer>> mockTask = mock(Task.class);
 
         FunctionUtil.divideAndConquer(list, mockTask, FunctionUtil.batch(2));
 
@@ -207,7 +204,7 @@ public class MultiThreadedFunctionSpec {
         list.add(4);
         list.add(5);
 
-        Task<List<Integer>> mockTask = mock(Task.class);
+        Task<Collection<Integer>> mockTask = mock(Task.class);
 
         FunctionUtil.divideAndConquer(list, mockTask, FunctionUtil.parallel(3));
 

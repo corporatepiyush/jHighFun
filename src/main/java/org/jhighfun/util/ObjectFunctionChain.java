@@ -67,8 +67,8 @@ public final class ObjectFunctionChain<I> {
         return this;
     }
 
-    public ObjectFunctionChain<I> executeWithPool(Operation operation, final Task<I> task) {
-        FunctionUtil.executeWithPool(operation, new Block() {
+    public ObjectFunctionChain<I> executeWithThrottle(ExecutionThrottler executionThrottler, final Task<I> task) {
+        FunctionUtil.executeWithThrottle(executionThrottler, new Block() {
             public void execute() {
                 task.execute(object);
             }

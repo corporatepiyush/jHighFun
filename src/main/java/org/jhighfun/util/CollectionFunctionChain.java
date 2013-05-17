@@ -149,12 +149,7 @@ public final class CollectionFunctionChain<I> {
         return new CollectionForkAndJoin<I>(this);
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Task<List<I>> task, Batch batch) {
-        FunctionUtil.divideAndConquer(this.collection, task, batch);
-        return this;
-    }
-
-    public CollectionFunctionChain<I> divideAndConquer(Task<List<I>> task, WorkDivisionStrategy partition) {
+    public CollectionFunctionChain<I> divideAndConquer(Task<Collection<I>> task, WorkDivisionStrategy partition) {
         FunctionUtil.divideAndConquer(this.collection, task, partition);
         return this;
     }
@@ -204,8 +199,8 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> executeWithPool(Operation operation, final Task<List<I>> task) {
-        FunctionUtil.executeWithPool(operation, new Block() {
+    public CollectionFunctionChain<I> executeWithThrottle(ExecutionThrottler executionThrottler, final Task<List<I>> task) {
+        FunctionUtil.executeWithThrottle(executionThrottler, new Block() {
             public void execute() {
                 task.execute(collection);
             }

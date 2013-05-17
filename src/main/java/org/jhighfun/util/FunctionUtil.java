@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,7 +26,7 @@ public final class FunctionUtil {
     private static final Lock registerOperation = new ReentrantLock(true);
     private static final ConcurrentHashMap<Operation, Lock> operationLockMap = new ConcurrentHashMap<Operation, Lock>(15, 0.9f, 32);
 
-    private static final Map<Operation, ExecutorService> operationPoolMap = new ConcurrentHashMap<Operation, ExecutorService>(15, 0.9f, 32);
+    private static final Map<ExecutionThrottler, ExecutorService> throttlerPoolMap = new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32);
 
     public static <I, O> List<O> map(List<I> inputList, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
@@ -686,11 +687,11 @@ public final class FunctionUtil {
         }
     }
 
-    public static void executeWithPool(Operation operation, final Block codeBlock) {
-        ExecutorService executorService = operationPoolMap.get(operation);
+    public static void executeWithThrottle(ExecutionThrottler executionThrottler, final Block codeBlock) {
+        ExecutorService executorService = throttlerPoolMap.get(executionThrottler);
 
         if (executorService == null)
-            throw new RuntimeException("Please register the Thread Pool for operation[" + operation.toString() + "]");
+            throw new RuntimeException("Please register the Thread Pool for executionThrottler[" + executionThrottler.toString() + "]");
 
         try {
             executorService.submit(new Runnable() {
@@ -704,16 +705,16 @@ public final class FunctionUtil {
         }
     }
 
-    public static void registerPool(Operation operation, int maxPoolSize) {
-        if (operation == null)
-            throw new RuntimeException("Please provide operation for which you wish to create Thread pool.");
-        operationPoolMap.put(operation, Executors.newFixedThreadPool(maxPoolSize));
+    public static void registerPool(ExecutionThrottler executionThrottler, int maxPoolSize) {
+        if (executionThrottler == null)
+            throw new RuntimeException("Please provide ExecutionThrottler for which you wish to create Thread pool.");
+        throttlerPoolMap.put(executionThrottler, Executors.newFixedThreadPool(maxPoolSize));
     }
 
-    public static void registerPool(Operation operation, ExecutorService executorService) {
-        if (operation == null || executorService == null)
-            throw new RuntimeException("Please provide operation and Thread Pool service.");
-        operationPoolMap.put(operation, executorService);
+    public static void registerPool(ExecutionThrottler executionThrottler, ExecutorService executorService) {
+        if (executionThrottler == null || executorService == null)
+            throw new RuntimeException("Please provide ExecutionThrottler and Thread Pool service.");
+        throttlerPoolMap.put(executionThrottler, executorService);
     }
 
     public static void executeWithGlobalLock(Block codeBlock) {
@@ -722,6 +723,48 @@ public final class FunctionUtil {
             codeBlock.execute();
         } finally {
             globalLock.unlock();
+        }
+    }
+
+    public static void executeWithTimeout(final Block codeBlock, Integer time, TimeUnit timeUnit) {
+
+        try {
+            highPriorityTaskThreadPool.submit(new Runnable() {
+                public void run() {
+                    codeBlock.execute();
+                }
+            }).get(time, timeUnit);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void executeAwait(final Block codeBlock, Integer time, TimeUnit timeUnit) {
+        final Lock lock = new ReentrantLock();
+        final Condition condition = lock.newCondition();
+        try {
+            try {
+                lock.lock();
+                highPriorityTaskThreadPool.submit(new Runnable() {
+                    public void run() {
+                        try {
+                            lock.lock();
+                            codeBlock.execute();
+                            condition.signal();
+                        } finally {
+                            lock.unlock();
+                        }
+                    }
+                });
+                condition.await(time, timeUnit);
+            } finally {
+                lock.unlock();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -902,6 +945,10 @@ public final class FunctionUtil {
         return new Operation(operationIdentifier);
     }
 
+    public static ExecutionThrottler throttler(String identity) {
+        return new ExecutionThrottler(identity);
+    }
+
     private static <I> Collection<I> getCollection(Collection<I> collection) {
         if (collection instanceof Set) {
             return new LinkedHashSet<I>();
@@ -914,13 +961,13 @@ public final class FunctionUtil {
         return new ForkAndJoin<T>(object);
     }
 
-    public static <T> void divideAndConquer(List<T> collection, final Task<List<T>> task, WorkDivisionStrategy partition) {
+    public static <T> void divideAndConquer(Collection<T> collection, final Task<Collection<T>> task, WorkDivisionStrategy partition) {
 
         final List<Collection<T>> collections = partition.divide(collection);
 
         each(collections, new RecordProcessor<Collection<T>>() {
             public void process(Collection<T> items) {
-                task.execute((List<T>) items);
+                task.execute(items);
             }
         }, parallel(collections.size()));
     }
@@ -1054,5 +1101,31 @@ final class Operation {
     @Override
     public String toString() {
         return operationIdentifier;
+    }
+}
+
+
+final class ExecutionThrottler {
+    private String identity;
+
+    public ExecutionThrottler(String identity) {
+        this.identity = identity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ExecutionThrottler)) return false;
+
+        ExecutionThrottler that = (ExecutionThrottler) o;
+
+        if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return identity != null ? identity.hashCode() : 0;
     }
 }
