@@ -10,10 +10,7 @@ import support.Person;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static org.jhighfun.util.CollectionUtil.List;
 import static org.junit.Assert.assertEquals;
@@ -656,5 +653,139 @@ public class FunctionUtilSpec {
 
         assertEquals(outList, List("hello", "FirstName"));
 
+    }
+
+    @Test
+    public void testRegisterPool() throws NoSuchFieldException, IllegalAccessException {
+
+        Field throttlerPoolMap = FunctionUtil.class.getDeclaredField("throttlerPoolMap");
+        throttlerPoolMap.setAccessible(true);
+        ConcurrentHashMap<ExecutionThrottler, ExecutorService> map = new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32);
+        throttlerPoolMap.set(null, map);
+
+        String identity = "some operation";
+        FunctionUtil.registerPool(FunctionUtil.throttler(identity), 10);
+
+        assertTrue(map.size()==1);
+        assertTrue(map.containsKey(FunctionUtil.throttler(identity)));
+        assertTrue(((ThreadPoolExecutor)map.get(FunctionUtil.throttler(identity))).getMaximumPoolSize()==10);
+
+    }
+
+    @Test
+    public void testRegisterPoolWithService() throws NoSuchFieldException, IllegalAccessException {
+
+        Field throttlerPoolMap = FunctionUtil.class.getDeclaredField("throttlerPoolMap");
+        throttlerPoolMap.setAccessible(true);
+        ConcurrentHashMap<ExecutionThrottler, ExecutorService> map = new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32);
+        throttlerPoolMap.set(null, map);
+
+        String identity = "some operation";
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        FunctionUtil.registerPool(FunctionUtil.throttler(identity), executorService);
+
+        assertTrue(map.size()==1);
+        assertTrue(map.containsKey(FunctionUtil.throttler(identity)));
+        assertTrue(map.get(FunctionUtil.throttler(identity)) == executorService);
+
+    }
+
+    @Test
+    public void testExecuteWithPool() throws NoSuchFieldException, IllegalAccessException {
+
+        Field throttlerPoolMap = FunctionUtil.class.getDeclaredField("throttlerPoolMap");
+        throttlerPoolMap.setAccessible(true);
+        ConcurrentHashMap<ExecutionThrottler, ExecutorService> map = new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32);
+        throttlerPoolMap.set(null, map);
+
+        String identity = "some operation";
+        ExecutorService executorServiceSpy = spy(Executors.newFixedThreadPool(10));
+        FunctionUtil.registerPool(FunctionUtil.throttler(identity), executorServiceSpy);
+
+
+        Block blockMock = mock(Block.class);
+        FunctionUtil.executeWithThrottle(FunctionUtil.throttler(identity), blockMock);
+
+        verify(executorServiceSpy).submit(any(Runnable.class));
+        verify(blockMock).execute();
+
+    }
+
+    @Test
+    public void testExecuteAwait() throws InterruptedException {
+
+        // what if task executes later
+
+        Block codeBlockSpy = spy(new Block() {
+            public void execute() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        long startTime = System.currentTimeMillis();
+
+        FunctionUtil.executeAwait(codeBlockSpy, 100, TimeUnit.MILLISECONDS);
+
+        System.out.print((System.currentTimeMillis() - startTime));
+       // assertTrue((System.currentTimeMillis() - startTime) < 200);
+        Thread.sleep(100);
+        verify(codeBlockSpy).execute();
+
+        // what if task executes earlier
+
+        codeBlockSpy = spy(new Block() {
+            public void execute() {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+         startTime = System.currentTimeMillis();
+
+        FunctionUtil.executeAwait(codeBlockSpy, 200, TimeUnit.MILLISECONDS);
+
+        assertTrue((System.currentTimeMillis() - startTime) < 200);
+        verify(codeBlockSpy).execute();
+
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testExecuteWithTimeoutForMoreExecutionTime(){
+
+        Block codeBlockSpy = spy(new Block() {
+            public void execute() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        FunctionUtil.executeWithTimeout(codeBlockSpy, 100, TimeUnit.MILLISECONDS);
+    }
+
+    @Test
+    public void testExecuteWithTimeoutForLessExecutionTime(){
+
+        Block codeBlockSpy = spy(new Block() {
+            public void execute() {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        FunctionUtil.executeWithTimeout(codeBlockSpy, 200, TimeUnit.MILLISECONDS);
+        assertTrue(true);
     }
 }

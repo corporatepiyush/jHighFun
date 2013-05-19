@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public final class CollectionFunctionChain<I> {
 
@@ -205,6 +206,24 @@ public final class CollectionFunctionChain<I> {
                 task.execute(collection);
             }
         });
+        return this;
+    }
+
+    public CollectionFunctionChain<I> executeWithTimeout(final Task<List<I>> task, Integer time, TimeUnit timeUnit) {
+        FunctionUtil.executeWithTimeout(new Block() {
+            public void execute() {
+                task.execute(collection);
+            }
+        }, time, timeUnit);
+        return this;
+    }
+
+    public CollectionFunctionChain<I> executeAwait(final Task<List<I>> task, Integer time, TimeUnit timeUnit) {
+        FunctionUtil.executeAwait(new Block() {
+            public void execute() {
+                task.execute(collection);
+            }
+        }, time, timeUnit);
         return this;
     }
 

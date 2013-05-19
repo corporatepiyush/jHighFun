@@ -3,6 +3,7 @@ package org.jhighfun.util;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public final class ObjectFunctionChain<I> {
 
@@ -73,6 +74,24 @@ public final class ObjectFunctionChain<I> {
                 task.execute(object);
             }
         });
+        return this;
+    }
+
+    public ObjectFunctionChain<I> executeWithTimeout(final Task<I> task, Integer time, TimeUnit timeUnit) {
+        FunctionUtil.executeWithTimeout(new Block() {
+            public void execute() {
+                task.execute(object);
+            }
+        }, time, timeUnit);
+        return this;
+    }
+
+    public ObjectFunctionChain<I> executeAwait(final Task<I> task, Integer time, TimeUnit timeUnit) {
+        FunctionUtil.executeAwait(new Block() {
+            public void execute() {
+                task.execute(object);
+            }
+        }, time, timeUnit);
         return this;
     }
 

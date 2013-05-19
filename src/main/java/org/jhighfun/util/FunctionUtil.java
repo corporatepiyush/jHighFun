@@ -26,7 +26,7 @@ public final class FunctionUtil {
     private static final Lock registerOperation = new ReentrantLock(true);
     private static final ConcurrentHashMap<Operation, Lock> operationLockMap = new ConcurrentHashMap<Operation, Lock>(15, 0.9f, 32);
 
-    private static final Map<ExecutionThrottler, ExecutorService> throttlerPoolMap = new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32);
+    private static Map<ExecutionThrottler, ExecutorService> throttlerPoolMap = new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32);
 
     public static <I, O> List<O> map(List<I> inputList, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
@@ -632,7 +632,7 @@ public final class FunctionUtil {
         return new CurriedFunction<I, O>(function, Arrays.asList(fixedInputs));
     }
 
-    public static TaskExecutionHandle acceptTasks(List<Callable> futureTasks) {
+    private static TaskExecutionHandle acceptTasks(List<Callable> futureTasks) {
 
         List<Future> futureList = new ArrayList<Future>();
 
@@ -745,12 +745,12 @@ public final class FunctionUtil {
         final Lock lock = new ReentrantLock();
         final Condition condition = lock.newCondition();
         try {
+            lock.lock();
             try {
-                lock.lock();
                 highPriorityTaskThreadPool.submit(new Runnable() {
                     public void run() {
+                        lock.lock();
                         try {
-                            lock.lock();
                             codeBlock.execute();
                             condition.signal();
                         } finally {
