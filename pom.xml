@@ -110,5 +110,17 @@
 
     <properties>
         <compileSource>1.5</compileSource>
+        <altDeploymentRepository>repo::default::file:/Users/Piyush/Documents/GitHub/jHighFun/releases</altDeploymentRepository>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>repo</id>
+            <url>https://github.com/corporatepiyush/jHighFun/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshot-repo</id>
+            <url>https://github.com/corporatepiyush/jHighFun/releases</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
