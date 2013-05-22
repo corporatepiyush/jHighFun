@@ -100,9 +100,9 @@ public class ThreadPoolFactory {
         if (priority.equals(HIGH_PRIORITY)) {
             executor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
         } else if (priority.equals(MEDIUM_PRIORITY)) {
-            executor = new ThreadPoolExecutor(0, 100, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+            executor = new ThreadPoolExecutor(20, 20, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         } else if (priority.equals(LOW_PRIORITY)) {
-            executor = new ThreadPoolExecutor(0, 5, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+            executor = new ThreadPoolExecutor(5, 5, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         }
 
         final ThreadPoolExecutor executorDummy = executor;

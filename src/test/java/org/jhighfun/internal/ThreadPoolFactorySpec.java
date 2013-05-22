@@ -83,8 +83,8 @@ public class ThreadPoolFactorySpec {
 
         ThreadPoolExecutor defaultPool = (ThreadPoolExecutor) ThreadPoolFactory.getMediumPriorityAsyncTaskThreadPool();
 
-        assertEquals(defaultPool.getCorePoolSize(), 0);
-        assertEquals(defaultPool.getMaximumPoolSize(), 100);
+        assertEquals(defaultPool.getCorePoolSize(), 20);
+        assertEquals(defaultPool.getMaximumPoolSize(), 20);
         assertEquals(defaultPool.getKeepAliveTime(TimeUnit.MINUTES), 5);
         assertEquals(defaultPool.getQueue().getClass(), new LinkedBlockingQueue<Runnable>().getClass());
     }
@@ -113,7 +113,7 @@ public class ThreadPoolFactorySpec {
 
         ThreadPoolExecutor defaultPool = (ThreadPoolExecutor) ThreadPoolFactory.getLowPriorityAsyncTaskThreadPool();
 
-        assertEquals(defaultPool.getCorePoolSize(), 0);
+        assertEquals(defaultPool.getCorePoolSize(), 5);
         assertEquals(defaultPool.getMaximumPoolSize(), 5);
         assertEquals(defaultPool.getKeepAliveTime(TimeUnit.MINUTES), 5);
         assertEquals(defaultPool.getQueue().getClass(), new LinkedBlockingQueue<Runnable>().getClass());
