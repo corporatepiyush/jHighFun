@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import static org.jhighfun.util.CollectionUtil.List;
+import static org.jhighfun.util.CollectionUtil.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -631,6 +632,28 @@ public class FunctionUtilSpec {
         });
         assertEquals(tuple2._1.toString(), "[Scala]");
         assertEquals(tuple2._2.toString(), "[Java]");
+    }
+
+    @Test
+    public void testMerge(){
+
+        List<String> lang = new LinkedList<String>();
+        lang.add("Scala");
+        lang.add("Java");
+        lang.add("C++");
+
+
+        List<String> author = new LinkedList<String>();
+        author.add("Martin");
+        author.add("James");
+        author.add("Dennis");
+
+        Collection<Tuple2<String, String>> mergeOutput  = FunctionUtil.merge(lang, author);
+
+        Collection<Tuple2<String, String>> expected = List(tuple("Scala", "Martin"), tuple("Java", "James"), tuple("C++", "Dennis"));
+
+        assertEquals(mergeOutput.toString(), expected.toString());
+
     }
 
     @Test

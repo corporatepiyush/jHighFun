@@ -43,4 +43,14 @@ public final class Tuple5<F, S, T, FO, FI> {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "Tuple5{" +
+                "_1=" + _1 +
+                ", _2=" + _2 +
+                ", _3=" + _3 +
+                ", _4=" + _4 +
+                ", _5=" + _5 +
+                '}';
+    }
 }

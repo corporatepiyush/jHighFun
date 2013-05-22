@@ -527,6 +527,7 @@ public final class FunctionUtil {
         return count;
     }
 
+
     public static <T> Tuple2<Collection<T>, Collection<T>> partition(Collection<T> input, Function<T, Boolean> predicate) {
 
         final Collection<T> list1 = new LinkedList<T>();
@@ -1005,6 +1006,24 @@ public final class FunctionUtil {
                 }
             }
         }
+    }
+
+    public static <T1, T2> Collection<Tuple2<T1,T2>> merge(Collection<T1> first, Collection<T2> second) {
+
+        if(first.size()> second.size() || first.size() < second.size()){
+            throw new IllegalArgumentException("Both collections should be of same size.");
+        }
+
+        List<Tuple2<T1,T2>> mergedList = new LinkedList<Tuple2<T1, T2>>();
+
+        Iterator<T1> T1 = first.iterator();
+        Iterator<T2> T2 = second.iterator();
+
+        while(T1.hasNext()){
+            mergedList.add(new Tuple2<T1, T2>(T1.next(), T2.next()));
+        }
+
+        return  mergedList;
     }
 }
 

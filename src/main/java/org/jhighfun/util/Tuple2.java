@@ -30,4 +30,12 @@ public final class Tuple2<F, S> {
         result = 31 * result + (_2 != null ? _2.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Tuple2{" +
+                "_1=" + _1 +
+                ", _2=" + _2 +
+                '}';
+    }
 }
