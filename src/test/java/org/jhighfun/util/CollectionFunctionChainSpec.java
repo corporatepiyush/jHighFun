@@ -842,7 +842,7 @@ public class CollectionFunctionChainSpec {
                     }
                 });
             }
-        }, FunctionUtil.parallel(10));
+        }, FunctionUtil.parallel(100));
 
         verify(spyBlock, times(10)).execute();
     }

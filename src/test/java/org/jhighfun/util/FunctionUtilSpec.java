@@ -648,7 +648,7 @@ public class FunctionUtilSpec {
         author.add("James");
         author.add("Dennis");
 
-        Collection<Tuple2<String, String>> mergeOutput  = FunctionUtil.merge(lang, author);
+        Collection<Tuple2<String, String>> mergeOutput  = FunctionUtil.combine(lang, author);
 
         Collection<Tuple2<String, String>> expected = List(tuple("Scala", "Martin"), tuple("Java", "James"), tuple("C++", "Dennis"));
 

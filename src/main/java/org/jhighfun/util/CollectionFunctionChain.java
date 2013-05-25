@@ -1,5 +1,7 @@
 package org.jhighfun.util;
 
+import sun.java2d.SunGraphicsEnvironment;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -11,7 +13,7 @@ public final class CollectionFunctionChain<I> {
     private List<I> collection;
 
     public CollectionFunctionChain(List<I> collection) {
-        this.collection = collection;
+        this.collection = new LinkedList<I>(collection);
     }
 
     public <O> ObjectFunctionChain<O> transform(Function<List<I>, O> converter) {
@@ -144,6 +146,20 @@ public final class CollectionFunctionChain<I> {
 
     public CollectionFunctionChain<I> limit(int to) {
         return slice(0, to);
+    }
+
+    public CollectionFunctionChain<I> reverse() {
+        final LinkedList<I> reverseList = new LinkedList<I>();
+        for (I element : collection) {
+            reverseList.addFirst(element);
+        }
+        collection = reverseList;
+        return this;
+    }
+
+    public <I, T> CollectionFunctionChain<Tuple2<I,T>> combine(Collection<T> second) {
+        List<Tuple2<I, T>> tuple2List = (List) FunctionUtil.combine(collection, second);
+        return  new CollectionFunctionChain<Tuple2<I, T>>(tuple2List);
     }
 
     public CollectionForkAndJoin<I> fork() {
