@@ -107,6 +107,7 @@ public final class FunctionUtil {
                         if (exception.size() == 0) {
                             try {
                                 taskInputOutput.setOutput(converter.apply(taskInputOutput.getInput()));
+                                Thread.yield();
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -270,6 +271,7 @@ public final class FunctionUtil {
                         if (exception.size() == 0) {
                             try {
                                 taskInputOutput.setOutput(predicate.apply(taskInputOutput.getInput()));
+                                Thread.yield();
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -378,6 +380,7 @@ public final class FunctionUtil {
                         if (exception.size() == 0) {
                             try {
                                 accum = accumulator.accumulate(accum, current);
+                                Thread.yield();
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -585,6 +588,7 @@ public final class FunctionUtil {
                         if (exception.size() == 0) {
                             try {
                                 recordProcessor.process(task);
+                                Thread.yield();
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
