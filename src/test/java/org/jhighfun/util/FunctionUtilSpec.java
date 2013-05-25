@@ -4,6 +4,7 @@ package org.jhighfun.util;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import support.Person;
@@ -109,6 +110,62 @@ public class FunctionUtilSpec {
 
         verify(mockBlock, times(1)).execute();
         verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+    }
+
+    @Test
+    public void testExecuteAsyncWithCallback() {
+
+        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
+            public String execute() {
+                return "output";
+            }
+        });
+        CallbackTask callbackTaskMock = mock(CallbackTask.class);
+
+        FunctionUtil.executeAsync(asyncTaskSpy, callbackTaskMock);
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
+
+        verify(asyncTaskSpy, times(1)).execute();
+        verify(callbackTaskMock, times(1)).execute(argument.capture());
+        assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
+        assertEquals(argument.getValue().getException(), null);
+        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+
+    }
+
+
+    @Test
+    public void testExecuteAsyncWithCallbackWithException() {
+
+        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
+            public String execute() {
+                if (1 < 2) throw new RuntimeException();
+                return "output";
+            }
+        });
+        CallbackTask callbackTaskMock = mock(CallbackTask.class);
+
+        FunctionUtil.executeAsync(asyncTaskSpy, callbackTaskMock);
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
+
+        verify(asyncTaskSpy, times(1)).execute();
+        verify(callbackTaskMock, times(1)).execute(argument.capture());
+        assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
+        assertEquals(argument.getValue().getException().getClass(), RuntimeException.class);
+        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+
     }
 
     @Test
@@ -635,7 +692,7 @@ public class FunctionUtilSpec {
     }
 
     @Test
-    public void testMerge(){
+    public void testMerge() {
 
         List<String> lang = new LinkedList<String>();
         lang.add("Scala");
@@ -648,7 +705,7 @@ public class FunctionUtilSpec {
         author.add("James");
         author.add("Dennis");
 
-        Collection<Tuple2<String, String>> mergeOutput  = FunctionUtil.combine(lang, author);
+        Collection<Tuple2<String, String>> mergeOutput = FunctionUtil.combine(lang, author);
 
         Collection<Tuple2<String, String>> expected = List(tuple("Scala", "Martin"), tuple("Java", "James"), tuple("C++", "Dennis"));
 
@@ -678,6 +735,7 @@ public class FunctionUtilSpec {
 
     }
 
+
     @Test
     public void testRegisterPool() throws NoSuchFieldException, IllegalAccessException {
 
@@ -689,9 +747,9 @@ public class FunctionUtilSpec {
         String identity = "some operation";
         FunctionUtil.registerPool(FunctionUtil.throttler(identity), 10);
 
-        assertTrue(map.size()==1);
+        assertTrue(map.size() == 1);
         assertTrue(map.containsKey(FunctionUtil.throttler(identity)));
-        assertTrue(((ThreadPoolExecutor)map.get(FunctionUtil.throttler(identity))).getMaximumPoolSize()==10);
+        assertTrue(((ThreadPoolExecutor) map.get(FunctionUtil.throttler(identity))).getMaximumPoolSize() == 10);
 
     }
 
@@ -707,7 +765,7 @@ public class FunctionUtilSpec {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         FunctionUtil.registerPool(FunctionUtil.throttler(identity), executorService);
 
-        assertTrue(map.size()==1);
+        assertTrue(map.size() == 1);
         assertTrue(map.containsKey(FunctionUtil.throttler(identity)));
         assertTrue(map.get(FunctionUtil.throttler(identity)) == executorService);
 
@@ -754,7 +812,7 @@ public class FunctionUtilSpec {
         FunctionUtil.executeAwait(codeBlockSpy, 100, TimeUnit.MILLISECONDS);
 
         System.out.print((System.currentTimeMillis() - startTime));
-       // assertTrue((System.currentTimeMillis() - startTime) < 200);
+        // assertTrue((System.currentTimeMillis() - startTime) < 200);
         Thread.sleep(100);
         verify(codeBlockSpy).execute();
 
@@ -770,7 +828,7 @@ public class FunctionUtilSpec {
             }
         });
 
-         startTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
 
         FunctionUtil.executeAwait(codeBlockSpy, 200, TimeUnit.MILLISECONDS);
 
@@ -780,7 +838,7 @@ public class FunctionUtilSpec {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testExecuteWithTimeoutForMoreExecutionTime(){
+    public void testExecuteWithTimeoutForMoreExecutionTime() {
 
         Block codeBlockSpy = spy(new Block() {
             public void execute() {
@@ -796,7 +854,7 @@ public class FunctionUtilSpec {
     }
 
     @Test
-    public void testExecuteWithTimeoutForLessExecutionTime(){
+    public void testExecuteWithTimeoutForLessExecutionTime() {
 
         Block codeBlockSpy = spy(new Block() {
             public void execute() {

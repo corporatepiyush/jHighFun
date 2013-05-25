@@ -94,4 +94,36 @@ public final class CollectionUtil {
         return new Tuple5<F, S, T, FO, FI>(first, second, third, fourth, fifth);
     }
 
+    public static List<Integer> NumberRange(int from, int to, int step) {
+        if (step < 1)
+            throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
+        List<Integer> range = new LinkedList<Integer>();
+        if (from > to) {
+            for (int i = from; i >= to; i = i - step) {
+                range.add(i);
+            }
+        } else {
+            for (int i = from; i <= to; i = i + step) {
+                range.add(i);
+            }
+        }
+
+        return range;
+    }
+
+    public static List<Double> NumberRange(double from, double to, double step) {
+        if (!(step > 0.0))
+            throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
+        List<Double> range = new LinkedList<Double>();
+        if (from > to) {
+            for (double i = from; i >= to; i = i - step) {
+                range.add(i);
+            }
+        } else {
+            for (double i = from; i <= to; i = i + step) {
+                range.add(i*1.0);
+            }
+        }
+        return range;
+    }
 }

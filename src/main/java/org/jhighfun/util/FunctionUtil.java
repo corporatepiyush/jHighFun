@@ -654,6 +654,22 @@ public final class FunctionUtil {
         });
     }
 
+    public static <T> void executeAsync(final AsyncTask<T> asyncTask, final CallbackTask callbackTask) {
+        mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
+            public void run() {
+                AsyncTaskHandle<T> asyncTaskHandle = null;
+                try {
+                    T output = asyncTask.execute();
+                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, null);
+                } catch (Throwable e) {
+                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, e);
+                } finally {
+                    callbackTask.execute(asyncTaskHandle);
+                }
+            }
+        });
+    }
+
     public static void executeLater(final Block codeBlock) {
         lowPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
@@ -802,7 +818,7 @@ public final class FunctionUtil {
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final MemoizeConfig config) {
         final Map<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>(100, 0.6f, 32);
         final Long maxPersistenceTime = config.getTimeUnit().toMillis(config.getUnitValue());
-        final AtomicBoolean isLRUInPorgress = new AtomicBoolean(false);
+        final AtomicBoolean isLRUInProgress = new AtomicBoolean(false);
 
         return new Function<I, O>() {
 
@@ -820,14 +836,14 @@ public final class FunctionUtil {
 
                         memoizedOutput.get()._2 = currentTimeinMillis;
 
-                        if (memo.size() > config.getSize() && !isLRUInPorgress.get()) {
+                        if (memo.size() > config.getSize() && !isLRUInProgress.get()) {
                             highPriorityTaskThreadPool.submit(new Runnable() {
                                 public void run() {
-                                    isLRUInPorgress.set(true);
+                                    isLRUInProgress.set(true);
                                     while (memo.size() > config.getSize()) {
                                         removeLeastRecentlyUsedRecord();
                                     }
-                                    isLRUInPorgress.set(false);
+                                    isLRUInProgress.set(false);
                                 }
                             });
                         }
@@ -1008,22 +1024,22 @@ public final class FunctionUtil {
         }
     }
 
-    public static <T1, T2> Collection<Tuple2<T1,T2>> combine(Collection<T1> first, Collection<T2> second) {
+    public static <T1, T2> Collection<Tuple2<T1, T2>> combine(Collection<T1> first, Collection<T2> second) {
 
-        if(first.size()> second.size() || first.size() < second.size()){
+        if (first.size() > second.size() || first.size() < second.size()) {
             throw new IllegalArgumentException("Both collections should be of same size.");
         }
 
-        List<Tuple2<T1,T2>> mergedList = new LinkedList<Tuple2<T1, T2>>();
+        List<Tuple2<T1, T2>> mergedList = new LinkedList<Tuple2<T1, T2>>();
 
         Iterator<T1> T1 = first.iterator();
         Iterator<T2> T2 = second.iterator();
 
-        while(T1.hasNext()){
+        while (T1.hasNext()) {
             mergedList.add(new Tuple2<T1, T2>(T1.next(), T2.next()));
         }
 
-        return  mergedList;
+        return mergedList;
     }
 }
 
