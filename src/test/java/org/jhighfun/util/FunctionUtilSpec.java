@@ -210,7 +210,7 @@ public class FunctionUtilSpec {
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
         assertEquals(argument.getValue().getOutput(), "output");
         assertEquals(argument.getValue().getException(), null);
-        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+        verify(spyLowPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
 
     }
 
@@ -240,7 +240,7 @@ public class FunctionUtilSpec {
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
         assertEquals(argument.getValue().getOutput(), null);
         assertEquals(argument.getValue().getException().getClass(), RuntimeException.class);
-        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+        verify(spyLowPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
 
     }
 

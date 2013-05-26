@@ -149,23 +149,4 @@ public class CollectionUtilSpec {
         assertEquals(NumberRange(10, 5, -1), List(10, 9, 8, 7, 6, 5));
     }
 
-    @Test
-    public void testGenerateDoubleList() {
-
-        assertEquals(NumberRange(1.0, 5.0, 1), List(1.0, 2.0, 3.0, 4.0, 5.0));
-        assertEquals(NumberRange(1.0, 5.0, 2.0), List(1.0, 3.0, 5.0));
-
-        assertEquals(NumberRange(10.0, 5.0, 1.0), List(10.0, 9.0, 8.0, 7.0, 6.0, 5.0));
-        assertEquals(NumberRange(10.0, 5.0, 2.0), List(10.0, 8.0, 6.0));
-
-        assertEquals(NumberRange(1.0, 2.0, 0.2d), List(1.0, 1.2, 1.4, 1.6, 1.8, 2.0));
-
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGenerateDoubleListForNegativeStep() {
-        assertEquals(NumberRange(10.0, 5.0, -1.0), List(10, 9, 8, 7, 6, 5));
-    }
-
-
 }

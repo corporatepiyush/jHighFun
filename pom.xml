@@ -110,7 +110,8 @@
 
     <properties>
         <compileSource>1.5</compileSource>
-        <altDeploymentRepository>repo::default::file:/Users/Piyush/Documents/GitHub/jHighFun/releases</altDeploymentRepository>
+        <altDeploymentRepository>repo::default::file:/Users/Piyush/Documents/GitHub/jHighFun/releases
+        </altDeploymentRepository>
     </properties>
 
     <distributionManagement>

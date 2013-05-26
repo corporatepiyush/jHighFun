@@ -1,9 +1,6 @@
 package org.jhighfun.util;
 
-import org.jhighfun.internal.CacheObject;
-import org.jhighfun.internal.Config;
-import org.jhighfun.internal.TaskInputOutput;
-import org.jhighfun.internal.ThreadPoolFactory;
+import org.jhighfun.internal.*;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -103,11 +100,15 @@ public final class FunctionUtil {
         for (final Collection<TaskInputOutput<I, O>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
+                    int loop = 1;
                     for (TaskInputOutput<I, O> taskInputOutput : list2) {
                         if (exception.size() == 0) {
                             try {
                                 taskInputOutput.setOutput(converter.apply(taskInputOutput.getInput()));
-                                Thread.yield();
+                                if (loop++ == Constants.MAX_LOOP_BEFORE_YIELD) {
+                                    Thread.yield();
+                                    loop = 1;
+                                }
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -267,11 +268,15 @@ public final class FunctionUtil {
         for (final Collection<TaskInputOutput<T, Boolean>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
+                    int loop = 1;
                     for (TaskInputOutput<T, Boolean> taskInputOutput : list2) {
                         if (exception.size() == 0) {
                             try {
                                 taskInputOutput.setOutput(predicate.apply(taskInputOutput.getInput()));
-                                Thread.yield();
+                                if (loop++ == Constants.MAX_LOOP_BEFORE_YIELD) {
+                                    Thread.yield();
+                                    loop = 1;
+                                }
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -374,13 +379,17 @@ public final class FunctionUtil {
                         accum = iterator.next();
                     }
 
+                    int loop = 1;
                     while (iterator.hasNext()) {
                         current = iterator.next();
 
                         if (exception.size() == 0) {
                             try {
                                 accum = accumulator.accumulate(accum, current);
-                                Thread.yield();
+                                if (loop++ == Constants.MAX_LOOP_BEFORE_YIELD) {
+                                    Thread.yield();
+                                    loop = 1;
+                                }
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -583,12 +592,15 @@ public final class FunctionUtil {
         for (final Collection<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-
+                    int loop = 1;
                     for (T task : list2) {
                         if (exception.size() == 0) {
                             try {
                                 recordProcessor.process(task);
-                                Thread.yield();
+                                if (loop++ == Constants.MAX_LOOP_BEFORE_YIELD) {
+                                    Thread.yield();
+                                    loop = 1;
+                                }
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();

@@ -110,20 +110,4 @@ public final class CollectionUtil {
 
         return range;
     }
-
-    public static List<Double> NumberRange(double from, double to, double step) {
-        if (!(step > 0.0))
-            throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
-        List<Double> range = new LinkedList<Double>();
-        if (from > to) {
-            for (double i = from; i >= to; i = i - step) {
-                range.add(i);
-            }
-        } else {
-            for (double i = from; i <= to; i = i + step) {
-                range.add(i*1.0);
-            }
-        }
-        return range;
-    }
 }
