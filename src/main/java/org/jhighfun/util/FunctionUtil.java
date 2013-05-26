@@ -664,9 +664,9 @@ public final class FunctionUtil {
                 AsyncTaskHandle<T> asyncTaskHandle = null;
                 try {
                     T output = asyncTask.execute();
-                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, null);
+                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, output, null);
                 } catch (Throwable e) {
-                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, e);
+                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, null, e);
                 } finally {
                     callbackTask.execute(asyncTaskHandle);
                 }
@@ -678,6 +678,22 @@ public final class FunctionUtil {
         lowPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
                 codeBlock.execute();
+            }
+        });
+    }
+
+    public static <T> void executeLater(final AsyncTask<T> asyncTask, final CallbackTask callbackTask) {
+        lowPriorityAsyncTaskThreadPool.submit(new Runnable() {
+            public void run() {
+                AsyncTaskHandle<T> asyncTaskHandle = null;
+                try {
+                    T output = asyncTask.execute();
+                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, output, null);
+                } catch (Throwable e) {
+                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, null, e);
+                } finally {
+                    callbackTask.execute(asyncTaskHandle);
+                }
             }
         });
     }

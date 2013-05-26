@@ -1,12 +1,14 @@
 package org.jhighfun.util;
 
-public class AsyncTaskHandle<T> {
+public final class AsyncTaskHandle<T> {
 
     private final AsyncTask<T> asyncTask;
     private final Throwable exception;
+    private final T output;
 
-    public AsyncTaskHandle(AsyncTask<T> asyncTask, Throwable exception) {
+    public AsyncTaskHandle(AsyncTask<T> asyncTask, T output, Throwable exception) {
         this.asyncTask = asyncTask;
+        this.output = output;
         this.exception = exception;
     }
 
@@ -17,4 +19,9 @@ public class AsyncTaskHandle<T> {
     public Throwable getException() {
         return exception;
     }
+
+    public T getOutput() {
+        return output;
+    }
+
 }

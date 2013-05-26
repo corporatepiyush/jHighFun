@@ -134,6 +134,7 @@ public class FunctionUtilSpec {
         verify(asyncTaskSpy, times(1)).execute();
         verify(callbackTaskMock, times(1)).execute(argument.capture());
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
+        assertEquals(argument.getValue().getOutput(), "output");
         assertEquals(argument.getValue().getException(), null);
         verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
 
@@ -163,6 +164,7 @@ public class FunctionUtilSpec {
         verify(asyncTaskSpy, times(1)).execute();
         verify(callbackTaskMock, times(1)).execute(argument.capture());
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
+        assertEquals(argument.getValue().getOutput(), null);
         assertEquals(argument.getValue().getException().getClass(), RuntimeException.class);
         verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
 
@@ -182,6 +184,64 @@ public class FunctionUtilSpec {
 
         verify(mockBlock, times(1)).execute();
         verify(spyLowPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+    }
+
+    @Test
+    public void testExecuteLaterWithCallback() {
+
+        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
+            public String execute() {
+                return "output";
+            }
+        });
+        CallbackTask callbackTaskMock = mock(CallbackTask.class);
+
+        FunctionUtil.executeLater(asyncTaskSpy, callbackTaskMock);
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
+
+        verify(asyncTaskSpy, times(1)).execute();
+        verify(callbackTaskMock, times(1)).execute(argument.capture());
+        assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
+        assertEquals(argument.getValue().getOutput(), "output");
+        assertEquals(argument.getValue().getException(), null);
+        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+
+    }
+
+
+    @Test
+    public void testExecuteLaterWithCallbackWithException() {
+
+        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
+            public String execute() {
+                if (1 < 2) throw new RuntimeException();
+                return "output";
+            }
+        });
+        CallbackTask callbackTaskMock = mock(CallbackTask.class);
+
+        FunctionUtil.executeLater(asyncTaskSpy, callbackTaskMock);
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
+
+        verify(asyncTaskSpy, times(1)).execute();
+        verify(callbackTaskMock, times(1)).execute(argument.capture());
+        assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
+        assertEquals(argument.getValue().getOutput(), null);
+        assertEquals(argument.getValue().getException().getClass(), RuntimeException.class);
+        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+
     }
 
 
