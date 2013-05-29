@@ -149,4 +149,12 @@ public class CollectionUtilSpec {
         assertEquals(NumberRange(10, 5, -1), List(10, 9, 8, 7, 6, 5));
     }
 
+    @Test
+    public void testGenerateIntListWithoutStep() {
+
+        assertEquals(NumberRange(1, 5), List(1, 2, 3, 4, 5));
+        assertEquals(NumberRange(10, 5), List(10, 9, 8, 7, 6, 5));
+
+    }
+
 }

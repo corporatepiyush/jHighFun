@@ -5,6 +5,8 @@ import org.junit.Test;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.*;
 
 import static junit.framework.Assert.assertEquals;
@@ -119,4 +121,42 @@ public class ThreadPoolFactorySpec {
         assertEquals(defaultPool.getQueue().getClass(), new LinkedBlockingQueue<Runnable>().getClass());
     }
 
+    @Test
+    public void testThreadLocalVariableTransfer(){
+
+        ThreadLocal<String> threadLocal = new ThreadLocal<String>();
+        threadLocal.set("transactionId");
+
+        final List<String> stringList = new CopyOnWriteArrayList<String>();
+
+        ExecutorService highPriorityTaskThreadPool = ThreadPoolFactory.getHighPriorityTaskThreadPool();
+        highPriorityTaskThreadPool.submit(new Callable<Object>() {
+            public Object call() throws Exception {
+                stringList.add(new ThreadLocal<String>().get());
+                return null;
+            }
+        });
+
+        highPriorityTaskThreadPool.submit(new Runnable() {
+            public void run() {
+                stringList.add(new ThreadLocal<String>().get());
+            }
+        });
+
+        highPriorityTaskThreadPool.submit(new Runnable() {
+            public void run() {
+                stringList.add(new ThreadLocal<String>().get());
+            }
+        }, "transactionId");
+
+        highPriorityTaskThreadPool.shutdown();
+        try {
+            highPriorityTaskThreadPool.awaitTermination(100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        assertEquals(stringList, Arrays.asList("transactionId", "transactionId", "transactionId"));
+
+    }
 }

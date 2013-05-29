@@ -110,4 +110,9 @@ public final class CollectionUtil {
 
         return range;
     }
+
+
+    public static List<Integer> NumberRange(int from, int to) {
+        return NumberRange(from, to, 1);
+    }
 }

@@ -871,8 +871,8 @@ public class FunctionUtilSpec {
 
         FunctionUtil.executeAwait(codeBlockSpy, 100, TimeUnit.MILLISECONDS);
 
-        System.out.print((System.currentTimeMillis() - startTime));
-        // assertTrue((System.currentTimeMillis() - startTime) < 200);
+        //System.out.print((System.currentTimeMillis() - startTime));
+        assertTrue((System.currentTimeMillis() - startTime) < 200);
         Thread.sleep(100);
         verify(codeBlockSpy).execute();
 
