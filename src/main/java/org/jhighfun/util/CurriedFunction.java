@@ -6,6 +6,13 @@ import java.util.List;
 
 import static org.jhighfun.util.CollectionUtil.List;
 
+/**
+ *  A curried form of function with ability of currying further and getting invoked
+ *
+ *  @author Piyush Katariya
+ *
+ **/
+
 public final class CurriedFunction<I, O> {
 
     private final List<I> fixedInputs;

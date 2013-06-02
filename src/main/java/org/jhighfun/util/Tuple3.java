@@ -1,5 +1,11 @@
 package org.jhighfun.util;
 
+/**
+ *  List of exact three referential element
+ *
+ *  @author Piyush Katariya
+ *
+ **/
 
 public final class Tuple3<F, S, T> {
 

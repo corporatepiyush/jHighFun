@@ -2,6 +2,13 @@ package org.jhighfun.internal;
 
 import java.lang.ref.SoftReference;
 
+/**
+ *  A garbage aware(SoftReferenced) wrapper around a an object
+ *
+ *  @author Piyush Katariya
+ *
+ **/
+
 public class CacheObject<T> {
 
     private SoftReference<T> softCacheObject;

@@ -198,7 +198,7 @@ public class FunctionUtilSpec {
 
         FunctionUtil.executeLater(asyncTaskSpy, callbackTaskMock);
         try {
-            Thread.sleep(10);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -871,7 +871,7 @@ public class FunctionUtilSpec {
 
         FunctionUtil.executeAwait(codeBlockSpy, 100, TimeUnit.MILLISECONDS);
 
-        //System.out.print((System.currentTimeMillis() - startTime));
+        System.out.print((System.currentTimeMillis() - startTime));
         assertTrue((System.currentTimeMillis() - startTime) < 200);
         Thread.sleep(100);
         verify(codeBlockSpy).execute();

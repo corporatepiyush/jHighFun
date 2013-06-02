@@ -1,6 +1,13 @@
 package org.jhighfun.util;
 
 
+/**
+ *  List of exact two referential element
+ *
+ *  @author Piyush Katariya
+ *
+ **/
+
 public final class Tuple2<F, S> {
 
     public F _1;

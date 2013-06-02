@@ -6,12 +6,22 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.jhighfun.util.CollectionUtil.List;
 import static org.jhighfun.util.CollectionUtil.Set;
+
+/**
+ *  Set of reusable utility methods to present finer interfaces to do a given job in
+ *  concurrent and lean fashion.
+ *
+ *  1. Higher Order Function's with concurrency support to mimic the best practices from functional programming
+ *  2. Memoization(caching/optimizing the method calls) to implement smart executable function units.
+ *
+ *  @author Piyush Katariya
+ *
+ **/
 
 public final class FunctionUtil {
 
@@ -790,30 +800,28 @@ public final class FunctionUtil {
 
     }
 
+
     public static void executeAwait(final Block codeBlock, Integer time, TimeUnit timeUnit) {
-        final Lock lock = new ReentrantLock();
-        final Condition condition = lock.newCondition();
+
+        final List<Throwable> exception = new LinkedList<Throwable>();
         try {
-            lock.lock();
-            try {
-                highPriorityTaskThreadPool.submit(new Runnable() {
-                    public void run() {
-                        lock.lock();
-                        try {
-                            codeBlock.execute();
-                            condition.signal();
-                        } finally {
-                            lock.unlock();
-                        }
+            highPriorityTaskThreadPool.submit(new Runnable() {
+                public void run() {
+                    try {
+                        codeBlock.execute();
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        exception.add(e);
                     }
-                });
-                condition.await(time, timeUnit);
-            } finally {
-                lock.unlock();
-            }
+                }
+            }).get(time, timeUnit);
+        } catch (TimeoutException e) {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        } finally {
+            if (exception.size() > 0)
+                throw new RuntimeException(exception.get(0));
         }
     }
 
@@ -849,7 +857,7 @@ public final class FunctionUtil {
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final MemoizeConfig config) {
         final Map<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>(100, 0.6f, 32);
-        final Long maxPersistenceTime = config.getTimeUnit().toMillis(config.getUnitValue());
+        final Long maxPersistenceTime = config.getTimeUnit().toMillis(config.getTimeValue());
         final AtomicBoolean isLRUInProgress = new AtomicBoolean(false);
 
         return new Function<I, O>() {
@@ -1074,6 +1082,14 @@ public final class FunctionUtil {
         return mergedList;
     }
 }
+
+/**
+ *  Cascading interface which enables writing execution of independent tasks concurrently
+ *  where each task has any object as input.
+ *
+ *  @author Piyush Katariya
+ *
+ **/
 
 final class Batch implements WorkDivisionStrategy {
     private final int size;

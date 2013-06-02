@@ -6,6 +6,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ *  Cascading interface which enables availability of utility methods which cam be invoked on
+ *  List data structure to compose/write clean business logic flow of any kind, more suitable for batch
+ *  programming.
+ *
+ *  @author Piyush Katariya
+ *
+ **/
+
 public final class CollectionFunctionChain<I> {
 
     private List<I> collection;

@@ -1,4 +1,4 @@
-package org.jhighfun.util;
+package org.jhighfun.util.batch;
 
 
 import java.util.Iterator;
@@ -20,14 +20,14 @@ public class BatchIterator<T> implements Iterator<List<T>> {
     }
 
     public List<T> next() {
-        List<T> chunk = new LinkedList<T>();
+        final List<T> batch = new LinkedList<T>();
         int i = 0;
         while (recordIterator.hasNext() && i < batchSize) {
-            chunk.add(recordIterator.next());
+            batch.add(recordIterator.next());
             i++;
         }
 
-        return chunk;
+        return batch;
     }
 
     public void remove() {

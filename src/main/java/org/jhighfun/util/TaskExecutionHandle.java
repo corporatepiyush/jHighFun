@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+/**
+ *  A future handle list of task submitted to executor
+ *
+ *  @author Piyush Katariya
+ *
+ **/
+
 public final class TaskExecutionHandle {
 
     private final List<Future> futureList;

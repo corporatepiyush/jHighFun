@@ -1,6 +1,13 @@
 package org.jhighfun.util;
 
 
+/**
+ *  List of exact four referential element
+ *
+ *  @author Piyush Katariya
+ *
+ **/
+
 public final class Tuple4<F, S, T, FO> {
 
     public F _1;

@@ -7,6 +7,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
+/**
+ *  jHighFun library uses three global ThreadPoolExecutors
+ *
+ *  1. HighPriorityTask thread pool - used for all multi-threaded/concurrent operations supported by framework
+ *  2. MediumPriorityTask thread pool - used for executing medium priority business task execution in async fashion
+ *                                      which does not help generate the output which is necessary to be sent out as response
+ *  3. LowPriorityTask thread pool - used for low priority tasks such as event logging etc. which are not part of business logic and
+ *                                   hence not important to be executed in synchronous fashion.
+ *
+ *  @author Piyush Katariya
+ *
+ **/
 
 public class ThreadPoolFactory {
 

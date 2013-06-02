@@ -3,6 +3,13 @@ package org.jhighfun.util;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  Cascading interface which enables writing execution of independent tasks concurrently
+ *  where each task has any object as input.
+ *
+ *  @author Piyush Katariya
+ *
+ **/
 
 public final class ForkAndJoin<T> {
 
