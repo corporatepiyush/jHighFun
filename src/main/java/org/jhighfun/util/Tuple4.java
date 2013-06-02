@@ -2,7 +2,7 @@ package org.jhighfun.util;
 
 
 /**
- * List of exact four referential element
+ * Object wrapper around List of exact four referential element
  *
  * @author Piyush Katariya
  */

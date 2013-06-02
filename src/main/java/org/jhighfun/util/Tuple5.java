@@ -1,7 +1,7 @@
 package org.jhighfun.util;
 
 /**
- * List of exact five referential element
+ * Object wrapper around List of exact five referential element
  *
  * @author Piyush Katariya
  */

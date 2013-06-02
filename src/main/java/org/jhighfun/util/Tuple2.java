@@ -2,7 +2,7 @@ package org.jhighfun.util;
 
 
 /**
- * List of exact two referential element
+ * Object wrapper around List of exact two referential element
  *
  * @author Piyush Katariya
  */

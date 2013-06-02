@@ -164,7 +164,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public <I, T> CollectionFunctionChain<Tuple2<I, T>> combine(Collection<T> second) {
-        List<Tuple2<I, T>> tuple2List = (List) FunctionUtil.combine(collection, second);
+        List<Tuple2<I, T>> tuple2List = (List) FunctionUtil.zip(collection, second);
         return new CollectionFunctionChain<Tuple2<I, T>>(tuple2List);
     }
 

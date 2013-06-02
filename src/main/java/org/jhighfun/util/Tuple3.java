@@ -1,7 +1,7 @@
 package org.jhighfun.util;
 
 /**
- * List of exact three referential element
+ * Object wrapper around List of exact three referential element
  *
  * @author Piyush Katariya
  */

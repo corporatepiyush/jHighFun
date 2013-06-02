@@ -1063,7 +1063,7 @@ public final class FunctionUtil {
         }
     }
 
-    public static <T1, T2> Collection<Tuple2<T1, T2>> combine(Collection<T1> first, Collection<T2> second) {
+    public static <T1, T2> Collection<Tuple2<T1, T2>> zip(Collection<T1> first, Collection<T2> second) {
 
         if (first.size() > second.size() || first.size() < second.size()) {
             throw new IllegalArgumentException("Both collections should be of same size.");
