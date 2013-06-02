@@ -121,7 +121,7 @@ public class ThreadPoolFactorySpec {
         assertEquals(defaultPool.getQueue().getClass(), new LinkedBlockingQueue<Runnable>().getClass());
     }
 
-    @Test
+
     public void testThreadLocalVariableTransfer() {
 
         ThreadLocal<String> threadLocal = new ThreadLocal<String>();
