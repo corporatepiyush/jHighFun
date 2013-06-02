@@ -7,6 +7,11 @@ import org.jhighfun.util.Tuple2;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * Lazy proxy for existing Iterator
+ *
+ * @author Piyush Katariya
+ */
 public class LazyIterator<INIT, OBJ> implements Iterator<OBJ> {
 
     protected INIT initialInput;

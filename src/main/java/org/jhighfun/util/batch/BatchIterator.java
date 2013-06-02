@@ -5,6 +5,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Bulk fetch proxy for existing Iterator
+ *
+ * @author Piyush Katariya
+ */
+
 public class BatchIterator<T> implements Iterator<List<T>> {
 
     private final Iterator<T> recordIterator;

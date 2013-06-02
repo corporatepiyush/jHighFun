@@ -11,5 +11,5 @@ import java.util.List;
 
 public interface WorkDivisionStrategy {
 
-    <T> List<Collection<T>> divide(Collection<T> work);
+    <T> List<Collection<T>> divide(Iterable<T> work);
 }

@@ -6,6 +6,12 @@ import org.jhighfun.util.Function;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * Condition aware proxy for existing Iterator
+ *
+ * @author Piyush Katariya
+ */
+
 public final class ConditionalIterator<T> implements Iterator<T> {
 
     private final Iterator<T> iterator;

@@ -2,7 +2,7 @@ package org.jhighfun.util;
 
 /**
  * A monoid function which accepts carry over as first and current element of Iterable structure
- * as second input element and returns carryover
+ * as second input element and returns carry over
  *
  * @author Piyush Katariya
  */

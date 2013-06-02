@@ -319,7 +319,7 @@ public final class FunctionUtil {
         }
     }
 
-    public static <ACCUM, EL> ACCUM foldLeft(Collection<EL> list, ACCUM accum,
+    public static <ACCUM, EL> ACCUM foldLeft(Iterable<EL> list, ACCUM accum,
                                              Accumulator<ACCUM, EL> accumulator) {
 
         for (EL element : list) {
@@ -329,7 +329,7 @@ public final class FunctionUtil {
         return accum;
     }
 
-    public static <ACCUM, EL> ACCUM foldRight(Collection<EL> list, ACCUM accum,
+    public static <ACCUM, EL> ACCUM foldRight(Iterable<EL> list, ACCUM accum,
                                               Accumulator<ACCUM, EL> accumulator) {
 
         final LinkedList<EL> reverseList = new LinkedList<EL>();
@@ -341,7 +341,7 @@ public final class FunctionUtil {
         return foldLeft(reverseList, accum, accumulator);
     }
 
-    public static <T> T reduce(Collection<T> list,
+    public static <T> T reduce(Iterable<T> list,
                                Accumulator<T, T> accumulator) {
         T current, accum = null;
 
@@ -360,10 +360,7 @@ public final class FunctionUtil {
     }
 
 
-    public static <T> T reduce(Collection<T> inputList, final Accumulator<T, T> accumulator, WorkDivisionStrategy workDivisionStrategy) {
-
-        if (inputList.size() < 2)
-            return reduce(inputList, accumulator);
+    public static <T> T reduce(Iterable<T> inputList, final Accumulator<T, T> accumulator, WorkDivisionStrategy workDivisionStrategy) {
 
         final List<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
         final List<T> outList = new CopyOnWriteArrayList<T>();
@@ -434,9 +431,9 @@ public final class FunctionUtil {
         return reduce(outList, accumulator);
     }
 
-    public static <T> List<T> sortWith(Collection<T> inputList, final Comparator<T> comparator) {
+    public static <T> List<T> sortWith(Iterable<T> inputList, final Comparator<T> comparator) {
 
-        final List<T> outList = new ArrayList<T>(inputList.size());
+        final List<T> outList = new ArrayList<T>();
 
         for (T element : inputList) {
             outList.add(element);
@@ -447,7 +444,7 @@ public final class FunctionUtil {
         return outList;
     }
 
-    public static <T> List<T> sort(Collection<T> inputList) {
+    public static <T> List<T> sort(Iterable<T> inputList) {
         return sortWith(inputList, new Comparator<T>() {
             public int compare(T o1, T o2) {
                 return ((Comparable) o1).compareTo(o2);
@@ -455,7 +452,7 @@ public final class FunctionUtil {
         });
     }
 
-    public static <T> List<T> sortBy(Collection<T> inputList, String member, String... members) {
+    public static <T> List<T> sortBy(Iterable<T> inputList, String member, String... members) {
 
         final List<String> memberVars = new LinkedList<String>();
         memberVars.add(member);
@@ -521,7 +518,7 @@ public final class FunctionUtil {
         return list;
     }
 
-    public static <T> boolean every(Collection<T> inputList, Function<T, Boolean> predicate) {
+    public static <T> boolean every(Iterable<T> inputList, Function<T, Boolean> predicate) {
 
         for (T t : inputList) {
             if (!predicate.apply(t))
@@ -530,7 +527,7 @@ public final class FunctionUtil {
         return true;
     }
 
-    public static <T> boolean any(Collection<T> inputList, Function<T, Boolean> predicate) {
+    public static <T> boolean any(Iterable<T> inputList, Function<T, Boolean> predicate) {
 
         for (T t : inputList) {
             if (predicate.apply(t))
@@ -539,7 +536,7 @@ public final class FunctionUtil {
         return false;
     }
 
-    public static <T> int count(Collection<T> input, Function<T, Boolean> predicate) {
+    public static <T> int count(Iterable<T> input, Function<T, Boolean> predicate) {
         int count = 0;
         for (T t : input) {
             if (predicate.apply(t))
@@ -549,7 +546,7 @@ public final class FunctionUtil {
     }
 
 
-    public static <T> Tuple2<Collection<T>, Collection<T>> partition(Collection<T> input, Function<T, Boolean> predicate) {
+    public static <T> Tuple2<Collection<T>, Collection<T>> partition(Iterable<T> input, Function<T, Boolean> predicate) {
 
         final Collection<T> list1 = new LinkedList<T>();
         final Collection<T> list2 = new LinkedList<T>();
@@ -574,20 +571,20 @@ public final class FunctionUtil {
         }
     }
 
-    public static <T> void each(Collection<T> list, RecordProcessor<T> recordProcessor) {
+    public static <T> void each(Iterable<T> list, RecordProcessor<T> recordProcessor) {
         for (T item : list) {
             recordProcessor.process(item);
         }
     }
 
-    public static <T> void eachWithIndex(Collection<T> list, RecordWithIndexProcessor<T> recordProcessor) {
+    public static <T> void eachWithIndex(Iterable<T> list, RecordWithIndexProcessor<T> recordProcessor) {
         int index = 0;
         for (T item : list) {
             recordProcessor.process(item, index++);
         }
     }
 
-    public static <T> void each(Collection<T> inputList, final RecordProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
+    public static <T> void each(Iterable<T> inputList, final RecordProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
         final List<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
 
         final int noOfThread = taskList.size();
@@ -1082,13 +1079,6 @@ public final class FunctionUtil {
     }
 }
 
-/**
- * Cascading interface which enables writing execution of independent tasks concurrently
- * where each task has any object as input.
- *
- * @author Piyush Katariya
- */
-
 final class Batch implements WorkDivisionStrategy {
     private final int size;
 
@@ -1096,7 +1086,7 @@ final class Batch implements WorkDivisionStrategy {
         this.size = size;
     }
 
-    public <T> List<Collection<T>> divide(Collection<T> work) {
+    public <T> List<Collection<T>> divide(Iterable<T> work) {
         int counter = size;
         int collectionsIndex = 0;
         final List<Collection<T>> workDivisor = new ArrayList<Collection<T>>();
@@ -1133,10 +1123,15 @@ final class Parallel implements WorkDivisionStrategy {
         this.threads = threads;
     }
 
-    public <T> List<Collection<T>> divide(Collection<T> work) {
+    public <T> List<Collection<T>> divide(Iterable<T> work) {
         final List<Collection<T>> workDivisor = new ArrayList<Collection<T>>();
 
-        int counter = threads > work.size() ? work.size() : threads;
+        int size = 0;
+        for (T t : work) {  //todo - optimize it
+           size++;
+        }
+
+        int counter = threads > size ? size : threads;
         int collectionsIndex = 0;
 
         for (int i = 0; i < counter; i++) {
