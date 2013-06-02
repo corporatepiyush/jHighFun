@@ -6,12 +6,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- *  Cascading interface which enables availability of utility methods which cam be invoked on
- *  any object to compose/write clean business logic flow of any kind
+ * Cascading interface which enables availability of utility methods which cam be invoked on
+ * any object to compose/write clean business logic flow of any kind
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class ObjectFunctionChain<I> {
 

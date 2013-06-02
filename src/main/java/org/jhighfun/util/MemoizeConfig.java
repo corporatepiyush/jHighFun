@@ -5,9 +5,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Memoization configuration parameter
- *
- *  1. Maximum time to live for a cache object
- *  2. Maximum size of In-Memory cache
+ * <p/>
+ * 1. Maximum time to live for a cache object
+ * 2. Maximum size of In-Memory cache
  *
  * @author Piyush Katariya
  */

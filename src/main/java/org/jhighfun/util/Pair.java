@@ -1,11 +1,10 @@
 package org.jhighfun.util;
 
 /**
- *  Immutable value object which represents the key and corresponding value
+ * Immutable value object which represents the key and corresponding value
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class Pair<K, V> {
     private final K key;

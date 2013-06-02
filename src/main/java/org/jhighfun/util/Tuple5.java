@@ -1,11 +1,10 @@
 package org.jhighfun.util;
 
 /**
- *  List of exact five referential element
+ * List of exact five referential element
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class Tuple5<F, S, T, FO, FI> {
 

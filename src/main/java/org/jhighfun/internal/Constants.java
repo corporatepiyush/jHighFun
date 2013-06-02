@@ -1,11 +1,10 @@
 package org.jhighfun.internal;
 
 /**
- *  Constants used for jHighFun library
+ * Constants used for jHighFun library
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public interface Constants {
 

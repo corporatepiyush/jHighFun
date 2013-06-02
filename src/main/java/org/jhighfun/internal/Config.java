@@ -1,11 +1,10 @@
 package org.jhighfun.internal;
 
 /**
- *  Configuration parameters for jHighFun library
+ * Configuration parameters for jHighFun library
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public class Config {
 

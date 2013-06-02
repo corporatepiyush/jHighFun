@@ -2,11 +2,10 @@ package org.jhighfun.util;
 
 
 /**
- *  List of exact four referential element
+ * List of exact four referential element
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class Tuple4<F, S, T, FO> {
 

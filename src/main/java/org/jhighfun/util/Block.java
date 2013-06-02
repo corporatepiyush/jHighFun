@@ -1,11 +1,10 @@
 package org.jhighfun.util;
 
 /**
- *  Executable code block which contains group of statement.
+ * Executable code block which contains group of statement.
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public interface Block {
 

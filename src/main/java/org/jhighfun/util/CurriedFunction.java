@@ -7,11 +7,10 @@ import java.util.List;
 import static org.jhighfun.util.CollectionUtil.List;
 
 /**
- *  A curried form of function with ability of currying further and getting invoked
+ * A curried form of function with ability of currying further and getting invoked
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class CurriedFunction<I, O> {
 

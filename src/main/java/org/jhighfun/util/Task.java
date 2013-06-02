@@ -2,11 +2,10 @@ package org.jhighfun.util;
 
 
 /**
- *  Executable business unit which contains group of statement to execute upon input passed.
+ * Executable business unit which contains group of statement to execute upon input passed.
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public interface Task<I> {
 

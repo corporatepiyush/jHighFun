@@ -5,12 +5,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- *  Reusable factory methods to generate, merge, flatten various useful data structures
- *  like List, Map, Tuples etc.
+ * Reusable factory methods to generate, merge, flatten various useful data structures
+ * like List, Map, Tuples etc.
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class CollectionUtil {
     public static <T> List<T> List(T... args) {

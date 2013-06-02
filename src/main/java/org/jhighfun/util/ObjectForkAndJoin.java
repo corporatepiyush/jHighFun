@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  Cascading interface which enables writing execution of independent tasks concurrently
- *  where each task has any object as input and compatible with ObjectFunctionChain
+ * Cascading interface which enables writing execution of independent tasks concurrently
+ * where each task has any object as input and compatible with ObjectFunctionChain
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class ObjectForkAndJoin<T> {
 

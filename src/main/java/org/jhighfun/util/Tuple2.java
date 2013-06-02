@@ -2,11 +2,10 @@ package org.jhighfun.util;
 
 
 /**
- *  List of exact two referential element
+ * List of exact two referential element
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class Tuple2<F, S> {
 

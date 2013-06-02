@@ -1,12 +1,11 @@
 package org.jhighfun.util;
 
 /**
- *  A future handle to a AsyncTask which also holds either output or exception
- *  due to execution of AsyncTask task.
+ * A future handle to a AsyncTask which also holds either output or exception
+ * due to execution of AsyncTask task.
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 public final class AsyncTaskHandle<T> {
 
     private final AsyncTask<T> asyncTask;

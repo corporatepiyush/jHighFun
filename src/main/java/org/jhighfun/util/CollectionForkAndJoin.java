@@ -5,12 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *  Cascading interface which enables writing execution of independent tasks concurrently
- *  where each task has List data structure as input.
+ * Cascading interface which enables writing execution of independent tasks concurrently
+ * where each task has List data structure as input.
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class CollectionForkAndJoin<T> {
 

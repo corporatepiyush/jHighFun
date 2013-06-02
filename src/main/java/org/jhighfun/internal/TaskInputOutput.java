@@ -1,11 +1,10 @@
 package org.jhighfun.internal;
 
 /**
- *  A bean used to capture input and output of any task or operation
+ * A bean used to capture input and output of any task or operation
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class TaskInputOutput<I, O> {
 

@@ -122,7 +122,7 @@ public class ThreadPoolFactorySpec {
     }
 
     @Test
-    public void testThreadLocalVariableTransfer(){
+    public void testThreadLocalVariableTransfer() {
 
         ThreadLocal<String> threadLocal = new ThreadLocal<String>();
         threadLocal.set("transactionId");

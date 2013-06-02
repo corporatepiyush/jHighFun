@@ -13,15 +13,14 @@ import static org.jhighfun.util.CollectionUtil.List;
 import static org.jhighfun.util.CollectionUtil.Set;
 
 /**
- *  Set of reusable utility methods to present finer interfaces to do a given job in
- *  concurrent and lean fashion.
+ * Set of reusable utility methods to present finer interfaces to do a given job in
+ * concurrent and lean fashion.
+ * <p/>
+ * 1. Higher Order Function's with concurrency support to mimic the best practices from functional programming
+ * 2. Memoization(caching/optimizing the method calls) to implement smart executable function units.
  *
- *  1. Higher Order Function's with concurrency support to mimic the best practices from functional programming
- *  2. Memoization(caching/optimizing the method calls) to implement smart executable function units.
- *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 public final class FunctionUtil {
 
@@ -1084,12 +1083,11 @@ public final class FunctionUtil {
 }
 
 /**
- *  Cascading interface which enables writing execution of independent tasks concurrently
- *  where each task has any object as input.
+ * Cascading interface which enables writing execution of independent tasks concurrently
+ * where each task has any object as input.
  *
- *  @author Piyush Katariya
- *
- **/
+ * @author Piyush Katariya
+ */
 
 final class Batch implements WorkDivisionStrategy {
     private final int size;
