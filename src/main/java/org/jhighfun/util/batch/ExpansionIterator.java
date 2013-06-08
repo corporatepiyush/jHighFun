@@ -5,15 +5,15 @@ import org.jhighfun.util.Function;
 
 import java.util.Iterator;
 
-public class ExpansionIterator<T, IN> implements Iterator<T> {
+public class ExpansionIterator<IN, OUT> implements Iterator<OUT> {
 
     private final Iterator<IN> iterator;
-    private final Function<IN, Iterable<T>> function;
+    private final Function<IN, Iterable<OUT>> function;
 
-    private Iterator<T> currentIterator;
+    private Iterator<OUT> currentIterator;
     private Boolean innerIteratorExhausted = true;
 
-    public ExpansionIterator(Iterator<IN> iterator, Function<IN, Iterable<T>> function) {
+    public ExpansionIterator(Iterator<IN> iterator, Function<IN, Iterable<OUT>> function) {
         this.iterator = iterator;
         this.function = function;
     }
@@ -26,14 +26,14 @@ public class ExpansionIterator<T, IN> implements Iterator<T> {
         }
         boolean hasNext = currentIterator.hasNext();
 
-        if (hasNext == false) {
+        if (!hasNext) {
             innerIteratorExhausted = true;
         }
 
         return hasNext;
     }
 
-    public final T next() {
+    public final OUT next() {
         return currentIterator.next();
     }
 
