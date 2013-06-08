@@ -814,45 +814,6 @@ public class FunctionUtilSpec {
     }
 
     @Test
-    public void testRegisterPoolWithService() throws NoSuchFieldException, IllegalAccessException {
-
-        Field throttlerPoolMap = FunctionUtil.class.getDeclaredField("throttlerPoolMap");
-        throttlerPoolMap.setAccessible(true);
-        ConcurrentHashMap<ExecutionThrottler, ExecutorService> map = new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32);
-        throttlerPoolMap.set(null, map);
-
-        String identity = "some operation";
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        FunctionUtil.registerPool(FunctionUtil.throttler(identity), executorService);
-
-        assertTrue(map.size() == 1);
-        assertTrue(map.containsKey(FunctionUtil.throttler(identity)));
-        assertTrue(map.get(FunctionUtil.throttler(identity)) == executorService);
-
-    }
-
-    @Test
-    public void testExecuteWithPool() throws NoSuchFieldException, IllegalAccessException {
-
-        Field throttlerPoolMap = FunctionUtil.class.getDeclaredField("throttlerPoolMap");
-        throttlerPoolMap.setAccessible(true);
-        ConcurrentHashMap<ExecutionThrottler, ExecutorService> map = new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32);
-        throttlerPoolMap.set(null, map);
-
-        String identity = "some operation";
-        ExecutorService executorServiceSpy = spy(Executors.newFixedThreadPool(10));
-        FunctionUtil.registerPool(FunctionUtil.throttler(identity), executorServiceSpy);
-
-
-        Block blockMock = mock(Block.class);
-        FunctionUtil.executeWithThrottle(FunctionUtil.throttler(identity), blockMock);
-
-        verify(executorServiceSpy).submit(any(Runnable.class));
-        verify(blockMock).execute();
-
-    }
-
-    @Test
     public void testExecuteAwait() throws InterruptedException {
 
         // what if task executes later
@@ -897,8 +858,8 @@ public class FunctionUtilSpec {
 
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testExecuteWithTimeoutForMoreExecutionTime() {
+    @Test(expected = TimeoutException.class)
+    public void testExecuteWithTimeoutForMoreExecutionTime() throws TimeoutException {
 
         Block codeBlockSpy = spy(new Block() {
             public void execute() {
@@ -914,7 +875,7 @@ public class FunctionUtilSpec {
     }
 
     @Test
-    public void testExecuteWithTimeoutForLessExecutionTime() {
+    public void testExecuteWithTimeoutForLessExecutionTime() throws TimeoutException {
 
         Block codeBlockSpy = spy(new Block() {
             public void execute() {

@@ -3,8 +3,6 @@ package org.jhighfun.internal;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.*;
 
 /**

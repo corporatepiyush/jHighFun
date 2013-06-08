@@ -183,22 +183,18 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> executeAsync(final Task<List<I>> task) {
-        final List<I> collectionCopy = getCollection();
-        collectionCopy.addAll(this.collection);
         FunctionUtil.executeAsync(new Block() {
             public void execute() {
-                task.execute(collectionCopy);
+                task.execute(new LinkedList<I>(collection));
             }
         });
         return this;
     }
 
     public CollectionFunctionChain<I> executeLater(final Task<List<I>> task) {
-        final List<I> collectionCopy = getCollection();
-        collectionCopy.addAll(this.collection);
         FunctionUtil.executeLater(new Block() {
             public void execute() {
-                task.execute(collectionCopy);
+                task.execute(new LinkedList<I>(collection));
             }
         });
         return this;
@@ -231,8 +227,8 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> executeWithTimeout(final Task<List<I>> task, Integer time, TimeUnit timeUnit) {
-        FunctionUtil.executeWithTimeout(new Block() {
+    public CollectionFunctionChain<I> executeAwait(final Task<List<I>> task, Integer time, TimeUnit timeUnit) {
+        FunctionUtil.executeAwait(new Block() {
             public void execute() {
                 task.execute(collection);
             }
@@ -240,12 +236,22 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> executeAwait(final Task<List<I>> task, Integer time, TimeUnit timeUnit) {
-        FunctionUtil.executeAwait(new Block() {
+    public CollectionFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Task<List<I>> task) {
+        FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Block() {
             public void execute() {
-                task.execute(collection);
+                task.execute(new LinkedList<I>(collection));
             }
-        }, time, timeUnit);
+        });
+        return this;
+    }
+
+    public <O> CollectionFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Function<List<I>, O> asyncTask, final CallbackTask<O> callbackTask) {
+        FunctionUtil.executeAsyncWithThrottle(executionThrottler, new AsyncTask<O>() {
+            public O execute() {
+                return asyncTask.apply(collection);
+            }
+        }, callbackTask);
+
         return this;
     }
 

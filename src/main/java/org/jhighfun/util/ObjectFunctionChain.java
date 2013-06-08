@@ -84,8 +84,8 @@ public final class ObjectFunctionChain<I> {
         return this;
     }
 
-    public ObjectFunctionChain<I> executeWithTimeout(final Task<I> task, Integer time, TimeUnit timeUnit) {
-        FunctionUtil.executeWithTimeout(new Block() {
+    public ObjectFunctionChain<I> executeAwait(final Task<I> task, Integer time, TimeUnit timeUnit) {
+        FunctionUtil.executeAwait(new Block() {
             public void execute() {
                 task.execute(object);
             }
@@ -93,12 +93,22 @@ public final class ObjectFunctionChain<I> {
         return this;
     }
 
-    public ObjectFunctionChain<I> executeAwait(final Task<I> task, Integer time, TimeUnit timeUnit) {
-        FunctionUtil.executeAwait(new Block() {
+    public ObjectFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Task<I> task) {
+        FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Block() {
             public void execute() {
                 task.execute(object);
             }
-        }, time, timeUnit);
+        });
+        return this;
+    }
+
+    public <O> ObjectFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Function<I, O> asyncTask, final CallbackTask<O> callbackTask) {
+        FunctionUtil.executeAsyncWithThrottle(executionThrottler, new AsyncTask<O>() {
+            public O execute() {
+                return asyncTask.apply(object);
+            }
+        }, callbackTask);
+
         return this;
     }
 

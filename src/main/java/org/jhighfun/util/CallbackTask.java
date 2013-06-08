@@ -6,5 +6,5 @@ package org.jhighfun.util;
  * @author Piyush Katariya
  */
 
-public interface CallbackTask extends Task<AsyncTaskHandle> {
+public interface CallbackTask<T> extends Task<AsyncTaskHandle<T>> {
 }
