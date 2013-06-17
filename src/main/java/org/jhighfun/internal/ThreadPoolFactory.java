@@ -28,7 +28,7 @@ public class ThreadPoolFactory {
         try {
             context = new InitialContext();
         } catch (NamingException e) {
-            System.err.println("Error while looking up for 'org.jhighfun.hpthreadpool' system property, falling back to default AsyncHighPriorityThreadPool.");
+            //System.err.println("Error while looking up for 'org.jhighfun.hpthreadpool' system property, falling back to default AsyncHighPriorityThreadPool.");
         }
 
         if (context != null) {
@@ -36,7 +36,7 @@ public class ThreadPoolFactory {
             try {
                 managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.jhighfun.hpthreadpool"));
             } catch (Exception e) {
-                System.err.println("Error while looking up for 'org.jhighfun.hpthreadpool' system property, falling back to default AsyncHighPriorityThreadPool.");
+                //System.err.println("Error while looking up for 'org.jhighfun.hpthreadpool' system property, falling back to default AsyncHighPriorityThreadPool.");
             } finally {
                 if (managedThreadPool != null)
                     return managedThreadPool;
@@ -55,7 +55,7 @@ public class ThreadPoolFactory {
         try {
             context = new InitialContext();
         } catch (NamingException e) {
-            System.err.println("Error while looking up for 'org.jhighfun.mpthreadpool' system property, falling back to default AsyncMediumPriorityThreadPool.");
+            //System.err.println("Error while looking up for 'org.jhighfun.mpthreadpool' system property, falling back to default AsyncMediumPriorityThreadPool.");
         }
 
         if (context != null) {
@@ -63,7 +63,7 @@ public class ThreadPoolFactory {
             try {
                 managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.jhighfun.mpthreadpool"));
             } catch (Exception e) {
-                System.err.println("Error while looking up for 'org.jhighfun.mpthreadpool' system property, falling back to default AsyncMediumPriorityThreadPool.");
+                //System.err.println("Error while looking up for 'org.jhighfun.mpthreadpool' system property, falling back to default AsyncMediumPriorityThreadPool.");
             } finally {
                 if (managedThreadPool != null)
                     return managedThreadPool;
@@ -82,7 +82,7 @@ public class ThreadPoolFactory {
         try {
             context = new InitialContext();
         } catch (NamingException e) {
-            System.err.println("Error while looking up for 'org.jhighfun.lpthreadpool' system property, falling back to default AsyncLowPriorityThreadPool.");
+            //System.err.println("Error while looking up for 'org.jhighfun.lpthreadpool' system property, falling back to default AsyncLowPriorityThreadPool.");
         }
 
         if (context != null) {
@@ -90,7 +90,7 @@ public class ThreadPoolFactory {
             try {
                 managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.jhighfun.lpthreadpool"));
             } catch (Exception e) {
-                System.err.println("Error while looking up for 'org.jhighfun.lpthreadpool' system property, falling back to default AsyncLowPriorityThreadPool.");
+                //System.err.println("Error while looking up for 'org.jhighfun.lpthreadpool' system property, falling back to default AsyncLowPriorityThreadPool.");
             } finally {
                 if (managedThreadPool != null)
                     return managedThreadPool;

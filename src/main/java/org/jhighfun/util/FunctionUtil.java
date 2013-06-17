@@ -52,6 +52,15 @@ public final class FunctionUtil {
         return outputList;
     }
 
+    public static <I, O> Iterable<O> map(Iterable<I> inputList, Function<I, O> converter) {
+        final List<O> outputList = new LinkedList<O>();
+
+        for (I i : inputList) {
+            outputList.add(converter.apply(i));
+        }
+        return outputList;
+    }
+
     public static <I, O> List<O> map(List<I> inputList,
                                      final Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
 
@@ -78,6 +87,26 @@ public final class FunctionUtil {
                                            final Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
 
         Collection<TaskInputOutput<I, O>> inputOutputs = map(inputList, new Function<I, TaskInputOutput<I, O>>() {
+            public TaskInputOutput<I, O> apply(I arg) {
+                return new TaskInputOutput<I, O>(arg);
+            }
+        });
+        Collection<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
+
+
+        if (dividedList.size() < 2)
+            return map(inputList, converter);
+
+        mapParallel(dividedList, converter);
+        return map(inputOutputs, new Function<TaskInputOutput<I, O>, O>() {
+            public O apply(TaskInputOutput<I, O> task) {
+                return task.getOutput();
+            }
+        });
+    }
+
+    public static <I, O> Iterable<O> map(Iterable<I> inputList, Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
+        Iterable<TaskInputOutput<I, O>> inputOutputs = map(inputList, new Function<I, TaskInputOutput<I, O>>() {
             public TaskInputOutput<I, O> apply(I arg) {
                 return new TaskInputOutput<I, O>(arg);
             }
@@ -184,6 +213,17 @@ public final class FunctionUtil {
         return outputList;
     }
 
+    public static <T> Iterable<T> filter(Iterable<T> inputList, Function<T, Boolean> predicate) {
+
+        final List<T> outputList = new LinkedList<T>();
+
+        for (T i : inputList) {
+            if (predicate.apply(i))
+                outputList.add(i);
+        }
+        return outputList;
+    }
+
     public static <T> List<T> filter(List<T> inputList, Function<T, Boolean> predicate,
                                      WorkDivisionStrategy workDivisionStrategy) {
 
@@ -263,6 +303,34 @@ public final class FunctionUtil {
                         return arg.getInput();
                     }
                 }).extract();
+
+    }
+
+    public static <T> Iterable<T> filter(Iterable<T> inputList, Function<T, Boolean> predicate,
+                                         WorkDivisionStrategy workDivisionStrategy) {
+
+        Iterable<TaskInputOutput<T, Boolean>> inputOutputs = map(inputList, new Function<T, TaskInputOutput<T, Boolean>>() {
+            public TaskInputOutput<T, Boolean> apply(T arg) {
+                return new TaskInputOutput<T, Boolean>(arg);
+            }
+        });
+        Collection<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
+
+        if (collectionList.size() < 2)
+            return filter(inputList, predicate);
+
+        filterParallel(collectionList, predicate, List.class);
+        Iterable<TaskInputOutput<T, Boolean>> filter = filter(inputOutputs, new Function<TaskInputOutput<T, Boolean>, Boolean>() {
+            public Boolean apply(TaskInputOutput<T, Boolean> task) {
+                return task.getOutput();
+            }
+        });
+
+        return map(filter, new Function<TaskInputOutput<T, Boolean>, T>() {
+            public T apply(TaskInputOutput<T, Boolean> arg) {
+                return arg.getInput();
+            }
+        });
 
     }
 

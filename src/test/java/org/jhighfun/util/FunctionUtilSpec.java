@@ -353,6 +353,38 @@ public class FunctionUtilSpec {
     }
 
     @Test
+    public void testMapFunctionForIterable() {
+
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 100; i++) {
+            list.add("India");
+            list.add("ndia");
+            list.add("dia");
+            list.add("ia");
+            list.add("a");
+        }
+
+        Iterable<Character> list1 = FunctionUtil.map((Iterable) list,
+                new Function<String, Character>() {
+
+                    public Character apply(String input) {
+                        try {
+                            Thread.currentThread().sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return input.charAt(0);
+                    }
+                });
+
+        int i = 0;
+        for (Character character : list1) {
+            assertTrue(character.charValue() == list.get(i++).charAt(0));
+        }
+    }
+
+
+    @Test
     public void testFilterFunctionForList() {
 
         List<String> list = new LinkedList<String>();
@@ -371,6 +403,32 @@ public class FunctionUtilSpec {
                 });
 
         assertTrue(list1.size() == (list.size() / 2));
+
+        for (String string : list1) {
+            assertTrue(string.equals("Ruby"));
+        }
+
+    }
+
+
+    @Test
+    public void testFilterFunctionForIterable() {
+
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 1000; i++) {
+            list.add("Scala");
+            list.add("Ruby");
+        }
+
+        Iterable<String> list1 = FunctionUtil.filter((Iterable) list,
+                new Function<String, Boolean>() {
+
+                    public Boolean apply(String t) {
+                        return t.contains("y");
+                    }
+
+                });
+
 
         for (String string : list1) {
             assertTrue(string.equals("Ruby"));
