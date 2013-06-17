@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import static org.jhighfun.util.CollectionUtil.List;
+import static org.jhighfun.util.CollectionUtil.NumberRange;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -820,11 +821,7 @@ public class CollectionFunctionChainSpec {
     @Test
     public void testExecuteWithGlobalLockWithMultipleThread() {
 
-        final List<Integer> list = new LinkedList<Integer>();
-
-        List<Integer> load = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
-        for (int i = 0; i < 10000; list.add(i), i++) ;
+        final List<Integer> list = NumberRange(1, 10000);
 
         final Block spyBlock = spy(new Block() {
             public void execute() {
@@ -834,9 +831,9 @@ public class CollectionFunctionChainSpec {
             }
         });
 
-        new CollectionFunctionChain<Integer>(load).each(new RecordProcessor<Integer>() {
+        FunctionUtil.each(NumberRange(1, 100), new RecordProcessor<Integer>() {
             public void process(Integer item) {
-                new CollectionFunctionChain<Integer>(list).executeWithGlobalLock(new Task<List<Integer>>() {
+                new CollectionFunctionChain<Integer>(NumberRange(1, 10)).executeWithGlobalLock(new Task<List<Integer>>() {
                     public void execute(List<Integer> input) {
                         spyBlock.execute();
                     }
@@ -844,6 +841,6 @@ public class CollectionFunctionChainSpec {
             }
         }, FunctionUtil.parallel(100));
 
-        verify(spyBlock, times(10)).execute();
+        verify(spyBlock, times(100)).execute();
     }
 }

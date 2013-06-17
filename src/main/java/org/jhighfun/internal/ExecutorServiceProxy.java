@@ -28,7 +28,7 @@ public class ExecutorServiceProxy implements ExecutorService {
     }
 
     private void initializeExecutorService() {
-        if (executorService != null) {
+        if (executorService == null) {
             executorService = new ThreadPoolExecutor(corePoolSize,
                     maximumPoolSize,
                     keepAliveTime,

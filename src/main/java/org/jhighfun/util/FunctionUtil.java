@@ -60,7 +60,7 @@ public final class FunctionUtil {
                 return new TaskInputOutput<I, O>(arg);
             }
         });
-        List<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
+        Collection<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
 
 
         if (dividedList.size() < 2)
@@ -82,7 +82,7 @@ public final class FunctionUtil {
                 return new TaskInputOutput<I, O>(arg);
             }
         });
-        List<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
+        Collection<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
 
 
         if (dividedList.size() < 2)
@@ -96,7 +96,7 @@ public final class FunctionUtil {
         });
     }
 
-    private static <I, O> void mapParallel(List<Collection<TaskInputOutput<I, O>>> taskList,
+    private static <I, O> void mapParallel(Collection<Collection<TaskInputOutput<I, O>>> taskList,
                                            final Function<I, O> converter) {
         final int noOfThread = taskList.size();
 
@@ -192,7 +192,7 @@ public final class FunctionUtil {
                 return new TaskInputOutput<T, Boolean>(arg);
             }
         });
-        List<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
+        Collection<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
 
         if (collectionList.size() < 2)
             return filter(inputList, predicate);
@@ -219,7 +219,7 @@ public final class FunctionUtil {
                 return new TaskInputOutput<T, Boolean>(arg);
             }
         });
-        List<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
+        Collection<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
 
         if (collectionList.size() < 2)
             return filter(inputSet, predicate);
@@ -247,7 +247,7 @@ public final class FunctionUtil {
                 return new TaskInputOutput<T, Boolean>(arg);
             }
         });
-        List<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
+        Collection<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
 
         if (collectionList.size() < 2)
             return filter(inputList, predicate);
@@ -266,7 +266,7 @@ public final class FunctionUtil {
 
     }
 
-    private static <T, DS> void filterParallel(List<Collection<TaskInputOutput<T, Boolean>>> taskList,
+    private static <T, DS> void filterParallel(Collection<Collection<TaskInputOutput<T, Boolean>>> taskList,
                                                final Function<T, Boolean> predicate, Class<DS> expectedCollection) {
         final int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
@@ -362,7 +362,7 @@ public final class FunctionUtil {
 
     public static <T> T reduce(Iterable<T> inputList, final Accumulator<T, T> accumulator, WorkDivisionStrategy workDivisionStrategy) {
 
-        final List<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
+        final Collection<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
         final List<T> outList = new CopyOnWriteArrayList<T>();
 
         int noOfThread = taskList.size();
@@ -585,7 +585,7 @@ public final class FunctionUtil {
     }
 
     public static <T> void each(Iterable<T> inputList, final RecordProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
-        final List<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
+        final Collection<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
 
         final int noOfThread = taskList.size();
 
@@ -1083,7 +1083,7 @@ public final class FunctionUtil {
 
     public static <T> void divideAndConquer(Collection<T> collection, final Task<Collection<T>> task, WorkDivisionStrategy partition) {
 
-        final List<Collection<T>> collections = partition.divide(collection);
+        final Collection<Collection<T>> collections = partition.divide(collection);
 
         each(collections, new RecordProcessor<Collection<T>>() {
             public void process(Collection<T> items) {

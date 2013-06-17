@@ -1,7 +1,6 @@
 package org.jhighfun.util;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Abstraction to implement work(Collection of Units to operate on) division strategy
@@ -11,5 +10,5 @@ import java.util.List;
 
 public interface WorkDivisionStrategy {
 
-    <T> List<Collection<T>> divide(Iterable<T> work);
+    <T> Collection<Collection<T>> divide(Iterable<T> work);
 }
