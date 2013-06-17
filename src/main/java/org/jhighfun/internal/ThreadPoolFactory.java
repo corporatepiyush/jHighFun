@@ -106,7 +106,7 @@ public class ThreadPoolFactory {
 
     private static ExecutorService getDefaultThreadPool(String priority) {
 
-        ThreadPoolExecutor executor = null;
+        ExecutorService executor = null;
 
         if (priority.equals(HIGH_PRIORITY)) {
             executor = getThreadPoolExecutor(0, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
@@ -116,39 +116,19 @@ public class ThreadPoolFactory {
             executor = getThreadPoolExecutor(5, 5, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         }
 
-        final ThreadPoolExecutor executorDummy = executor;
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                executorDummy.shutdownNow();
-            }
-        });
-
         return executor;
     }
 
-    private static ThreadPoolExecutor getThreadPoolExecutor(int corePoolSize,
-                                                            int maximumPoolSize,
-                                                            long keepAliveTime,
-                                                            TimeUnit unit,
-                                                            BlockingQueue<Runnable> workQueue) {
-        return new ThreadPoolExecutor(corePoolSize,
+    private static ExecutorService getThreadPoolExecutor(int corePoolSize,
+                                                         int maximumPoolSize,
+                                                         long keepAliveTime,
+                                                         TimeUnit unit,
+                                                         BlockingQueue<Runnable> workQueue) {
+        return new ExecutorServiceProxy(corePoolSize,
                 maximumPoolSize,
                 keepAliveTime,
                 unit,
-                workQueue) {
-            public <T> Future<T> submit(Callable<T> task) {
-                return super.submit(task);
-            }
-
-            public <T> Future<T> submit(Runnable task, T result) {
-                return super.submit(task, result);
-            }
-
-            public Future<?> submit(Runnable task) {
-                return super.submit(task);
-            }
-        };
+                workQueue);
     }
 
 }
