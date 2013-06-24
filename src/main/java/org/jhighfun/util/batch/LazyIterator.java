@@ -4,8 +4,6 @@ package org.jhighfun.util.batch;
 import org.jhighfun.util.Function;
 import org.jhighfun.util.Tuple2;
 
-import java.util.Iterator;
-
 /**
  * Lazy proxy for existing Iterator
  *

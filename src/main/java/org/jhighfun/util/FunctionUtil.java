@@ -1212,6 +1212,37 @@ public final class FunctionUtil {
 
         return mergedList;
     }
+
+    public static void scheduleAtFixedRate(final Block block, long period) {
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    block.execute();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        }, period, period);
+    }
+
+    public static void scheduleAtFixedDelay(final Block block, long period) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    block.execute();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        }, period, period);
+    }
+
+    public static <T> RepeatCondition<T> repeat(RepeatableTask<T> task) {
+        return new RepeatCondition<T>(task);
+    }
+
 }
 
 final class Batch implements WorkDivisionStrategy {

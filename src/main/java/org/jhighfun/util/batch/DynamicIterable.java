@@ -21,10 +21,10 @@ public class DynamicIterable<T> implements Iterable<T> {
     public String toString() {
 
         StringBuilder string = new StringBuilder("[");
-        if(iterator.hasNext()){
+        if (iterator.hasNext()) {
             string.append(iterator.next().toString());
         }
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             string.append(", ");
             string.append(iterator.next().toString());
         }
