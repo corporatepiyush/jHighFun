@@ -11,7 +11,7 @@ import java.util.List;
  * @author Piyush Katariya
  */
 
-public class BatchIterator<T> implements Iterator<List<T>> {
+public class BatchIterator<T> extends AbstractIterator<List<T>> {
 
     private final Iterator<T> recordIterator;
     private final int batchSize;

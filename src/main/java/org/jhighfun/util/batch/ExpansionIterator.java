@@ -5,7 +5,7 @@ import org.jhighfun.util.Function;
 
 import java.util.Iterator;
 
-public class ExpansionIterator<IN, OUT> implements Iterator<OUT> {
+public class ExpansionIterator<IN, OUT> extends AbstractIterator<OUT> {
 
     private final Iterator<IN> iterator;
     private final Function<IN, Iterable<OUT>> function;

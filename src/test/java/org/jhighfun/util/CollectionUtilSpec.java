@@ -144,9 +144,27 @@ public class CollectionUtilSpec {
 
     }
 
+    @Test
+    public void testGenerateLazyIntList() {
+
+        assertEquals(List(LazyRange(1, 5, 1)), List(1, 2, 3, 4, 5));
+        assertEquals(List(LazyRange(1, 5, 2)), List(1, 3, 5));
+
+        assertEquals(List(LazyRange(10, 5, 1)), List(10, 9, 8, 7, 6, 5));
+        assertEquals(List(LazyRange(10, 5, 2)), List(10, 8, 6));
+
+
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testGenerateIntListForNegativeStep() {
         assertEquals(NumberRange(10, 5, -1), List(10, 9, 8, 7, 6, 5));
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGenerateLazyIntListForNegativeStep() {
+        assertEquals(List(LazyRange(10, 5, -1)), List(10, 9, 8, 7, 6, 5));
     }
 
     @Test
@@ -154,6 +172,14 @@ public class CollectionUtilSpec {
 
         assertEquals(NumberRange(1, 5), List(1, 2, 3, 4, 5));
         assertEquals(NumberRange(10, 5), List(10, 9, 8, 7, 6, 5));
+
+    }
+
+    @Test
+    public void testGenerateLazyIntListWithoutStep() {
+
+        assertEquals(List(LazyRange(1, 5)), List(1, 2, 3, 4, 5));
+        assertEquals(List(LazyRange(10, 5)), List(10, 9, 8, 7, 6, 5));
 
     }
 

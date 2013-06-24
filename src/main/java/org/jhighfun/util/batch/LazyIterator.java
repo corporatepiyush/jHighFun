@@ -11,7 +11,7 @@ import java.util.Iterator;
  *
  * @author Piyush Katariya
  */
-public class LazyIterator<INIT, OBJ> implements Iterator<OBJ> {
+public class LazyIterator<INIT, OBJ> extends AbstractIterator<OBJ> {
 
     protected INIT initialInput;
     protected final Function<INIT, Tuple2<INIT, OBJ>> function;

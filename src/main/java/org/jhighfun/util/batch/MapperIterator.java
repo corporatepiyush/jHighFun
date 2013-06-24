@@ -5,7 +5,7 @@ import org.jhighfun.util.Function;
 
 import java.util.Iterator;
 
-public class MapperIterator<I, O> implements Iterator<O> {
+public class MapperIterator<I, O> extends AbstractIterator<O> {
 
     private final Iterator<I> iterator;
     private final Function<I, O> function;

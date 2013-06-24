@@ -16,4 +16,20 @@ public class DynamicIterable<T> implements Iterable<T> {
     public Iterator<T> iterator() {
         return iterator;
     }
+
+    @Override
+    public String toString() {
+
+        StringBuilder string = new StringBuilder("[");
+        if(iterator.hasNext()){
+            string.append(iterator.next().toString());
+        }
+        while(iterator.hasNext()){
+            string.append(", ");
+            string.append(iterator.next().toString());
+        }
+        string.append("]");
+
+        return string.toString();
+    }
 }

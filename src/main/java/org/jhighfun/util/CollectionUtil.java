@@ -1,5 +1,8 @@
 package org.jhighfun.util;
 
+import org.jhighfun.util.batch.AbstractIterator;
+import org.jhighfun.util.batch.DynamicIterable;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -28,9 +31,9 @@ public final class CollectionUtil {
         return argsList;
     }
 
-    public static List List(Collection... listArgs) {
+    public static List List(Iterable... listArgs) {
         final List flattenList = new LinkedList();
-        for (Collection collection : listArgs) {
+        for (Iterable collection : listArgs) {
             for (Object obj : collection) {
                 flattenList.add(obj);
             }
@@ -46,9 +49,9 @@ public final class CollectionUtil {
         return set;
     }
 
-    public static Set Set(Collection... setArgs) {
+    public static Set Set(Iterable... setArgs) {
         final Set flattenSet = new HashSet();
-        for (Collection collection : setArgs) {
+        for (Iterable collection : setArgs) {
             for (Object obj : collection) {
                 flattenSet.add(obj);
             }
@@ -121,5 +124,65 @@ public final class CollectionUtil {
 
     public static List<Integer> NumberRange(int from, int to) {
         return NumberRange(from, to, 1);
+    }
+
+
+    public static Iterable<Integer> LazyRange(final int from, final int to, final int step) {
+        if (step < 1)
+            throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
+        Iterable<Integer> range = null;
+        if (from > to) {
+            range = new DynamicIterable<Integer>(new AbstractIterator<Integer>() {
+
+                private int i = from;
+
+                public boolean hasNext() {
+                    return i >= to;
+                }
+
+                public Integer next() {
+
+                    if (hasNext()) {
+                        try {
+                            return i;
+                        } finally {
+                            i = i - step;
+                        }
+                    } else {
+                        throw new NoSuchElementException();
+                    }
+                }
+
+            });
+        } else {
+            range = new DynamicIterable<Integer>(new AbstractIterator<Integer>() {
+
+                private int i = from;
+
+                public boolean hasNext() {
+                    return i <= to;
+                }
+
+                public Integer next() {
+
+                    if (hasNext()) {
+                        try {
+                            return i;
+                        } finally {
+                            i = i + step;
+                        }
+                    } else {
+                        throw new NoSuchElementException();
+                    }
+                }
+
+            });
+        }
+
+        return range;
+    }
+
+    public static Iterable<Integer> LazyRange(int from, int to) {
+        return LazyRange(from, to, 1);
     }
 }

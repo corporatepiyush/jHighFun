@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  * @author Piyush Katariya
  */
 
-public final class ConditionalIterator<T> implements Iterator<T> {
+public final class ConditionalIterator<T> extends AbstractIterator<T> {
 
     private final Iterator<T> iterator;
     private final Function<T, Boolean> predicate;
