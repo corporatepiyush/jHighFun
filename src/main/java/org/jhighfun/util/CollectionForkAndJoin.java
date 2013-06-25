@@ -41,10 +41,6 @@ public final class CollectionForkAndJoin<T> {
     }
 
     private List<T> copyCollection() {
-        List<T> list = new LinkedList<T>();
-        for (T t : collectionFunctionChain.extract()) {
-            list.add(t);
-        }
-        return list;
+        return new LinkedList<T>(collectionFunctionChain.extract());
     }
 }

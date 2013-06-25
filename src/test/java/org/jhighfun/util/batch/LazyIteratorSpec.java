@@ -18,13 +18,15 @@ public class LazyIteratorSpec {
         final int load = 99999999;
         LazyIterator<Integer, Integer> lazyIterator = new LazyIterator<Integer, Integer>(1,
                 new Function<Integer, Tuple2<Integer, Integer>>() {
-            public Tuple2<Integer, Integer> apply(Integer arg) {return tuple(arg + 1, arg); }
-        },
+                    public Tuple2<Integer, Integer> apply(Integer arg) {
+                        return tuple(arg + 1, arg);
+                    }
+                },
                 new Function<Integer, Boolean>() {
-            public Boolean apply(Integer arg) {
-                return arg != load;
-            }
-        }
+                    public Boolean apply(Integer arg) {
+                        return arg != load;
+                    }
+                }
         );
 
         int index = 1;

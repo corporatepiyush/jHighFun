@@ -19,10 +19,7 @@ public final class CollectionFunctionChain<I> {
     private List<I> collection;
 
     public CollectionFunctionChain(List<I> collection) {
-        LinkedList<I> list = new LinkedList<I>();
-        for (I i : collection)
-            list.add(i);
-        this.collection = list;
+        this.collection = new LinkedList<I>(collection);
     }
 
     public <O> ObjectFunctionChain<O> transform(Function<List<I>, O> converter) {
@@ -166,6 +163,17 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
+
+    public CollectionFunctionChain<I> removeDuplicates() {
+        final LinkedList<I> newList = new LinkedList<I>();
+        for (I element : collection) {
+            if (!newList.contains(element))
+                newList.addFirst(element);
+        }
+        collection = newList;
+        return this;
+    }
+
     public <I, T> CollectionFunctionChain<Tuple2<I, T>> zip(Collection<T> second) {
         List<Tuple2<I, T>> tuple2List = (List) FunctionUtil.zip(collection, second);
         return new CollectionFunctionChain<Tuple2<I, T>>(tuple2List);
@@ -196,10 +204,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     private LinkedList<I> copyCollection() {
-        LinkedList<I> list = new LinkedList<I>();
-        for (I i : this.collection)
-            list.add(i);
-        return list;
+        return new LinkedList<I>(collection);
     }
 
     public CollectionFunctionChain<I> executeLater(final Task<List<I>> task) {
@@ -267,6 +272,10 @@ public final class CollectionFunctionChain<I> {
         }, callbackTask);
 
         return this;
+    }
+
+    public <T> When<List<I>, T> matchAndReturn(Class<T> returnType) {
+        return new Matcher<List<I>, T>(collection);
     }
 
     private List<I> getCollection() {
