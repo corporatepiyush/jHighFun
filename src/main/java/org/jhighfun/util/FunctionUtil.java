@@ -1239,6 +1239,19 @@ public final class FunctionUtil {
         }, period, period);
     }
 
+    public static void scheduleOnce(final Block block, long period) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    block.execute();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        }, period);
+    }
+
     public static <T> RepeatCondition<T> repeat(RepeatableTask<T> task) {
         return new RepeatCondition<T>(task);
     }
