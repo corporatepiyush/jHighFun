@@ -49,6 +49,9 @@ public final class ConditionalIterator<T> extends AbstractIterator<T> {
     }
 
     public void remove() {
-        iterator.remove();
+        if (hasNext())
+            next();
+        else
+            throw new NoSuchElementException();
     }
 }

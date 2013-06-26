@@ -4,6 +4,7 @@ package org.jhighfun.util.batch;
 import org.jhighfun.util.Function;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class MapperIterator<I, O> extends AbstractIterator<O> {
 
@@ -24,6 +25,9 @@ public class MapperIterator<I, O> extends AbstractIterator<O> {
     }
 
     public void remove() {
-        iterator.remove();
+        if (hasNext())
+            next();
+        else
+            throw new NoSuchElementException();
     }
 }

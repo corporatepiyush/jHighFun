@@ -4,6 +4,8 @@ package org.jhighfun.util.batch;
 import org.jhighfun.util.Function;
 import org.jhighfun.util.Tuple2;
 
+import java.util.NoSuchElementException;
+
 /**
  * Lazy proxy for existing Iterator
  *
@@ -32,6 +34,9 @@ public class LazyIterator<INIT, OBJ> extends AbstractIterator<OBJ> {
     }
 
     public void remove() {
-
+        if (hasNext())
+            next();
+        else
+            throw new NoSuchElementException();
     }
 }

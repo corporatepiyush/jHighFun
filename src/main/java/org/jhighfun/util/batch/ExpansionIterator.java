@@ -4,6 +4,7 @@ package org.jhighfun.util.batch;
 import org.jhighfun.util.Function;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ExpansionIterator<IN, OUT> extends AbstractIterator<OUT> {
 
@@ -38,6 +39,10 @@ public class ExpansionIterator<IN, OUT> extends AbstractIterator<OUT> {
     }
 
     public void remove() {
-
+        if (hasNext())
+            next();
+        else
+            throw new NoSuchElementException();
     }
+
 }

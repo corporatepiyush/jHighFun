@@ -22,8 +22,7 @@ public class ConcurrentIterator<T> extends AbstractIterator<T> {
             if (iterator.hasNext()) {
                 return true;
             }
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             lock.unlock();
             throw new RuntimeException(t);
         }
@@ -39,8 +38,7 @@ public class ConcurrentIterator<T> extends AbstractIterator<T> {
 
         try {
             return iterator.next();
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
     }
