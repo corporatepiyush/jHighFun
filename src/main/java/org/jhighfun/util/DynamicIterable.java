@@ -1,7 +1,6 @@
-package org.jhighfun.util.batch;
+package org.jhighfun.util;
 
-import org.jhighfun.util.Function;
-import org.jhighfun.util.Tuple2;
+import org.jhighfun.util.batch.*;
 
 import java.util.Iterator;
 import java.util.List;
@@ -29,16 +28,24 @@ public class DynamicIterable<IN> implements Iterable<IN> {
         return new DynamicIterable<OUT>(new ExpansionIterator<IN, OUT>(iterator, function));
     }
 
-    public DynamicIterable<IN> filter(Function<IN, Boolean> function) {
-        return new DynamicIterable<IN>(new ConditionalIterator<IN>(iterator, function));
+    public DynamicIterable<List<IN>> batch(int batchSize) {
+        return new DynamicIterable<List<IN>>(new BatchIterator<IN>(iterator, batchSize));
     }
 
     public <OUT> DynamicIterable<OUT> map(Function<IN, OUT> function) {
         return new DynamicIterable<OUT>(new MapperIterator<IN, OUT>(iterator, function));
     }
 
-    public DynamicIterable<List<IN>> batch(int batchSize) {
-        return new DynamicIterable<List<IN>>(new BatchIterator<IN>(iterator, batchSize));
+    public DynamicIterable<IN> filter(Function<IN, Boolean> function) {
+        return new DynamicIterable<IN>(new ConditionalIterator<IN>(iterator, function));
+    }
+
+    public DynamicIterable<IN> filter(Function<IN, Boolean> function, Task<IN> task) {
+        return new DynamicIterable<IN>(new ConditionalIterator<IN>(iterator, function, task));
+    }
+
+    public DynamicIterable<IN> execute(Task<IN> task) {
+        return new DynamicIterable<IN>(new ExecutorIterator<IN>(iterator, task));
     }
 
     public DynamicIterable<IN> ensureThreadSafety() {

@@ -1,5 +1,6 @@
 package org.jhighfun.util.batch;
 
+import org.jhighfun.util.DynamicIterable;
 import org.jhighfun.util.Function;
 import org.jhighfun.util.Tuple2;
 import org.junit.Test;

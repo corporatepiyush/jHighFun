@@ -1,5 +1,6 @@
 package org.jhighfun.util.batch;
 
+import org.jhighfun.util.DynamicIterable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

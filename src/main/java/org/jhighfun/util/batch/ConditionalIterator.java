@@ -2,6 +2,7 @@ package org.jhighfun.util.batch;
 
 
 import org.jhighfun.util.Function;
+import org.jhighfun.util.Task;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -17,10 +18,17 @@ public final class ConditionalIterator<T> extends AbstractIterator<T> {
     private final Iterator<T> iterator;
     private final Function<T, Boolean> predicate;
     private T current;
+    private Task<T> task;
 
     public ConditionalIterator(Iterator<T> iterator, Function<T, Boolean> predicate) {
         this.iterator = iterator;
         this.predicate = predicate;
+    }
+
+    public ConditionalIterator(Iterator<T> iterator, Function<T, Boolean> predicate, Task<T> task) {
+        this.iterator = iterator;
+        this.predicate = predicate;
+        this.task = task;
     }
 
     public boolean hasNext() {
@@ -31,6 +39,8 @@ public final class ConditionalIterator<T> extends AbstractIterator<T> {
                 hasNext = true;
                 this.current = current;
                 break;
+            } else {
+                task.execute(current);
             }
         }
         return hasNext;

@@ -1,7 +1,6 @@
 package org.jhighfun.util;
 
 import org.jhighfun.util.batch.AbstractIterator;
-import org.jhighfun.util.batch.DynamicIterable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
