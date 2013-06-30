@@ -154,7 +154,7 @@ public class FunctionUtilSpec {
 
         FunctionUtil.executeAsync(asyncTaskSpy, callbackTaskMock);
         try {
-            Thread.sleep(10);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

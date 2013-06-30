@@ -79,7 +79,7 @@ public class CollectionFunctionChainSpec {
                 return input.get(0);
             }
         });
-        assertEquals(chain.transform(mockConverter).extract(), object);
+        assertEquals(chain.transformToObject(mockConverter).extract(), object);
         verify(mockConverter, times(1)).apply(List(object));
 
     }

@@ -19,11 +19,34 @@ public final class CollectionFunctionChain<I> {
     private List<I> collection;
 
     public CollectionFunctionChain(List<I> collection) {
-        this.collection = new LinkedList<I>(collection);
+        this.collection = collection;
     }
 
-    public <O> ObjectFunctionChain<O> transform(Function<List<I>, O> converter) {
+    public <O> ObjectFunctionChain<O> transformToObject(Function<List<I>, O> converter) {
         return new ObjectFunctionChain<O>(converter.apply(this.collection));
+    }
+
+    public ObjectFunctionChain<List<I>> asObject() {
+        return new ObjectFunctionChain<List<I>>(this.collection);
+    }
+
+    public <O> CollectionFunctionChain<O> transform(Function<List<I>, List<O>> converter) {
+        return new CollectionFunctionChain<O>(converter.apply(this.collection));
+    }
+
+    public CollectionFunctionChain<I> flatten() {
+        if (this.collection.get(0) instanceof Iterable) {
+            List<I> newList = new LinkedList<I>();
+            List<? extends Iterable<I>> collection = (List<? extends Iterable<I>>) this.collection;
+            for (Iterable<I> inner : collection) {
+                for (I i : inner) {
+                    newList.add(i);
+                }
+            }
+            return new CollectionFunctionChain<I>(newList);
+        } else {
+            throw new RuntimeException("Cannot perform flatten operation");
+        }
     }
 
     public <O> CollectionFunctionChain<O> map(Function<I, O> converter) {
@@ -109,18 +132,30 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> plus(Collection<I> collection) {
-        this.collection.addAll(collection);
+    public CollectionFunctionChain<I> plus(Iterable<I> iterable) {
+        if (iterable instanceof Collection) {
+            this.collection.addAll((Collection<I>) iterable);
+        } else {
+            for (I i : iterable) {
+                this.collection.add(i);
+            }
+        }
         return this;
     }
 
-    public CollectionFunctionChain<I> minus(Collection<I> collection) {
-        this.collection.removeAll(collection);
+    public CollectionFunctionChain<I> minus(Iterable<I> iterable) {
+        if (iterable instanceof Collection) {
+            this.collection.removeAll((Collection<I>) iterable);
+        } else {
+            for (I i : iterable) {
+                this.collection.remove(i);
+            }
+        }
         return this;
     }
 
-    public CollectionFunctionChain<I> union(Collection<I> inputCollection) {
-        for (I item : inputCollection) {
+    public CollectionFunctionChain<I> union(Iterable<I> iterable) {
+        for (I item : iterable) {
             if (!this.collection.contains(item))
                 this.collection.add(item);
         }
@@ -128,10 +163,10 @@ public final class CollectionFunctionChain<I> {
     }
 
 
-    public CollectionFunctionChain<I> intersect(Collection<I> collection) {
+    public CollectionFunctionChain<I> intersect(Iterable<I> iterable) {
         final List<I> commonElements = getCollection();
-        for (I item : this.collection) {
-            if (collection.contains(item))
+        for (I item : iterable) {
+            if (this.collection.contains(item))
                 commonElements.add(item);
         }
         return new CollectionFunctionChain<I>(commonElements);

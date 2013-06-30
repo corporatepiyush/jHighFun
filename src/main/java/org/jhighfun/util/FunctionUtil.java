@@ -1309,8 +1309,13 @@ final class Parallel implements WorkDivisionStrategy {
         final List<Collection<T>> workDivisor = new ArrayList<Collection<T>>();
 
         int size = 0;
-        for (T t : work) {  //todo - optimize it
-            size++;
+
+        if (work instanceof Collection) {
+            size = ((Collection) work).size();
+        } else {
+            for (T t : work) {
+                size++;
+            }
         }
 
         int counter = threads > size ? size : threads;
