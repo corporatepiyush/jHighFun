@@ -39,7 +39,7 @@ public final class ConditionalIterator<T> extends AbstractIterator<T> {
                 hasNext = true;
                 this.current = current;
                 break;
-            } else {
+            } else if (task != null) {
                 task.execute(current);
             }
         }

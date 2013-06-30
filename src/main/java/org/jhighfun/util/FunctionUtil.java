@@ -1,6 +1,7 @@
 package org.jhighfun.util;
 
 import org.jhighfun.internal.*;
+import org.jhighfun.util.matcher.WhenChecker;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -1150,9 +1151,7 @@ public final class FunctionUtil {
     }
 
     public static <T> void divideAndConquer(Collection<T> collection, final Task<Collection<T>> task, WorkDivisionStrategy partition) {
-
         final Collection<Collection<T>> collections = partition.divide(collection);
-
         each(collections, new RecordProcessor<Collection<T>>() {
             public void process(Collection<T> items) {
                 task.execute(items);
@@ -1254,6 +1253,10 @@ public final class FunctionUtil {
 
     public static <T> RepeatCondition<T> repeat(RepeatableTask<T> task) {
         return new RepeatCondition<T>(task);
+    }
+
+    public static <T> WhenChecker<T> check(T object) {
+        return new WhenChecker<T>(object);
     }
 
 }

@@ -112,10 +112,6 @@ public final class ObjectFunctionChain<I> {
         return this;
     }
 
-    public <T> When<I, T> matchAndReturn(Class<T> returnType) {
-        return new Matcher<I, T>(object);
-    }
-
     public I extract() {
         return object;
     }

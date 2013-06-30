@@ -274,14 +274,6 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public <T> When<List<I>, T> matchWithDefault(T returnObject) {
-        return new Matcher<List<I>, T>(collection);
-    }
-
-    public <T> When<List<I>, T> matchWithDefault(Function<List<I>, T> function) {
-        return new Matcher<List<I>, T>(collection);
-    }
-
     private List<I> getCollection() {
         return new LinkedList<I>();
     }
