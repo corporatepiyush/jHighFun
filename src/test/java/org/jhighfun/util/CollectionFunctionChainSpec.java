@@ -12,8 +12,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static org.jhighfun.util.CollectionUtil.IntRange;
 import static org.jhighfun.util.CollectionUtil.List;
-import static org.jhighfun.util.CollectionUtil.NumberRange;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -821,7 +821,7 @@ public class CollectionFunctionChainSpec {
     @Test
     public void testExecuteWithGlobalLockWithMultipleThread() {
 
-        final List<Integer> list = NumberRange(1, 10000);
+        final List<Integer> list = IntRange(1, 10000);
 
         final Block spyBlock = spy(new Block() {
             public void execute() {
@@ -831,9 +831,9 @@ public class CollectionFunctionChainSpec {
             }
         });
 
-        FunctionUtil.each(NumberRange(1, 100), new RecordProcessor<Integer>() {
+        FunctionUtil.each(IntRange(1, 100), new RecordProcessor<Integer>() {
             public void process(Integer item) {
-                new CollectionFunctionChain<Integer>(NumberRange(1, 10)).executeWithGlobalLock(new Task<List<Integer>>() {
+                new CollectionFunctionChain<Integer>(IntRange(1, 10)).executeWithGlobalLock(new Task<List<Integer>>() {
                     public void execute(List<Integer> input) {
                         spyBlock.execute();
                     }

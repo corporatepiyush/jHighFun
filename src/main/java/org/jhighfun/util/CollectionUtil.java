@@ -40,6 +40,17 @@ public final class CollectionUtil {
         return flattenList;
     }
 
+
+    public static List SafeList(Iterable... listArgs) {
+        final List flattenList = new CopyOnWriteArrayList();
+        for (Iterable collection : listArgs) {
+            for (Object obj : collection) {
+                flattenList.add(obj);
+            }
+        }
+        return flattenList;
+    }
+
     public static <T> Set<T> Set(T... args) {
         final Set<T> set = new HashSet<T>();
         for (T arg : args) {
@@ -103,7 +114,7 @@ public final class CollectionUtil {
         return new Tuple5<F, S, T, FO, FI>(first, second, third, fourth, fifth);
     }
 
-    public static List<Integer> NumberRange(int from, int to, int step) {
+    public static List<Integer> IntRange(int from, int to, int step) {
         if (step < 1)
             throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
         List<Integer> range = new LinkedList<Integer>();
@@ -121,12 +132,72 @@ public final class CollectionUtil {
     }
 
 
-    public static List<Integer> NumberRange(int from, int to) {
-        return NumberRange(from, to, 1);
+    public static List<Integer> IntRange(int from, int to) {
+        return IntRange(from, to, 1);
     }
 
 
-    public static Iterable<Integer> LazyRange(final int from, final int to, final int step) {
+    public static Iterable<Long> LazyLongRange(final long from, final long to, final long step) {
+        if (step < 1)
+            throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
+        Iterable<Long> range = null;
+        if (from > to) {
+            range = new DynamicIterable<Long>(new AbstractIterator<Long>() {
+
+                private long i = from;
+
+                public boolean hasNext() {
+                    return i >= to;
+                }
+
+                public Long next() {
+
+                    if (hasNext()) {
+                        try {
+                            return i;
+                        } finally {
+                            i = i - step;
+                        }
+                    } else {
+                        throw new NoSuchElementException();
+                    }
+                }
+
+            });
+        } else {
+            range = new DynamicIterable<Long>(new AbstractIterator<Long>() {
+
+                private long i = from;
+
+                public boolean hasNext() {
+                    return i <= to;
+                }
+
+                public Long next() {
+
+                    if (hasNext()) {
+                        try {
+                            return i;
+                        } finally {
+                            i = i + step;
+                        }
+                    } else {
+                        throw new NoSuchElementException();
+                    }
+                }
+
+            });
+        }
+
+        return range;
+    }
+
+    public static Iterable<Long> LazyLongRange(long from, long to) {
+        return LazyLongRange(from, to, 1);
+    }
+
+
+    public static Iterable<Integer> LazyIntRange(final int from, final int to, final int step) {
         if (step < 1)
             throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
         Iterable<Integer> range = null;
@@ -181,7 +252,7 @@ public final class CollectionUtil {
         return range;
     }
 
-    public static Iterable<Integer> LazyRange(int from, int to) {
-        return LazyRange(from, to, 1);
+    public static Iterable<Integer> LazyIntRange(int from, int to) {
+        return LazyIntRange(from, to, 1);
     }
 }

@@ -6,7 +6,7 @@ import org.jhighfun.util.Task;
 import java.util.LinkedList;
 import java.util.List;
 
-public class WhenThenCheckerWithTask<IN> implements WhenCheckerWithTask<IN>, ThenTaskExecutor<IN> {
+public final class WhenThenCheckerWithTask<IN> implements WhenCheckerWithTask<IN>, ThenTaskExecutor<IN> {
 
     private final IN inputObject;
     private final List<Function<IN, Boolean>> conditions = new LinkedList<Function<IN, Boolean>>();
@@ -48,6 +48,8 @@ public class WhenThenCheckerWithTask<IN> implements WhenCheckerWithTask<IN>, The
 
         if (index == conditions.size()) {
             task.execute(inputObject);
+        } else {
+            tasks.get(0).execute(inputObject);
         }
     }
 

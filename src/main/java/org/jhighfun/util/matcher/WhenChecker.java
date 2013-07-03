@@ -3,7 +3,7 @@ package org.jhighfun.util.matcher;
 
 import org.jhighfun.util.Function;
 
-public class WhenChecker<T> {
+public final class WhenChecker<T> {
 
     private final T input;
 

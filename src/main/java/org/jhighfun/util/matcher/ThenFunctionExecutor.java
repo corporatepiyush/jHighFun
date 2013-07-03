@@ -9,7 +9,4 @@ public interface ThenFunctionExecutor<IN, OUT> {
 
     public WhenFunctionExecutor<IN, OUT> then(Function<IN, OUT> function);
 
-    public OUT otherwise(OUT outputObject);
-
-    public OUT otherwise(Function<IN, OUT> function);
 }

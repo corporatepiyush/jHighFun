@@ -3,7 +3,7 @@ package org.jhighfun.util.matcher;
 import org.jhighfun.util.Function;
 import org.jhighfun.util.Task;
 
-public class ThenExecutor<IN> {
+public final class ThenExecutor<IN> {
 
     private final Function<IN, Boolean> condition;
     private final IN inputObject;

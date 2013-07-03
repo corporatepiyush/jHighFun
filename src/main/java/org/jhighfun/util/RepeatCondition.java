@@ -16,7 +16,7 @@ public class RepeatCondition<T> {
     }
 
     public void times(Integer times, WorkDivisionStrategy strategy) {
-        FunctionUtil.each(CollectionUtil.NumberRange(1, times), new RecordProcessor<Integer>() {
+        FunctionUtil.each(CollectionUtil.IntRange(1, times), new RecordProcessor<Integer>() {
             public void process(Integer i) {
                 task.execute();
             }

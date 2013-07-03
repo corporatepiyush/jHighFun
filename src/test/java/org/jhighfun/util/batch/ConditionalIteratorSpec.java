@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.jhighfun.util.CollectionUtil.NumberRange;
+import static org.jhighfun.util.CollectionUtil.IntRange;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -22,7 +22,7 @@ public class ConditionalIteratorSpec {
             }
         });
 
-        ConditionalIterator<Integer> conditionalIterator = new ConditionalIterator<Integer>(NumberRange(1, 100).iterator(), spy);
+        ConditionalIterator<Integer> conditionalIterator = new ConditionalIterator<Integer>(IntRange(1, 100).iterator(), spy);
 
         for (Integer integer : new DynamicIterable<Integer>(conditionalIterator)) {
             assertTrue(integer % 4 == 0);

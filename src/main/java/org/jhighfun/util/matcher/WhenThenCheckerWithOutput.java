@@ -6,7 +6,7 @@ import org.jhighfun.util.Function;
 import java.util.LinkedList;
 import java.util.List;
 
-public class WhenThenCheckerWithOutput<IN, OUT> implements WhenFunctionExecutor<IN, OUT>, ThenFunctionExecutor<IN, OUT> {
+public final class WhenThenCheckerWithOutput<IN, OUT> implements WhenFunctionExecutor<IN, OUT>, ThenFunctionExecutor<IN, OUT> {
 
     private final IN inputObject;
     private final List<Function<IN, Boolean>> conditions = new LinkedList<Function<IN, Boolean>>();
