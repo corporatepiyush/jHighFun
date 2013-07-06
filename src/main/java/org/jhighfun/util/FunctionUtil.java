@@ -707,13 +707,27 @@ public final class FunctionUtil {
             throw new RuntimeException(exception.get(0));
     }
 
-    public static <I> CollectionFunctionChain<I> chain(List<I> collection) {
-        return new CollectionFunctionChain<I>(collection);
+    public static <I> CollectionFunctionChain<I> chain(Iterable<I> iterable) {
+        if (iterable instanceof List)
+            return new CollectionFunctionChain<I>((List<I>) iterable);
+        else
+            return new CollectionFunctionChain<I>(CollectionUtil.List(iterable));
     }
-
 
     public static <I> ObjectFunctionChain<I> chain(I object) {
         return new ObjectFunctionChain<I>(object);
+    }
+
+    public static <I> DynamicIterable<I> stream(Iterable<I> iterable) {
+        return new DynamicIterable<I>(iterable);
+    }
+
+    public static <I> DynamicIterable<I> stream(Iterator<I> iterator) {
+        return new DynamicIterable<I>(iterator);
+    }
+
+    public static <INIT, IN> DynamicIterable<IN> lazyStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
+        return new DynamicIterable<IN>(initialInput, function, predicate);
     }
 
     public static <I, O> CurriedFunction<I, O> curry(Function<List<I>, O> function, List<I> fixedInputs) {

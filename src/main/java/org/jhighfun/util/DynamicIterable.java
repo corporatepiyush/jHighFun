@@ -3,6 +3,7 @@ package org.jhighfun.util;
 import org.jhighfun.util.batch.*;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -129,8 +130,62 @@ public class DynamicIterable<IN> implements Iterable<IN> {
         }));
     }
 
-    public DynamicIterable<IN> ensureThreadSafety() {
+    public DynamicIterable<IN> _ensureThreadSafety() {
         return new DynamicIterable<IN>(new ConcurrentIterator<IN>(iterator));
+    }
+
+
+    public DynamicIterable<IN> processExclusively() {
+        final List<IN> list = new LinkedList<IN>();
+        final Tuple2<String, Throwable> exception = new Tuple2<String, Throwable>("Exception", null);
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    while (iterator.hasNext()) {
+                        list.add(iterator().next());
+                    }
+                } catch (Throwable e) {
+                    exception._2 = e;
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (exception._2 != null) {
+            throw new RuntimeException(exception._2);
+        }
+
+        return new DynamicIterable<IN>(list);
+    }
+
+    public DynamicIterable<IN> process() {
+        final List<IN> list = new LinkedList<IN>();
+        while (iterator.hasNext()) {
+            list.add(iterator().next());
+        }
+        return new DynamicIterable<IN>(list);
+    }
+
+    public CollectionFunctionChain<IN> processAndChain() {
+        return new CollectionFunctionChain<IN>(extract());
+    }
+
+    public List<IN> extract() {
+        final List<IN> list = new LinkedList<IN>();
+        while (iterator.hasNext()) {
+            list.add(iterator().next());
+        }
+        return list;
+    }
+
+    public <O> O extract(Function<Iterable<IN>, O> extractor) {
+        return extractor.apply(this);
     }
 
     public Iterator<IN> iterator() {

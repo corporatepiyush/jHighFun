@@ -24,10 +24,14 @@ public final class ObjectFunctionChain<I> {
         return new ObjectFunctionChain<O>(converter.apply(object));
     }
 
-    public CollectionFunctionChain<I> toCollection() {
+    public CollectionFunctionChain<I> asCollection() {
         final List<I> collection = new LinkedList<I>();
         collection.add(object);
         return new CollectionFunctionChain<I>(collection);
+    }
+
+    public <O> CollectionFunctionChain<O> toCollection(Function<I, List<O>> converter) {
+        return new CollectionFunctionChain<O>(converter.apply(object));
     }
 
     public ObjectForkAndJoin<I> fork() {
@@ -114,6 +118,10 @@ public final class ObjectFunctionChain<I> {
 
     public I extract() {
         return object;
+    }
+
+    public <O> O extract(Function<I, O> extractor) {
+        return extractor.apply(this.object);
     }
 
     @Override

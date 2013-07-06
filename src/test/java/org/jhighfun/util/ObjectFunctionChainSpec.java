@@ -72,7 +72,7 @@ public class ObjectFunctionChainSpec {
         Object object = new Object();
         ObjectFunctionChain<Object> objectFunctionChain = new ObjectFunctionChain<Object>(object);
 
-        CollectionFunctionChain<Object> collectionFunctionChain = objectFunctionChain.toCollection();
+        CollectionFunctionChain<Object> collectionFunctionChain = objectFunctionChain.asCollection();
 
         Collection<Object> objectCollection = collectionFunctionChain.extract();
 

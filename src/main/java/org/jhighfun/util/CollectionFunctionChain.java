@@ -22,7 +22,7 @@ public final class CollectionFunctionChain<I> {
         this.collection = collection;
     }
 
-    public <O> ObjectFunctionChain<O> transformToObject(Function<List<I>, O> converter) {
+    public <O> ObjectFunctionChain<O> toObject(Function<List<I>, O> converter) {
         return new ObjectFunctionChain<O>(converter.apply(this.collection));
     }
 
@@ -164,7 +164,7 @@ public final class CollectionFunctionChain<I> {
 
 
     public CollectionFunctionChain<I> intersect(Iterable<I> iterable) {
-        final List<I> commonElements = getCollection();
+        final List<I> commonElements = new LinkedList<I>();
         for (I item : iterable) {
             if (this.collection.contains(item))
                 commonElements.add(item);
@@ -174,7 +174,7 @@ public final class CollectionFunctionChain<I> {
 
 
     public CollectionFunctionChain<I> slice(int from, int to) {
-        final List<I> sliced = getCollection();
+        final List<I> sliced = new LinkedList<I>();
         int index = 0;
         for (I item : this.collection) {
             if (index >= from && index <= to) {
@@ -229,7 +229,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> executeAsync(final Task<List<I>> task) {
-        final LinkedList<I> list = copyCollection();
+        final LinkedList<I> list = new LinkedList<I>(collection);
         FunctionUtil.executeAsync(new Block() {
             public void execute() {
                 task.execute(list);
@@ -238,12 +238,8 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    private LinkedList<I> copyCollection() {
-        return new LinkedList<I>(collection);
-    }
-
     public CollectionFunctionChain<I> executeLater(final Task<List<I>> task) {
-        final LinkedList<I> list = copyCollection();
+        final LinkedList<I> list = new LinkedList<I>(collection);
         FunctionUtil.executeLater(new Block() {
             public void execute() {
                 task.execute(list);
@@ -289,7 +285,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Task<List<I>> task) {
-        final LinkedList<I> list = copyCollection();
+        final LinkedList<I> list = new LinkedList<I>(collection);
         FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Block() {
             public void execute() {
                 task.execute(list);
@@ -299,7 +295,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public <O> CollectionFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Function<List<I>, O> asyncTask, final CallbackTask<O> callbackTask) {
-        final LinkedList<I> list = copyCollection();
+        final LinkedList<I> list = new LinkedList<I>(collection);
         FunctionUtil.executeAsyncWithThrottle(executionThrottler, new AsyncTask<O>() {
             public O execute() {
                 return asyncTask.apply(list);
@@ -309,12 +305,16 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    private List<I> getCollection() {
-        return new LinkedList<I>();
+    public DynamicIterable<I> asStream() {
+        return new DynamicIterable<I>(this.collection);
     }
 
     public List<I> extract() {
         return this.collection;
+    }
+
+    public <O> O extract(Function<List<I>, O> extractor) {
+        return extractor.apply(this.collection);
     }
 
     @Override
