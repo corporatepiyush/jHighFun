@@ -8,34 +8,34 @@ import java.util.NoSuchElementException;
 
 public class ExpansionIterator<IN, OUT> extends AbstractIterator<OUT> {
 
-    private final Iterator<IN> iterator;
+    private final Iterator<IN> expansionIterator;
     private final Function<IN, Iterable<OUT>> function;
 
     private Iterator<OUT> currentIterator;
     private Boolean innerIteratorExhausted = true;
 
     public ExpansionIterator(Iterator<IN> iterator, Function<IN, Iterable<OUT>> function) {
-        this.iterator = iterator;
+        this.expansionIterator = iterator;
         this.function = function;
     }
 
     public final boolean hasNext() {
-        if (innerIteratorExhausted && iterator.hasNext()) {
-            IN next = iterator.next();
-            currentIterator = function.apply(next).iterator();
-            innerIteratorExhausted = false;
+        if (this.innerIteratorExhausted && this.expansionIterator.hasNext()) {
+            IN next = this.expansionIterator.next();
+            this.currentIterator = this.function.apply(next).iterator();
+            this.innerIteratorExhausted = false;
         }
-        boolean hasNext = currentIterator.hasNext();
+        boolean hasNext = this.currentIterator.hasNext();
 
         if (!hasNext) {
-            innerIteratorExhausted = true;
+            this.innerIteratorExhausted = true;
         }
 
         return hasNext;
     }
 
     public final OUT next() {
-        return currentIterator.next();
+        return this.currentIterator.next();
     }
 
     public void remove() {

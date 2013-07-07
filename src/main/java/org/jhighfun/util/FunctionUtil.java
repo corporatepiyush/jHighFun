@@ -11,7 +11,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.jhighfun.util.CollectionUtil.List;
-import static org.jhighfun.util.CollectionUtil.Set;
 
 /**
  * Set of reusable utility methods to present finer interfaces to do a given job in
@@ -271,7 +270,7 @@ public final class FunctionUtil {
                     public Boolean apply(TaskInputOutput<T, Boolean> task) {
                         return task.getOutput();
                     }
-                }).foldLeft((Set<T>) Set(), new Accumulator<Set<T>, TaskInputOutput<T, Boolean>>() {
+                }).foldLeft((Set<T>) CollectionUtil.FlattenSet(), new Accumulator<Set<T>, TaskInputOutput<T, Boolean>>() {
                     public Set<T> accumulate(Set<T> accumulator, TaskInputOutput<T, Boolean> task) {
                         accumulator.add(task.getInput());
                         return accumulator;
@@ -376,7 +375,7 @@ public final class FunctionUtil {
         for (i = 1; i < noOfThread; i++) {
             try {
                 futures[i].get();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
@@ -488,7 +487,7 @@ public final class FunctionUtil {
         for (i = 1; i < noOfThread; i++) {
             try {
                 futures[i].get();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
@@ -697,7 +696,7 @@ public final class FunctionUtil {
         for (i = 1; i < noOfThread; i++) {
             try {
                 futures[i].get();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
@@ -711,7 +710,7 @@ public final class FunctionUtil {
         if (iterable instanceof List)
             return new CollectionFunctionChain<I>((List<I>) iterable);
         else
-            return new CollectionFunctionChain<I>(CollectionUtil.List(iterable));
+            return new CollectionFunctionChain<I>(CollectionUtil.FlattenList(iterable));
     }
 
     public static <I> ObjectFunctionChain<I> chain(I object) {
@@ -829,39 +828,33 @@ public final class FunctionUtil {
     }
 
     public static void executeWithThrottle(ExecutionThrottler executionThrottler, final Block codeBlock) {
-        ExecutorService executorService = throttlerPoolMap.get(executionThrottler);
+        ExecutorService executorService = getThrottler(executionThrottler);
 
-        if (executorService == null)
-            throw new RuntimeException("Please register the Thread Pool for executionThrottler[" + executionThrottler.toString() + "]");
-
-        final LinkedList<Throwable> exception = new LinkedList<Throwable>();
+        final Tuple2<String, Throwable> exception = new Tuple2<String, Throwable>("Exception", null);
         try {
             executorService.submit(new Runnable() {
                 public void run() {
                     try {
                         codeBlock.execute();
                     } catch (Throwable e) {
-                        exception.add(e);
+                        exception._2 = e;
                         e.printStackTrace();
                     }
                 }
             }).get();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
 
-        if (exception.size() > 0) {
-            throw new RuntimeException(exception.get(0));
+        if (exception._2 != null) {
+            throw new RuntimeException(exception._2);
         }
     }
 
     public static <T> void executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final AsyncTask<T> asyncTask, final CallbackTask<T> callbackTask) {
 
-        ExecutorService executorService = throttlerPoolMap.get(executionThrottler);
-
-        if (executorService == null)
-            throw new RuntimeException("Please register the Thread Pool for executionThrottler[" + executionThrottler.toString() + "]");
+        ExecutorService executorService = getThrottler(executionThrottler);
 
         executorService.submit(new Runnable() {
             public void run() {
@@ -884,10 +877,7 @@ public final class FunctionUtil {
 
 
     public static void executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Block codeBlock) {
-        ExecutorService executorService = throttlerPoolMap.get(executionThrottler);
-
-        if (executorService == null)
-            throw new RuntimeException("Please register the Thread Pool for executionThrottler[" + executionThrottler.toString() + "]");
+        ExecutorService executorService = getThrottler(executionThrottler);
 
         executorService.submit(new Runnable() {
             public void run() {
@@ -898,6 +888,14 @@ public final class FunctionUtil {
                 }
             }
         });
+    }
+
+    private static ExecutorService getThrottler(ExecutionThrottler executionThrottler) {
+        ExecutorService executorService = throttlerPoolMap.get(executionThrottler);
+
+        if (executorService == null)
+            throw new RuntimeException("Please register the Thread Pool for executionThrottler[" + executionThrottler.toString() + "]");
+        return executorService;
     }
 
     public static void registerPool(ExecutionThrottler executionThrottler, int maxPoolSize) {
@@ -936,7 +934,7 @@ public final class FunctionUtil {
         } catch (TimeoutException e) {
             e.printStackTrace();
             throw e;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
@@ -962,7 +960,7 @@ public final class FunctionUtil {
                 }
             }).get(time, timeUnit);
         } catch (TimeoutException e) {
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
@@ -1186,7 +1184,7 @@ public final class FunctionUtil {
     }
 
     private static <T> void eachWithConditionChain(Collection<T> collection, Tuple2<Function<T, Boolean>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Function<T, Boolean>, RecordProcessor<T>>... predicateRecordProcessors) {
-        List<Tuple2<Function<T, Boolean>, RecordProcessor<T>>> predicateRecordProcessorList = List(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
+        List<Tuple2<Function<T, Boolean>, RecordProcessor<T>>> predicateRecordProcessorList = CollectionUtil.FlattenList(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
         for (T t : collection) {
             for (Tuple2<Function<T, Boolean>, RecordProcessor<T>> tuple : predicateRecordProcessorList) {
                 if (tuple._1.apply(t)) {
@@ -1197,7 +1195,7 @@ public final class FunctionUtil {
     }
 
     private static <T> void eachWithOptionChain(Collection<T> collection, Tuple2<Function<T, Boolean>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Function<T, Boolean>, RecordProcessor<T>>... predicateRecordProcessors) {
-        List<Tuple2<Function<T, Boolean>, RecordProcessor<T>>> predicateRecordProcessorList = List(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
+        List<Tuple2<Function<T, Boolean>, RecordProcessor<T>>> predicateRecordProcessorList = CollectionUtil.FlattenList(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
         for (T t : collection) {
             for (Tuple2<Function<T, Boolean>, RecordProcessor<T>> tuple : predicateRecordProcessorList) {
                 if (tuple._1.apply(t)) {
@@ -1253,13 +1251,16 @@ public final class FunctionUtil {
     }
 
     public static void scheduleOnce(final Block block, long period) {
-        new Timer().schedule(new TimerTask() {
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
                     block.execute();
                 } catch (Throwable e) {
                     e.printStackTrace();
+                } finally {
+                    timer.cancel();
                 }
             }
         }, period);

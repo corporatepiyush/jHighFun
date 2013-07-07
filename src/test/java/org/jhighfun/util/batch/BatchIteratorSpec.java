@@ -8,6 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.List;
 
 import static org.jhighfun.util.CollectionUtil.IntRange;
+import static org.jhighfun.util.CollectionUtil.List;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,6 +28,20 @@ public class BatchIteratorSpec {
             first = last + 1;
             last = last + batchSize;
         }
+
+    }
+
+    @Test
+    public void test1() {
+
+        int batchSize = 2;
+        List<String> stringList = List("India", "Singapore");
+        BatchIterator<String> integerBatchIterator = new BatchIterator<String>(stringList.iterator(), batchSize);
+
+        List<List<String>> list = new DynamicIterable<List<String>>(integerBatchIterator)
+                .extract();
+
+        assertEquals(List(stringList), list);
 
     }
 }

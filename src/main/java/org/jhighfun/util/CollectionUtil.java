@@ -30,7 +30,7 @@ public final class CollectionUtil {
         return argsList;
     }
 
-    public static List List(Iterable... listArgs) {
+    public static List FlattenList(Iterable... listArgs) {
         final List flattenList = new LinkedList();
         for (Iterable collection : listArgs) {
             for (Object obj : collection) {
@@ -41,7 +41,7 @@ public final class CollectionUtil {
     }
 
 
-    public static List SafeList(Iterable... listArgs) {
+    public static List SafeFlattenList(Iterable... listArgs) {
         final List flattenList = new CopyOnWriteArrayList();
         for (Iterable collection : listArgs) {
             for (Object obj : collection) {
@@ -59,7 +59,7 @@ public final class CollectionUtil {
         return set;
     }
 
-    public static Set Set(Iterable... setArgs) {
+    public static Set FlattenSet(Iterable... setArgs) {
         final Set flattenSet = new HashSet();
         for (Iterable collection : setArgs) {
             for (Object obj : collection) {
@@ -85,7 +85,7 @@ public final class CollectionUtil {
         return map;
     }
 
-    public static Map Map(Map first, Map... maps) {
+    public static Map FlattenMap(Map first, Map... maps) {
         final Map flattenMap = new HashMap();
         flattenMap.putAll(first);
         for (Map map : maps) {

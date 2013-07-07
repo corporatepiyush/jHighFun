@@ -232,7 +232,7 @@ public class CollectionFunctionChainSpec {
         set.add(2);
         set.add(3);
 
-        assertTrue(new CollectionFunctionChain<Integer>(List(set)).sort().extract().toString().equals("[1, 2, 3, 4]"));
+        assertTrue(new CollectionFunctionChain<Integer>(CollectionUtil.FlattenList(set)).sort().extract().toString().equals("[1, 2, 3, 4]"));
 
     }
 
@@ -521,7 +521,7 @@ public class CollectionFunctionChainSpec {
         set.add("Scala");
         set.add("Java");
 
-        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(List(set));
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(CollectionUtil.FlattenList(set));
 
         int count = chain.count(new Function<String, Boolean>() {
             public Boolean apply(String s) {

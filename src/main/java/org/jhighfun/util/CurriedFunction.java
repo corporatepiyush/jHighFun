@@ -4,8 +4,6 @@ package org.jhighfun.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jhighfun.util.CollectionUtil.List;
-
 /**
  * A curried form of function with ability of currying further and getting invoked
  *
@@ -23,7 +21,7 @@ public final class CurriedFunction<I, O> {
     }
 
     public CurriedFunction curry(List<I> dynamicInputs) {
-        return new CurriedFunction(this.function, List(this.fixedInputs, dynamicInputs));
+        return new CurriedFunction(this.function, CollectionUtil.FlattenList(this.fixedInputs, dynamicInputs));
     }
 
     public CurriedFunction curry(I... dynamicInputs) {

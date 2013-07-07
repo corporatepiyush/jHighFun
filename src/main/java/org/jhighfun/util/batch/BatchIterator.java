@@ -13,23 +13,23 @@ import java.util.List;
 
 public class BatchIterator<T> extends AbstractIterator<List<T>> {
 
-    private final Iterator<T> recordIterator;
+    private final Iterator<T> batchIterator;
     private final int batchSize;
 
-    public BatchIterator(Iterator<T> recordIterator, int batchSize) {
-        this.recordIterator = recordIterator;
+    public BatchIterator(Iterator<T> iterator, int batchSize) {
+        this.batchIterator = iterator;
         this.batchSize = batchSize;
     }
 
     public boolean hasNext() {
-        return recordIterator.hasNext();
+        return this.batchIterator.hasNext();
     }
 
     public List<T> next() {
         final List<T> batch = new LinkedList<T>();
         int i = 0;
-        while (recordIterator.hasNext() && i < batchSize) {
-            batch.add(recordIterator.next());
+        while (this.batchIterator.hasNext() && i < this.batchSize) {
+            batch.add(this.batchIterator.next());
             i++;
         }
 
@@ -38,8 +38,8 @@ public class BatchIterator<T> extends AbstractIterator<List<T>> {
 
     public void remove() {
         int i = 0;
-        while (i < batchSize) {
-            recordIterator.remove();
+        while (i < this.batchSize) {
+            this.batchIterator.remove();
             i++;
         }
     }

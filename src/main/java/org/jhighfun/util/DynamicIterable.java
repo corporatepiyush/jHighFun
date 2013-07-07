@@ -26,31 +26,31 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
     public <OUT> DynamicIterable<OUT> expand(Function<IN, Iterable<OUT>> function) {
-        return new DynamicIterable<OUT>(new ExpansionIterator<IN, OUT>(iterator, function));
+        return new DynamicIterable<OUT>(new ExpansionIterator<IN, OUT>(this.iterator, function));
     }
 
     public DynamicIterable<List<IN>> batch(int batchSize) {
-        return new DynamicIterable<List<IN>>(new BatchIterator<IN>(iterator, batchSize));
+        return new DynamicIterable<List<IN>>(new BatchIterator<IN>(this.iterator, batchSize));
     }
 
     public <OUT> DynamicIterable<OUT> map(Function<IN, OUT> function) {
-        return new DynamicIterable<OUT>(new MapperIterator<IN, OUT>(iterator, function));
+        return new DynamicIterable<OUT>(new MapperIterator<IN, OUT>(this.iterator, function));
     }
 
     public DynamicIterable<IN> filter(Function<IN, Boolean> function) {
-        return new DynamicIterable<IN>(new ConditionalIterator<IN>(iterator, function));
+        return new DynamicIterable<IN>(new ConditionalIterator<IN>(this.iterator, function));
     }
 
     public DynamicIterable<IN> filter(Function<IN, Boolean> function, Task<IN> task) {
-        return new DynamicIterable<IN>(new ConditionalIterator<IN>(iterator, function, task));
+        return new DynamicIterable<IN>(new ConditionalIterator<IN>(this.iterator, function, task));
     }
 
     public DynamicIterable<IN> execute(Task<IN> task) {
-        return new DynamicIterable<IN>(new ExecutorIterator<IN>(iterator, task));
+        return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, task));
     }
 
     public DynamicIterable<IN> executeAsync(final Task<IN> task) {
-        return new DynamicIterable<IN>(new ExecutorIterator<IN>(iterator, new Task<IN>() {
+        return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeAsync(new Block() {
                     public void execute() {
@@ -62,7 +62,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
     public DynamicIterable<IN> executeLater(final Task<IN> task) {
-        return new DynamicIterable<IN>(new ExecutorIterator<IN>(iterator, new Task<IN>() {
+        return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeLater(new Block() {
                     public void execute() {
@@ -75,7 +75,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
 
 
     public DynamicIterable<IN> executeWithThrottle(final ExecutionThrottler executionThrottler, final Task<IN> task) {
-        return new DynamicIterable<IN>(new ExecutorIterator<IN>(iterator, new Task<IN>() {
+        return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeWithThrottle(executionThrottler, new Block() {
                     public void execute() {
@@ -87,7 +87,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
     public DynamicIterable<IN> executeAsyncWithThrottle(final ExecutionThrottler executionThrottler, final AsyncTask<IN> asyncTask, final CallbackTask<IN> callbackTask) {
-        return new DynamicIterable<IN>(new ExecutorIterator<IN>(iterator, new Task<IN>() {
+        return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeAsyncWithThrottle(executionThrottler, asyncTask, callbackTask);
             }
@@ -95,7 +95,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
     public DynamicIterable<IN> executeAsyncWithThrottle(final ExecutionThrottler executionThrottler, final Task<IN> task) {
-        return new DynamicIterable<IN>(new ExecutorIterator<IN>(iterator, new Task<IN>() {
+        return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Block() {
                     public void execute() {
@@ -107,7 +107,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
     public DynamicIterable<IN> executeWithGlobalLock(final Task<IN> task) {
-        return new DynamicIterable<IN>(new ExecutorIterator<IN>(iterator, new Task<IN>() {
+        return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeWithGlobalLock(new Block() {
                     public void execute() {
@@ -119,7 +119,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
     public DynamicIterable<IN> executeWithLock(final Operation operation, final Task<IN> task) {
-        return new DynamicIterable<IN>(new ExecutorIterator<IN>(iterator, new Task<IN>() {
+        return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeWithLock(operation, new Block() {
                     public void execute() {
@@ -131,7 +131,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
     public DynamicIterable<IN> _ensureThreadSafety() {
-        return new DynamicIterable<IN>(new ConcurrentIterator<IN>(iterator));
+        return new DynamicIterable<IN>(new ConcurrentIterator<IN>(this.iterator));
     }
 
 
@@ -142,7 +142,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
             public void run() {
                 try {
                     while (iterator.hasNext()) {
-                        list.add(iterator().next());
+                        list.add(iterator.next());
                     }
                 } catch (Throwable e) {
                     exception._2 = e;
@@ -165,11 +165,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
     public DynamicIterable<IN> process() {
-        final List<IN> list = new LinkedList<IN>();
-        while (iterator.hasNext()) {
-            list.add(iterator().next());
-        }
-        return new DynamicIterable<IN>(list);
+        return new DynamicIterable<IN>(extract());
     }
 
     public CollectionFunctionChain<IN> processAndChain() {
@@ -178,8 +174,8 @@ public class DynamicIterable<IN> implements Iterable<IN> {
 
     public List<IN> extract() {
         final List<IN> list = new LinkedList<IN>();
-        while (iterator.hasNext()) {
-            list.add(iterator().next());
+        while (this.iterator.hasNext()) {
+            list.add(this.iterator.next());
         }
         return list;
     }
@@ -189,22 +185,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
     public Iterator<IN> iterator() {
-        return iterator;
+        return this.iterator;
     }
 
-    @Override
-    public String toString() {
-
-        StringBuilder string = new StringBuilder("[");
-        if (iterator.hasNext()) {
-            string.append(iterator.next().toString());
-        }
-        while (iterator.hasNext()) {
-            string.append(", ");
-            string.append(iterator.next().toString());
-        }
-        string.append("]");
-
-        return string.toString();
-    }
 }

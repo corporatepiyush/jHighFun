@@ -54,11 +54,11 @@ public class FunctionUtilSpec {
         set.add("Scala");
         set.add("Java");
 
-        CollectionFunctionChain<String> chain = FunctionUtil.chain(List(set));
+        CollectionFunctionChain<String> chain = FunctionUtil.chain(CollectionUtil.FlattenList(set));
 
         Collection<String> expected = chain.extract();
 
-        assertEquals(List(set), expected);
+        assertEquals(CollectionUtil.FlattenList(set), expected);
     }
 
     @Test

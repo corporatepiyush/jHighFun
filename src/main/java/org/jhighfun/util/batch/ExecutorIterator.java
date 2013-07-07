@@ -7,20 +7,20 @@ import java.util.Iterator;
 
 public class ExecutorIterator<T> extends AbstractIterator<T> {
 
-    private final Iterator<T> iterator;
+    private final Iterator<T> executorIterator;
     private final Task<T> task;
 
     public ExecutorIterator(Iterator<T> iterator, Task<T> task) {
-        this.iterator = iterator;
+        this.executorIterator = iterator;
         this.task = task;
     }
 
     public boolean hasNext() {
-        return iterator.hasNext();
+        return executorIterator.hasNext();
     }
 
     public T next() {
-        T next = iterator.next();
+        T next = executorIterator.next();
         task.execute(next);
         return next;
     }

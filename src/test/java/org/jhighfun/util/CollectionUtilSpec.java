@@ -21,7 +21,7 @@ public class CollectionUtilSpec {
         List<String> stringList = List("One", "Two");
 
         assertEquals(List(1, 2, 1).size(), 3);
-        assertEquals(List().size(), 0);
+        assertEquals(FlattenList().size(), 0);
     }
 
     @Test
@@ -31,17 +31,17 @@ public class CollectionUtilSpec {
         List<String> stringList = SafeList("One", "Two");
 
         assertEquals(SafeList(1, 2, 1).size(), 3);
-        assertEquals(SafeList().size(), 0);
-        assertEquals(SafeList().getClass(), CopyOnWriteArrayList.class);
+        assertEquals(SafeFlattenList().size(), 0);
+        assertEquals(SafeFlattenList().getClass(), CopyOnWriteArrayList.class);
 
     }
 
 
     @Test
     public void testListCompose() {
-        assertEquals(List(List(), List()), List());
-        assertEquals(List(List(1, 2, 3), Set(4, 5, 6)), List(1, 2, 3, 4, 5, 6));
-        assertEquals(List(List(1, 2, 3), Set()), List(1, 2, 3));
+        assertEquals(FlattenList(FlattenList(), FlattenList()), FlattenList());
+        assertEquals(FlattenList(List(1, 2, 3), Set(4, 5, 6)), List(1, 2, 3, 4, 5, 6));
+        assertEquals(FlattenList(List(1, 2, 3), FlattenSet()), List(1, 2, 3));
     }
 
     @Test
@@ -79,24 +79,24 @@ public class CollectionUtilSpec {
 
     @Test
     public void testMapCompose() {
-        assertEquals(Map(Map(Entry(1, 2)), Map(Entry(1, 2))), Map(Entry(1, 2)));
-        assertEquals(Map(Map(Entry(1, 2)), Map(Entry(3, 4))), Map(Entry(1, 2), Entry(3, 4)));
-        assertEquals(Map(Map(), Map()), Map());
+        assertEquals(FlattenMap(Map(Entry(1, 2)), Map(Entry(1, 2))), Map(Entry(1, 2)));
+        assertEquals(FlattenMap(Map(Entry(1, 2)), Map(Entry(3, 4))), Map(Entry(1, 2), Entry(3, 4)));
+        assertEquals(FlattenMap(Map(), Map()), Map());
     }
 
     @Test
     public void testSet() {
         Set<Integer> integerSet = Set(1, 2, 1);
         assertEquals(integerSet.size(), 2);
-        assertEquals(Set().size(), 0);
+        assertEquals(FlattenSet().size(), 0);
     }
 
     @Test
     public void testSetCompose() {
-        assertEquals(Set(Set(), Set()), Set());
-        assertEquals(Set(Set(1, 2, 3), List(4, 5, 6)), Set(1, 2, 3, 4, 5, 6));
-        assertEquals(Set(Set(1, 2, 3), List()), Set(1, 2, 3));
-        assertEquals(Set(Set(1, 2, 3), Set(1, 2, 3)), Set(1, 2, 3));
+        assertEquals(FlattenSet(FlattenSet(), FlattenSet()), FlattenSet());
+        assertEquals(FlattenSet(Set(1, 2, 3), List(4, 5, 6)), Set(1, 2, 3, 4, 5, 6));
+        assertEquals(FlattenSet(Set(1, 2, 3), FlattenList()), Set(1, 2, 3));
+        assertEquals(FlattenSet(Set(1, 2, 3), Set(1, 2, 3)), Set(1, 2, 3));
     }
 
     @Test
@@ -147,11 +147,11 @@ public class CollectionUtilSpec {
     @Test
     public void testGenerateLazyIntList() {
 
-        assertEquals(List(LazyIntRange(1, 5, 1)), List(1, 2, 3, 4, 5));
-        assertEquals(List(LazyIntRange(1, 5, 2)), List(1, 3, 5));
+        assertEquals(FlattenList(LazyIntRange(1, 5, 1)), List(1, 2, 3, 4, 5));
+        assertEquals(FlattenList(LazyIntRange(1, 5, 2)), List(1, 3, 5));
 
-        assertEquals(List(LazyIntRange(10, 5, 1)), List(10, 9, 8, 7, 6, 5));
-        assertEquals(List(LazyIntRange(10, 5, 2)), List(10, 8, 6));
+        assertEquals(FlattenList(LazyIntRange(10, 5, 1)), List(10, 9, 8, 7, 6, 5));
+        assertEquals(FlattenList(LazyIntRange(10, 5, 2)), List(10, 8, 6));
 
 
     }
@@ -164,7 +164,7 @@ public class CollectionUtilSpec {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGenerateLazyIntListForNegativeStep() {
-        assertEquals(List(LazyIntRange(10, 5, -1)), List(10, 9, 8, 7, 6, 5));
+        assertEquals(FlattenList(LazyIntRange(10, 5, -1)), List(10, 9, 8, 7, 6, 5));
     }
 
     @Test
@@ -178,8 +178,8 @@ public class CollectionUtilSpec {
     @Test
     public void testGenerateLazyIntListWithoutStep() {
 
-        assertEquals(List(LazyIntRange(1, 5)), List(1, 2, 3, 4, 5));
-        assertEquals(List(LazyIntRange(10, 5)), List(10, 9, 8, 7, 6, 5));
+        assertEquals(FlattenList(LazyIntRange(1, 5)), List(1, 2, 3, 4, 5));
+        assertEquals(FlattenList(LazyIntRange(10, 5)), List(10, 9, 8, 7, 6, 5));
 
     }
 
