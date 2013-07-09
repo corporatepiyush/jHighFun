@@ -200,7 +200,7 @@ public final class CollectionUtil {
     public static Iterable<Integer> LazyIntRange(final int from, final int to, final int step) {
         if (step < 1)
             throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
-        Iterable<Integer> range = null;
+        Iterable<Integer> range;
         if (from > to) {
             range = new DynamicIterable<Integer>(new AbstractIterator<Integer>() {
 

@@ -24,7 +24,7 @@ public class CacheObject<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof CacheObject))
+        if (o == null || !(o instanceof CacheObject))
             return false;
         if (this == o || this.get() == ((CacheObject) o).get()
                 || this.get().equals(((CacheObject) o).get()))
@@ -34,6 +34,6 @@ public class CacheObject<T> {
 
     @Override
     public int hashCode() {
-        return softCacheObject.get() != null ? softCacheObject.get().hashCode() : 0;
+        return softCacheObject != null && softCacheObject.get() != null ? softCacheObject.get().hashCode() : 0;
     }
 }
