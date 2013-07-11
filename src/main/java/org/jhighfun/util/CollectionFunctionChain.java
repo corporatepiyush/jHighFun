@@ -34,21 +34,6 @@ public final class CollectionFunctionChain<I> {
         return new CollectionFunctionChain<O>(converter.apply(this.collection));
     }
 
-    public CollectionFunctionChain<I> flatten() {
-        if (this.collection.get(0) instanceof Iterable) {
-            List<I> newList = new LinkedList<I>();
-            List<? extends Iterable<I>> collection = (List<? extends Iterable<I>>) this.collection;
-            for (Iterable<I> inner : collection) {
-                for (I i : inner) {
-                    newList.add(i);
-                }
-            }
-            return new CollectionFunctionChain<I>(newList);
-        } else {
-            throw new RuntimeException("Cannot perform flatten operation");
-        }
-    }
-
     public <O> CollectionFunctionChain<O> map(Function<I, O> converter) {
         return new CollectionFunctionChain<O>(FunctionUtil.map(this.collection, converter));
     }
@@ -191,26 +176,26 @@ public final class CollectionFunctionChain<I> {
 
     public CollectionFunctionChain<I> reverse() {
         final LinkedList<I> reverseList = new LinkedList<I>();
-        for (I element : collection) {
+        for (I element : this.collection) {
             reverseList.addFirst(element);
         }
-        collection = reverseList;
+        this.collection = reverseList;
         return this;
     }
 
 
     public CollectionFunctionChain<I> removeDuplicates() {
         final LinkedList<I> newList = new LinkedList<I>();
-        for (I element : collection) {
+        for (I element : this.collection) {
             if (!newList.contains(element))
                 newList.addFirst(element);
         }
-        collection = newList;
+        this.collection = newList;
         return this;
     }
 
     public <I, T> CollectionFunctionChain<Tuple2<I, T>> zip(Collection<T> second) {
-        List<Tuple2<I, T>> tuple2List = (List) FunctionUtil.zip(collection, second);
+        List<Tuple2<I, T>> tuple2List = (List) FunctionUtil.zip(this.collection, second);
         return new CollectionFunctionChain<Tuple2<I, T>>(tuple2List);
     }
 
@@ -229,7 +214,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> executeAsync(final Task<List<I>> task) {
-        final LinkedList<I> list = new LinkedList<I>(collection);
+        final LinkedList<I> list = new LinkedList<I>(this.collection);
         FunctionUtil.executeAsync(new Block() {
             public void execute() {
                 task.execute(list);
@@ -239,7 +224,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> executeLater(final Task<List<I>> task) {
-        final LinkedList<I> list = new LinkedList<I>(collection);
+        final LinkedList<I> list = new LinkedList<I>(this.collection);
         FunctionUtil.executeLater(new Block() {
             public void execute() {
                 task.execute(list);
@@ -285,7 +270,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Task<List<I>> task) {
-        final LinkedList<I> list = new LinkedList<I>(collection);
+        final LinkedList<I> list = new LinkedList<I>(this.collection);
         FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Block() {
             public void execute() {
                 task.execute(list);
@@ -295,7 +280,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public <O> CollectionFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Function<List<I>, O> asyncTask, final CallbackTask<O> callbackTask) {
-        final LinkedList<I> list = new LinkedList<I>(collection);
+        final LinkedList<I> list = new LinkedList<I>(this.collection);
         FunctionUtil.executeAsyncWithThrottle(executionThrottler, new AsyncTask<O>() {
             public O execute() {
                 return asyncTask.apply(list);

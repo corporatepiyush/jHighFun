@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static org.jhighfun.util.CollectionUtil.IntRange;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -68,7 +70,7 @@ public class ObjectFunctionChainSpec {
     }
 
     @Test
-    public void testToCollection() {
+    public void testAsCollection() {
         Object object = new Object();
         ObjectFunctionChain<Object> objectFunctionChain = new ObjectFunctionChain<Object>(object);
 
@@ -78,6 +80,23 @@ public class ObjectFunctionChainSpec {
 
         assertTrue(objectCollection.size() == 1);
         assertTrue(objectCollection.contains(object));
+    }
+
+    @Test
+    public void testToCollection() {
+        Integer upper = 100;
+
+        ObjectFunctionChain<Integer> objectFunctionChain = new ObjectFunctionChain<Integer>(upper);
+
+        CollectionFunctionChain<Integer> collectionFunctionChain = objectFunctionChain.toCollection(new Function<Integer, List<Integer>>() {
+            public List<Integer> apply(Integer arg) {
+                return IntRange(1,arg);
+            }
+        });
+
+        List<Integer> objectCollection = collectionFunctionChain.extract();
+
+        assertEquals(objectCollection, IntRange(1, upper));
     }
 
     @Test

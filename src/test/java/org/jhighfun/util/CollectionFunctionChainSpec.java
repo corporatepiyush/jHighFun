@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static org.jhighfun.util.CollectionUtil.FlattenList;
 import static org.jhighfun.util.CollectionUtil.IntRange;
 import static org.jhighfun.util.CollectionUtil.List;
 import static org.junit.Assert.assertEquals;
@@ -70,7 +71,7 @@ public class CollectionFunctionChainSpec {
 
 
     @Test
-    public void testTransform() {
+    public void testToObject() {
         Object object = new Object();
         CollectionFunctionChain<Object> chain = new CollectionFunctionChain<Object>(List(object));
 
@@ -386,6 +387,80 @@ public class CollectionFunctionChainSpec {
 
         assertTrue(foldRight.toString().equals("!Rocks Java"));
 
+    }
+
+    @Test
+    public void testTransform(){
+
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        CollectionFunctionChain<Integer> chain = new CollectionFunctionChain<Integer>(list);
+
+        List<String> stringList = chain.transform(new Function<List<Integer>, List<String>>() {
+            public List<String> apply(List<Integer> arg) {
+                return List("One", "Two", "Three");
+            }
+        }).extract();
+
+        assertEquals(stringList, List("One", "Two", "Three"));
+    }
+
+
+    @Test
+    public void testAsObject(){
+
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        CollectionFunctionChain<Integer> chain = new CollectionFunctionChain<Integer>(list);
+
+        List<Integer> integerList = chain.asObject().extract();
+
+        assertEquals(integerList, List(1,2,3,4));
+    }
+
+
+    @Test
+    public void testExtract(){
+
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        CollectionFunctionChain<Integer> chain = new CollectionFunctionChain<Integer>(list);
+
+        Integer extract = chain.extract(new Function<List<Integer>, Integer>() {
+            public Integer apply(List<Integer> arg) {
+                return arg.get(0) + arg.get(1);
+            }
+        });
+
+        assertTrue(extract == 3);
+    }
+
+    @Test
+    public void testAsStream(){
+
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        CollectionFunctionChain<Integer> chain = new CollectionFunctionChain<Integer>(list);
+
+        DynamicIterable<Integer> integers = chain.asStream();
+
+        assertEquals(list, FlattenList(integers));
     }
 
     @Test
