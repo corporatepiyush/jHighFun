@@ -901,7 +901,13 @@ public final class FunctionUtil {
     public static void registerPool(ExecutionThrottler executionThrottler, int maxPoolSize) {
         if (executionThrottler == null)
             throw new RuntimeException("Please provide ExecutionThrottler for which you wish to create Thread pool.");
-        throttlerPoolMap.put(executionThrottler, Executors.newFixedThreadPool(maxPoolSize));
+        final ExecutorService executorService = Executors.newFixedThreadPool(maxPoolSize);
+        throttlerPoolMap.put(executionThrottler, executorService);
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            public void run(){
+                executorService.shutdownNow();
+            }
+        });
     }
 
     public static void executeWithGlobalLock(Block codeBlock) {
