@@ -1,29 +1,22 @@
 package org.jhighfun.util;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import support.Person;
 
 import java.lang.reflect.Field;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 
-import static org.jhighfun.util.CollectionUtil.List;
-import static org.jhighfun.util.CollectionUtil.tuple;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecuteWithThrottleSpec {
 
-    private static ConcurrentHashMap<ExecutionThrottler,ExecutorService> mapSpy;
+    private static ConcurrentHashMap<ExecutionThrottler, ExecutorService> mapSpy;
     private static ExecutionThrottler throttler;
 
     public static void init() throws Exception {
@@ -66,7 +59,7 @@ public class ExecuteWithThrottleSpec {
     @Test
     public void testExecuteAsyncWithThrottle_callback() throws Exception {
         init();
-        AsyncTask<Object> asyncTask =  mock(AsyncTask.class);
+        AsyncTask<Object> asyncTask = mock(AsyncTask.class);
         CallbackTask<Object> callbackTask = mock(CallbackTask.class);
 
 
@@ -80,6 +73,11 @@ public class ExecuteWithThrottleSpec {
 
 
         verify(asyncTask, times(1)).execute();
-        verify(callbackTask, times(1)).execute(any(AsyncTaskHandle.class));
+        ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
+        verify(callbackTask, times(1)).execute(argument.capture());
+
+        assertEquals(argument.getValue().getAsyncTask(), asyncTask);
+        assertEquals(argument.getValue().getOutput(), asyncTaskResult);
+        assertEquals(argument.getValue().getException(), null);
     }
 }

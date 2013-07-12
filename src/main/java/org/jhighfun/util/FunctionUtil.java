@@ -903,8 +903,8 @@ public final class FunctionUtil {
             throw new RuntimeException("Please provide ExecutionThrottler for which you wish to create Thread pool.");
         final ExecutorService executorService = Executors.newFixedThreadPool(maxPoolSize);
         throttlerPoolMap.put(executionThrottler, executorService);
-        Runtime.getRuntime().addShutdownHook(new Thread(){
-            public void run(){
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
                 executorService.shutdownNow();
             }
         });

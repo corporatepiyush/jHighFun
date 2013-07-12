@@ -3,6 +3,7 @@ package org.jhighfun.util;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -90,7 +91,7 @@ public class ObjectFunctionChainSpec {
 
         CollectionFunctionChain<Integer> collectionFunctionChain = objectFunctionChain.toCollection(new Function<Integer, List<Integer>>() {
             public List<Integer> apply(Integer arg) {
-                return IntRange(1,arg);
+                return IntRange(1, arg);
             }
         });
 
@@ -185,4 +186,77 @@ public class ObjectFunctionChainSpec {
 
         verify(spyBlock, times(10)).execute();
     }
+
+    private static ConcurrentHashMap<ExecutionThrottler, ExecutorService> mapSpy;
+    private static ExecutionThrottler throttler;
+
+    public static void init() throws Exception {
+
+        Field throttlerPoolMap = FunctionUtil.class.getDeclaredField("throttlerPoolMap");
+        throttlerPoolMap.setAccessible(true);
+        mapSpy = spy(new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32));
+        throttlerPoolMap.set(null, mapSpy);
+
+        String identity = "some operation";
+        throttler = FunctionUtil.throttler(identity);
+        FunctionUtil.registerPool(throttler, 10);
+
+    }
+
+    @Test
+    public void testExecuteWithThrottle() throws Exception {
+        init();
+        Task<List<Integer>> taskMock = mock(Task.class);
+
+        List<Integer> integerList = IntRange(1, 100);
+        ObjectFunctionChain<List<Integer>> chain = new ObjectFunctionChain<List<Integer>>(integerList);
+
+        chain.executeWithThrottle(throttler, taskMock);
+
+        verify(mapSpy, times(1)).get(throttler);
+
+        verify(taskMock, times(1)).execute(integerList);
+
+    }
+
+    @Test
+    public void testExecuteAsyncWithThrottle() throws Exception {
+        init();
+        Task<List<Integer>> taskMock = mock(Task.class);
+
+        List<Integer> integerList = IntRange(1, 100);
+        ObjectFunctionChain<List<Integer>> chain = new ObjectFunctionChain<List<Integer>>(integerList);
+
+        chain.executeAsyncWithThrottle(throttler, taskMock);
+
+        verify(mapSpy, times(1)).get(throttler);
+        Thread.sleep(200);
+
+        verify(taskMock, times(1)).execute(integerList);
+
+    }
+
+    @Test
+    public void testExecuteAsyncWithThrottle_callback() throws Exception {
+        init();
+        Function<List<Integer>, Object> function = mock(Function.class);
+        CallbackTask<Object> callbackTask = mock(CallbackTask.class);
+        Object asyncTaskResult = new Object();
+        List<Integer> integerList = IntRange(1, 100);
+        ObjectFunctionChain<List<Integer>> chain = new ObjectFunctionChain<List<Integer>>(integerList);
+
+
+        when(function.apply(integerList)).thenReturn(asyncTaskResult);
+
+        chain.executeAsyncWithThrottle(throttler, function, callbackTask);
+
+        verify(mapSpy, times(1)).get(throttler);
+        Thread.sleep(200);
+        ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
+        verify(callbackTask, times(1)).execute(argument.capture());
+
+        assertEquals(argument.getValue().getOutput(), asyncTaskResult);
+        assertEquals(argument.getValue().getException(), null);
+    }
+
 }

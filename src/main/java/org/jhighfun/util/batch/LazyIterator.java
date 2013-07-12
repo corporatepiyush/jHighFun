@@ -40,7 +40,7 @@ public class LazyIterator<INIT, OBJ> extends AbstractIterator<OBJ> {
     }
 
     private void checkIfIterationInProgress() {
-        if(!this.iterationInProgress){
+        if (!this.iterationInProgress) {
             this.hasNext = this.predicate.apply(this.initialInput);
         }
     }
