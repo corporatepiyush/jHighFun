@@ -45,6 +45,10 @@ public class DynamicIterable<IN> implements Iterable<IN> {
         return new DynamicIterable<IN>(new ConditionalIterator<IN>(this.iterator, function, task));
     }
 
+    public DynamicIterable<List<IN>> extractSequence(Function<List<IN>, Boolean> function) {
+        return new DynamicIterable<List<IN>>(new ExtractorIterator<IN>(this.iterator, function));
+    }
+
     public DynamicIterable<IN> execute(Task<IN> task) {
         return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, task));
     }
