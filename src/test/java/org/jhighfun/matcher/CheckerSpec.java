@@ -15,7 +15,7 @@ public class CheckerSpec {
     public void testCheckerWithOutput() {
 
         String result = new WhenChecker<String>("@copyright")
-                .when((String) null).thenReturn("bad")
+                .whenMatchesWith((String) null).thenReturn("bad")
                 .whenMatchesWith("@copyright").thenReturn("ok")
                 .whenMatchesWith("@COPYRIGHT").thenReturn("bad")
                 .otherwiseReturn("noneMatch");
@@ -27,7 +27,7 @@ public class CheckerSpec {
     public void testCheckerWithOutputFunctions() {
 
         String result = new WhenChecker<String>("@copyright")
-                .when((String) null).thenReturn(new Function<String, String>() {
+                .whenMatchesWith((String) null).thenReturn(new Function<String, String>() {
                     public String apply(String arg) {
                         return "bad";
                     }
@@ -53,7 +53,11 @@ public class CheckerSpec {
         final Tuple2<String, Object> tuple = tuple("key", null);
 
         new WhenChecker<String>("@copyright")
-                .when("@copyright").thenExecute(new Task<String>() {
+                .whenMatchesWith(new Function<String, Boolean>() {
+                    public Boolean apply(String arg) {
+                        return arg.equals("@copyright");
+                    }
+                }).thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "ok";
             }
@@ -87,7 +91,7 @@ public class CheckerSpec {
         final Tuple2<String, Object> tuple = tuple("key", null);
 
         new WhenChecker<String>("@copyright")
-                .when("@copyrighT").thenExecute(new Task<String>() {
+                .whenMatchesWith("@copyrighT").thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "ok";
             }

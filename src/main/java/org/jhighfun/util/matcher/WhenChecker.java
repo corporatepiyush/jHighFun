@@ -11,7 +11,7 @@ public final class WhenChecker<T> {
         this.input = input;
     }
 
-    public ThenExecutor<T> when(final T matchingInput) {
+    public ThenExecutor<T> whenMatchesWith(final T matchingInput) {
         return new ThenExecutor<T>(input, new Function<T, Boolean>() {
             public Boolean apply(T arg) {
                 return matchingInput != null && matchingInput.equals(input);
@@ -19,7 +19,7 @@ public final class WhenChecker<T> {
         });
     }
 
-    public ThenExecutor<T> when(Function<T, Boolean> condition) {
+    public ThenExecutor<T> whenMatchesWith(Function<T, Boolean> condition) {
         return new ThenExecutor<T>(input, condition);
     }
 
