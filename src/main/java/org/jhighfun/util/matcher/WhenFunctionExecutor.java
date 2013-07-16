@@ -5,11 +5,11 @@ import org.jhighfun.util.Function;
 
 public interface WhenFunctionExecutor<IN, OUT> {
 
-    public ThenFunctionExecutor<IN, OUT> when(final IN matchingInput);
+    public ThenFunctionExecutor<IN, OUT> whenMatchesWith(final IN matchingInput);
 
-    public ThenFunctionExecutor<IN, OUT> when(Function<IN, Boolean> condition);
+    public ThenFunctionExecutor<IN, OUT> whenMatchesWith(Function<IN, Boolean> condition);
 
-    public OUT otherwise(OUT outputObject);
+    public OUT otherwiseReturn(OUT outputObject);
 
-    public OUT otherwise(Function<IN, OUT> function);
+    public OUT otherwiseReturn(Function<IN, OUT> function);
 }

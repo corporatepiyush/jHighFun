@@ -15,10 +15,10 @@ public class CheckerSpec {
     public void testCheckerWithOutput() {
 
         String result = new WhenChecker<String>("@copyright")
-                .when((String) null).then("bad")
-                .when("@copyright").then("ok")
-                .when("@COPYRIGHT").then("bad")
-                .otherwise("noneMatch");
+                .when((String) null).thenReturn("bad")
+                .whenMatchesWith("@copyright").thenReturn("ok")
+                .whenMatchesWith("@COPYRIGHT").thenReturn("bad")
+                .otherwiseReturn("noneMatch");
 
         assertEquals(result, "ok");
     }
@@ -27,18 +27,18 @@ public class CheckerSpec {
     public void testCheckerWithOutputFunctions() {
 
         String result = new WhenChecker<String>("@copyright")
-                .when((String) null).then(new Function<String, String>() {
+                .when((String) null).thenReturn(new Function<String, String>() {
                     public String apply(String arg) {
                         return "bad";
                     }
                 })
-                .when("@copyrighT").then(new Function<String, String>() {
+                .whenMatchesWith("@copyrighT").thenReturn(new Function<String, String>() {
                     public String apply(String arg) {
                         return "ok";
                     }
                 })
-                .when("@COPYRIGHT").then("bad")
-                .otherwise(new Function<String, String>() {
+                .whenMatchesWith("@COPYRIGHT").thenReturn("bad")
+                .otherwiseReturn(new Function<String, String>() {
                     public String apply(String arg) {
                         return "noneMatch";
                     }
@@ -53,22 +53,22 @@ public class CheckerSpec {
         final Tuple2<String, Object> tuple = tuple("key", null);
 
         new WhenChecker<String>("@copyright")
-                .when("@copyright").then(new Task<String>() {
+                .when("@copyright").thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "ok";
             }
         })
-                .when((String) null).then(new Task<String>() {
+                .whenMatchesWith((String) null).thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "null";
             }
         })
-                .when("@COPYRIGHT").then(new Task<String>() {
+                .whenMatchesWith("@COPYRIGHT").thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "bad";
             }
         })
-                .otherwise(new Task<String>() {
+                .otherwiseExecute(new Task<String>() {
                     public void execute(String input) {
                         tuple._2 = "NONE";
                     }
@@ -83,22 +83,22 @@ public class CheckerSpec {
         final Tuple2<String, Object> tuple = tuple("key", null);
 
         new WhenChecker<String>("@copyright")
-                .when("@copyrighT").then(new Task<String>() {
+                .when("@copyrighT").thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "ok";
             }
         })
-                .when((String) null).then(new Task<String>() {
+                .whenMatchesWith((String) null).thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "null";
             }
         })
-                .when("@COPYRIGHT").then(new Task<String>() {
+                .whenMatchesWith("@COPYRIGHT").thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "bad";
             }
         })
-                .otherwise(new Task<String>() {
+                .otherwiseExecute(new Task<String>() {
                     public void execute(String input) {
                         tuple._2 = "NONE";
                     }

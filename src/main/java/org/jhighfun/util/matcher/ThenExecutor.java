@@ -13,7 +13,7 @@ public final class ThenExecutor<IN> {
         this.condition = condition;
     }
 
-    public <OUT> WhenThenCheckerWithOutput<IN, OUT> then(final OUT outputObject) {
+    public <OUT> WhenThenCheckerWithOutput<IN, OUT> thenReturn(final OUT outputObject) {
         return new WhenThenCheckerWithOutput<IN, OUT>(inputObject, condition, new Function<IN, OUT>() {
             public OUT apply(IN arg) {
                 return outputObject;
@@ -21,11 +21,11 @@ public final class ThenExecutor<IN> {
         });
     }
 
-    public <OUT> WhenThenCheckerWithOutput<IN, OUT> then(Function<IN, OUT> outputFunction) {
+    public <OUT> WhenThenCheckerWithOutput<IN, OUT> thenReturn(Function<IN, OUT> outputFunction) {
         return new WhenThenCheckerWithOutput<IN, OUT>(inputObject, condition, outputFunction);
     }
 
-    public WhenCheckerWithTask<IN> then(Task<IN> task) {
+    public WhenCheckerWithTask<IN> thenExecute(Task<IN> task) {
         return new WhenThenCheckerWithTask<IN>(inputObject, condition, task);
     }
 }

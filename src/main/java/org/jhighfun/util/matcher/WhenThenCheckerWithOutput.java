@@ -18,7 +18,7 @@ public final class WhenThenCheckerWithOutput<IN, OUT> implements WhenFunctionExe
         this.outputFunctions.add(outputFunction);
     }
 
-    public ThenFunctionExecutor<IN, OUT> when(final IN matchingInput) {
+    public ThenFunctionExecutor<IN, OUT> whenMatchesWith(final IN matchingInput) {
         this.conditions.add(new Function<IN, Boolean>() {
             public Boolean apply(IN arg) {
                 return matchingInput != null && matchingInput.equals(inputObject);
@@ -27,12 +27,12 @@ public final class WhenThenCheckerWithOutput<IN, OUT> implements WhenFunctionExe
         return this;
     }
 
-    public ThenFunctionExecutor<IN, OUT> when(Function<IN, Boolean> condition) {
+    public ThenFunctionExecutor<IN, OUT> whenMatchesWith(Function<IN, Boolean> condition) {
         this.conditions.add(condition);
         return this;
     }
 
-    public WhenFunctionExecutor<IN, OUT> then(final OUT outputObject) {
+    public WhenFunctionExecutor<IN, OUT> thenReturn(final OUT outputObject) {
         this.outputFunctions.add(new Function<IN, OUT>() {
             public OUT apply(IN arg) {
                 return outputObject;
@@ -41,17 +41,17 @@ public final class WhenThenCheckerWithOutput<IN, OUT> implements WhenFunctionExe
         return this;
     }
 
-    public WhenFunctionExecutor<IN, OUT> then(Function<IN, OUT> function) {
+    public WhenFunctionExecutor<IN, OUT> thenReturn(Function<IN, OUT> function) {
         this.outputFunctions.add(function);
         return this;
     }
 
-    public OUT otherwise(OUT outputObject) {
+    public OUT otherwiseReturn(OUT outputObject) {
         Function<IN, OUT> thenFunction = getFunctionToExecute();
         return thenFunction != null ? thenFunction.apply(this.inputObject) : outputObject;
     }
 
-    public OUT otherwise(Function<IN, OUT> function) {
+    public OUT otherwiseReturn(Function<IN, OUT> function) {
         Function<IN, OUT> thenFunction = getFunctionToExecute();
         return thenFunction != null ? thenFunction.apply(this.inputObject) : function.apply(this.inputObject);
     }

@@ -4,6 +4,6 @@ import org.jhighfun.util.Task;
 
 public interface ThenTaskExecutor<IN> {
 
-    public WhenCheckerWithTask<IN> then(Task<IN> task);
+    public WhenCheckerWithTask<IN> thenExecute(Task<IN> task);
 
 }
