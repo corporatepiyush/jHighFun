@@ -63,7 +63,11 @@ public class CheckerSpec {
                 tuple._2 = "null";
             }
         })
-                .whenMatchesWith("@COPYRIGHT").thenExecute(new Task<String>() {
+                .whenMatchesWith(new Function<String, Boolean>() {
+                    public Boolean apply(String arg) {
+                        return arg.equals("@COPYRIGHT");
+                    }
+                }).thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "bad";
             }
@@ -93,7 +97,9 @@ public class CheckerSpec {
                 tuple._2 = "null";
             }
         })
-                .whenMatchesWith("@COPYRIGHT").thenExecute(new Task<String>() {
+                .whenMatchesWith(new Function<String, Boolean>() {
+                    public Boolean apply(String arg) { return arg.equals("@COPYRIGHT");  }
+                }).thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "bad";
             }
