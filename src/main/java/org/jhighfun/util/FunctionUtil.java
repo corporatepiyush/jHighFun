@@ -138,15 +138,10 @@ public final class FunctionUtil {
         for (final Collection<TaskInputOutput<I, O>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-                    int loop = 1;
                     for (TaskInputOutput<I, O> taskInputOutput : list2) {
                         if (exception.size() == 0) {
                             try {
                                 taskInputOutput.setOutput(converter.apply(taskInputOutput.getInput()));
-                                if (loop++ == Constants.MAX_LOOP_BEFORE_YIELD) {
-                                    Thread.yield();
-                                    loop = 1;
-                                }
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -345,15 +340,10 @@ public final class FunctionUtil {
         for (final Collection<TaskInputOutput<T, Boolean>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-                    int loop = 1;
                     for (TaskInputOutput<T, Boolean> taskInputOutput : list2) {
                         if (exception.size() == 0) {
                             try {
                                 taskInputOutput.setOutput(predicate.apply(taskInputOutput.getInput()));
-                                if (loop++ == Constants.MAX_LOOP_BEFORE_YIELD) {
-                                    Thread.yield();
-                                    loop = 1;
-                                }
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -453,17 +443,12 @@ public final class FunctionUtil {
                         accum = iterator.next();
                     }
 
-                    int loop = 1;
                     while (iterator.hasNext()) {
                         current = iterator.next();
 
                         if (exception.size() == 0) {
                             try {
                                 accum = accumulator.accumulate(accum, current);
-                                if (loop++ == Constants.MAX_LOOP_BEFORE_YIELD) {
-                                    Thread.yield();
-                                    loop = 1;
-                                }
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -666,15 +651,10 @@ public final class FunctionUtil {
         for (final Collection<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-                    int loop = 1;
                     for (T task : list2) {
                         if (exception.size() == 0) {
                             try {
                                 recordProcessor.process(task);
-                                if (loop++ == Constants.MAX_LOOP_BEFORE_YIELD) {
-                                    Thread.yield();
-                                    loop = 1;
-                                }
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
