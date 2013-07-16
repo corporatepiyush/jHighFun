@@ -19,14 +19,14 @@ public class DynamicIterableSpec {
                         return arg.contains("a");
                     }
                 })
-                .process()
+                ._process()
                 .batch(2)
                 .expand(new Function<List<String>, Iterable<String>>() {
                     public Iterable<String> apply(List<String> arg) {
                         return arg;
                     }
                 })
-                .processExclusively()
+                ._processExclusively()
                 .batch(2)
                 .expand(new Function<List<String>, Iterable<String>>() {
                     public Iterable<String> apply(List<String> arg) {

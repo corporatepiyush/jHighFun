@@ -45,7 +45,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
         return new DynamicIterable<IN>(new ConditionalIterator<IN>(this.iterator, function, task));
     }
 
-    public DynamicIterable<List<IN>> extractSequence(Function<List<IN>, Boolean> function) {
+    public DynamicIterable<List<IN>> extractSequences(Function<List<IN>, Boolean> function) {
         return new DynamicIterable<List<IN>>(new ExtractorIterator<IN>(this.iterator, function));
     }
 
@@ -76,7 +76,6 @@ public class DynamicIterable<IN> implements Iterable<IN> {
             }
         }));
     }
-
 
     public DynamicIterable<IN> executeWithThrottle(final ExecutionThrottler executionThrottler, final Task<IN> task) {
         return new DynamicIterable<IN>(new ExecutorIterator<IN>(this.iterator, new Task<IN>() {
@@ -139,7 +138,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
     }
 
 
-    public DynamicIterable<IN> processExclusively() {
+    public DynamicIterable<IN> _processExclusively() {
         final List<IN> list = new LinkedList<IN>();
         final Tuple2<String, Throwable> exception = new Tuple2<String, Throwable>("Exception", null);
         Thread thread = new Thread(new Runnable() {
@@ -168,7 +167,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
         return new DynamicIterable<IN>(list);
     }
 
-    public DynamicIterable<IN> process() {
+    public DynamicIterable<IN> _process() {
         return new DynamicIterable<IN>(extract());
     }
 
