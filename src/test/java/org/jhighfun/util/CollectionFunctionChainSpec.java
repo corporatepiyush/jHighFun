@@ -204,6 +204,49 @@ public class CollectionFunctionChainSpec {
     }
 
     @Test
+    public void testBatch() {
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 1000; i++) {
+            list.add("Scala");
+            list.add("Ruby");
+        }
+
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
+
+        List<List<String>> batchedOutput = chain.batch(100).extract();
+
+        assertEquals(batchedOutput.size(), 20);
+
+        for(List<String> batchedList : batchedOutput){
+            assertEquals(batchedList.size(), 100);
+        }
+
+    }
+
+
+    @Test
+    public void testExpand() {
+        List<String> list = new LinkedList<String>();
+            list.add("Scala");
+            list.add("Ruby");
+
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
+
+        List<String> expandedOutput = chain.expand(new Function<String, Iterable<String>>(){
+            public Iterable<String> apply(String arg) {
+                return List(arg, arg);
+            }
+        }).extract();
+
+        assertEquals(expandedOutput.size(), 4);
+        assertEquals(expandedOutput.get(0), "Scala");
+        assertEquals(expandedOutput.get(1), "Scala");
+        assertEquals(expandedOutput.get(2), "Ruby");
+        assertEquals(expandedOutput.get(3), "Ruby");
+
+    }
+
+    @Test
     public void testSortWith() {
         List<Integer> list = new LinkedList<Integer>();
         list.add(1);

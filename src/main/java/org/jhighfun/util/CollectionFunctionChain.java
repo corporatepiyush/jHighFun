@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Cascading interface which enables availability of utility methods which cam be invoked on
  * List data structure to compose/write clean business logic flow of any kind, more suitable for batch
- * programming.
+ * programming and data computation.
  *
  * @author Piyush Katariya
  */
@@ -87,9 +87,19 @@ public final class CollectionFunctionChain<I> {
         return new ObjectFunctionChain<ACCUM>(FunctionUtil.foldLeft(this.collection, accum, accumulator));
     }
 
+    public <O> CollectionFunctionChain<O> foldLeft(List<O> accum,
+                                                       Accumulator<List<O>, I> accumulator) {
+        return new CollectionFunctionChain<O>(FunctionUtil.foldLeft(this.collection, accum, accumulator));
+    }
+
     public <ACCUM> ObjectFunctionChain<ACCUM> foldRight(ACCUM accum,
                                                         Accumulator<ACCUM, I> accumulator) {
         return new ObjectFunctionChain<ACCUM>(FunctionUtil.foldRight(this.collection, accum, accumulator));
+    }
+
+    public <O> CollectionFunctionChain<O> foldRight(List<O> accum,
+                                                   Accumulator<List<O>, I> accumulator) {
+        return new CollectionFunctionChain<O>(FunctionUtil.foldRight(this.collection, accum, accumulator));
     }
 
     public ObjectFunctionChain<I> reduce(Accumulator<I, I> accumulator) {
@@ -300,6 +310,45 @@ public final class CollectionFunctionChain<I> {
 
     public <O> O extract(Function<List<I>, O> extractor) {
         return extractor.apply(this.collection);
+    }
+
+    public CollectionFunctionChain<List<I>> batch(int batchSize) {
+        batchSize = Math.abs(batchSize);
+        List<List<I>> batchCollection = new LinkedList<List<I>>();
+
+        int batchCount = (this.collection.size() / batchSize) + ((this.collection.size() % batchSize) > 0 ? 1 : 0);
+
+        for(int i = 0; i < batchCount; i++){
+             batchCollection.add(new LinkedList<I>());
+        }
+
+        int index = 0;
+        List<I> currentBatchedList = batchCollection.get(0);
+        for(I element : this.collection ){
+            if(currentBatchedList.size() < batchSize){
+                currentBatchedList.add(element);
+            }
+            else {
+                index ++;
+                currentBatchedList = batchCollection.get(index);
+                currentBatchedList.add(element);
+            }
+        }
+
+        return new CollectionFunctionChain<List<I>>(batchCollection);
+    }
+
+    public <O> CollectionFunctionChain<O> expand(Function<I, Iterable<O>> function) {
+        List<O> expandedList = new LinkedList<O>();
+
+        for(I element : this.collection){
+            Iterable<O> iterable = function.apply(element);
+            for(O input : iterable){
+                expandedList.add(input);
+            }
+        }
+
+        return new CollectionFunctionChain<O>(expandedList);
     }
 
     @Override

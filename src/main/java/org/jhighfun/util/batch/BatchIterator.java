@@ -18,7 +18,7 @@ public class BatchIterator<T> extends AbstractIterator<List<T>> {
 
     public BatchIterator(Iterator<T> iterator, int batchSize) {
         this.batchIterator = iterator;
-        this.batchSize = batchSize;
+        this.batchSize = Math.abs(batchSize);
     }
 
     public boolean hasNext() {
