@@ -1252,11 +1252,11 @@ public final class FunctionUtil {
         }, period);
     }
 
-    public static <T> RepeatCondition<T> repeat(RepeatableTask<T> task) {
-        return new RepeatCondition<T>(task);
+    public static <T> RepeatConditionEvaluator<T> repeat(RepeatableTask<T> task) {
+        return new RepeatConditionEvaluator<T>(task);
     }
 
-    public static <T> WhenChecker<T> check(T object) {
+    public static <T> WhenChecker<T> checkFor(T object) {
         return new WhenChecker<T>(object);
     }
 
@@ -1319,7 +1319,7 @@ final class Parallel implements WorkDivisionStrategy {
             }
         }
 
-        int counter = threads > size ? size : threads;
+        int counter = this.threads > size ? size : this.threads;
         int collectionsIndex = 0;
 
         for (int i = 0; i < counter; i++) {

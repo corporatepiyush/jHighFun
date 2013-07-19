@@ -88,7 +88,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public <O> CollectionFunctionChain<O> foldLeft(List<O> accum,
-                                                       Accumulator<List<O>, I> accumulator) {
+                                                   Accumulator<List<O>, I> accumulator) {
         return new CollectionFunctionChain<O>(FunctionUtil.foldLeft(this.collection, accum, accumulator));
     }
 
@@ -98,7 +98,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public <O> CollectionFunctionChain<O> foldRight(List<O> accum,
-                                                   Accumulator<List<O>, I> accumulator) {
+                                                    Accumulator<List<O>, I> accumulator) {
         return new CollectionFunctionChain<O>(FunctionUtil.foldRight(this.collection, accum, accumulator));
     }
 
@@ -181,7 +181,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> limit(int to) {
-        return slice(0, to);
+        return slice(0, to - 1);
     }
 
     public CollectionFunctionChain<I> reverse() {
@@ -318,18 +318,17 @@ public final class CollectionFunctionChain<I> {
 
         int batchCount = (this.collection.size() / batchSize) + ((this.collection.size() % batchSize) > 0 ? 1 : 0);
 
-        for(int i = 0; i < batchCount; i++){
-             batchCollection.add(new LinkedList<I>());
+        for (int i = 0; i < batchCount; i++) {
+            batchCollection.add(new LinkedList<I>());
         }
 
         int index = 0;
         List<I> currentBatchedList = batchCollection.get(0);
-        for(I element : this.collection ){
-            if(currentBatchedList.size() < batchSize){
+        for (I element : this.collection) {
+            if (currentBatchedList.size() < batchSize) {
                 currentBatchedList.add(element);
-            }
-            else {
-                index ++;
+            } else {
+                index++;
                 currentBatchedList = batchCollection.get(index);
                 currentBatchedList.add(element);
             }
@@ -341,9 +340,9 @@ public final class CollectionFunctionChain<I> {
     public <O> CollectionFunctionChain<O> expand(Function<I, Iterable<O>> function) {
         List<O> expandedList = new LinkedList<O>();
 
-        for(I element : this.collection){
+        for (I element : this.collection) {
             Iterable<O> iterable = function.apply(element);
-            for(O input : iterable){
+            for (O input : iterable) {
                 expandedList.add(input);
             }
         }

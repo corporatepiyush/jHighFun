@@ -1,17 +1,17 @@
 package org.jhighfun.util;
 
 
-public class RepeatCondition<T> {
+public class RepeatConditionEvaluator<T> {
 
     private final RepeatableTask<T> task;
 
-    public RepeatCondition(RepeatableTask<T> task) {
+    public RepeatConditionEvaluator(RepeatableTask<T> task) {
         this.task = task;
     }
 
     public void times(Integer times) {
         for (int loop = 0; loop < times; loop++) {
-            task.execute();
+            this.task.execute();
         }
     }
 
@@ -24,11 +24,11 @@ public class RepeatCondition<T> {
     }
 
     public void asLongAs(Function<T, Boolean> function) {
-        while (function.apply(task.execute())) ;
+        while (function.apply(this.task.execute())) ;
     }
 
     public void untilWhen(Function<T, Boolean> function) {
-        while (!function.apply(task.execute())) ;
+        while (!function.apply(this.task.execute())) ;
     }
 
 }

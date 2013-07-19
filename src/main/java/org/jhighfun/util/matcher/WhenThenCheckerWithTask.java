@@ -39,17 +39,17 @@ public final class WhenThenCheckerWithTask<IN> implements WhenCheckerWithTask<IN
 
     public void otherwiseExecute(Task<IN> task) {
         int index = 0;
-        for (Function<IN, Boolean> condition : conditions) {
-            if (condition.apply(inputObject)) {
+        for (Function<IN, Boolean> condition : this.conditions) {
+            if (condition.apply(this.inputObject)) {
                 break;
             }
             index++;
         }
 
-        if (index == conditions.size()) {
-            task.execute(inputObject);
+        if (index == this.conditions.size()) {
+            task.execute(this.inputObject);
         } else {
-            tasks.get(0).execute(inputObject);
+            this.tasks.get(0).execute(this.inputObject);
         }
     }
 

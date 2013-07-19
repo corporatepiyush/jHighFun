@@ -59,13 +59,13 @@ public final class WhenThenCheckerWithOutput<IN, OUT> implements WhenFunctionExe
     private Function<IN, OUT> getFunctionToExecute() {
         int index = 0;
 
-        for (Function<IN, Boolean> condition : conditions) {
-            if (condition.apply(inputObject)) {
+        for (Function<IN, Boolean> condition : this.conditions) {
+            if (condition.apply(this.inputObject)) {
                 break;
             }
             index++;
         }
 
-        return index == conditions.size() ? null : outputFunctions.get(index);
+        return index == this.conditions.size() ? null : this.outputFunctions.get(index);
     }
 }
