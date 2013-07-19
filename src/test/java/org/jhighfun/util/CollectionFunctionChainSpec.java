@@ -778,14 +778,6 @@ public class CollectionFunctionChainSpec {
 
         //--------------------------------
 
-        combinedList = new CollectionFunctionChain<String>(list).slice(-2, -1).extract();
-
-        expectedList = new LinkedList<String>();
-
-        assertEquals(expectedList, combinedList);
-
-        //--------------------------------
-
         combinedList = new CollectionFunctionChain<String>(list).slice(5, 6).extract();
 
         expectedList = new LinkedList<String>();
@@ -806,6 +798,85 @@ public class CollectionFunctionChainSpec {
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
         assertTrue(chain.fork().getClass() == CollectionForkAndJoin.class);
 
+    }
+
+    @Test
+    public void testLimit() {
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+        list.add("Groovy");
+        list.add("Ruby");
+
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
+
+        assertEquals(chain.limit(10).extract(), List("Scala", "Java", "Groovy", "Ruby"));
+        assertEquals(chain.limit(3).extract(), List("Scala", "Java", "Groovy"));
+        assertEquals(chain.limit(1).extract(), List("Scala"));
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testLimitWithNegativeValue() {
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+        list.add("Groovy");
+        list.add("Ruby");
+
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
+
+        assertEquals(chain.limit(-1).extract(), List());
+    }
+
+    @Test
+    public void testReverse() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+        list.add("Groovy");
+        list.add("Ruby");
+
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
+
+        assertEquals(chain.reverse().extract(), List("Ruby", "Groovy", "Java", "Scala"));
+    }
+
+
+    @Test
+    public void testRemoveDuplicates() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala");
+        list.add("Java");
+        list.add("Java");
+        list.add("Groovy");
+        list.add("Ruby");
+        list.add("Ruby");
+
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
+
+        assertEquals(chain.removeDuplicates().extract(), List("Scala", "Java", "Groovy", "Ruby"));
+    }
+
+
+    @Test
+    public void testRemoveAlikes() {
+
+        List<String> list = new LinkedList<String>();
+        list.add("Scala - JVM");
+        list.add("Java  - JVM");
+        list.add("Groovy  - JVM");
+        list.add("Ruby - Custom");
+
+        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
+
+        assertEquals(chain.removeAlikes(new Function<Tuple2<String, String>, Boolean>() {
+            public Boolean apply(Tuple2<String, String> tuple) {
+                return tuple._1.endsWith("JVM") && tuple._2.endsWith("JVM");
+            }
+        }).extract(), List("Scala - JVM", "Ruby - Custom"));
     }
 
     @Test

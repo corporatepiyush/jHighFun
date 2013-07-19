@@ -1,9 +1,6 @@
 package org.jhighfun.util;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -169,6 +166,11 @@ public final class CollectionFunctionChain<I> {
 
 
     public CollectionFunctionChain<I> slice(int from, int to) {
+
+        if(from < 0 || to < 0) {
+            throw new IllegalArgumentException("Please provide positive value.");
+        }
+
         final List<I> sliced = new LinkedList<I>();
         int index = 0;
         for (I item : this.collection) {
@@ -181,6 +183,10 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> limit(int to) {
+        if(to < 1) {
+            throw new IllegalArgumentException("Please provide value greater than ZERO.");
+        }
+
         return slice(0, to - 1);
     }
 
@@ -198,7 +204,26 @@ public final class CollectionFunctionChain<I> {
         final LinkedList<I> newList = new LinkedList<I>();
         for (I element : this.collection) {
             if (!newList.contains(element))
-                newList.addFirst(element);
+                newList.add(element);
+        }
+        this.collection = newList;
+        return this;
+    }
+
+    public CollectionFunctionChain<I> removeAlikes(Function<Tuple2<I, I>, Boolean> likenessEvaluator) {
+        final LinkedList<I> newList = new LinkedList<I>();
+        Tuple2<I, I> tuple = new Tuple2<I, I>(null, null);
+        while(this.collection.size() > 0){
+            I first = this.collection.remove(0);
+            newList.add(first);
+            Iterator<I> iterator = this.collection.iterator();
+            while(iterator.hasNext()) {
+                tuple._1 = first;
+                tuple._2 = iterator.next();
+                if(likenessEvaluator.apply(tuple)){
+                       iterator.remove();
+                }
+            }
         }
         this.collection = newList;
         return this;

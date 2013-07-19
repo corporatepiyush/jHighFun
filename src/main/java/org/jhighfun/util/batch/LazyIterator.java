@@ -7,7 +7,7 @@ import org.jhighfun.util.Tuple2;
 import java.util.NoSuchElementException;
 
 /**
- * Lazy customized stream iterator
+ * Lazy customized stream iterator, useful for memory sensitive operations
  *
  * @author Piyush Katariya
  */
@@ -34,7 +34,7 @@ public class LazyIterator<INIT, OBJ> extends AbstractIterator<OBJ> {
     public final OBJ next() {
         checkIfIterationInProgress();
         Tuple2<INIT, OBJ> tuple2 = this.function.apply(this.initialInput);
-        initialInput = tuple2._1;
+        this.initialInput = tuple2._1;
         this.iterationInProgress = false;
         return tuple2._2;
     }
@@ -45,10 +45,4 @@ public class LazyIterator<INIT, OBJ> extends AbstractIterator<OBJ> {
         }
     }
 
-    public void remove() {
-        if (hasNext())
-            next();
-        else
-            throw new NoSuchElementException();
-    }
 }

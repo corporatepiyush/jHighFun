@@ -36,11 +36,4 @@ public class BatchIterator<T> extends AbstractIterator<List<T>> {
         return batch;
     }
 
-    public void remove() {
-        int i = 0;
-        while (i < this.batchSize) {
-            this.batchIterator.remove();
-            i++;
-        }
-    }
 }

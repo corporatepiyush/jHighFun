@@ -38,11 +38,4 @@ public class ExpansionIterator<IN, OUT> extends AbstractIterator<OUT> {
         return this.currentIterator.next();
     }
 
-    public void remove() {
-        if (hasNext())
-            next();
-        else
-            throw new NoSuchElementException();
-    }
-
 }
