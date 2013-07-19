@@ -1,10 +1,8 @@
-package org.jhighfun.util.batch;
+package org.jhighfun.util.stream;
 
 
 import org.jhighfun.util.Function;
 import org.jhighfun.util.Tuple2;
-
-import java.util.NoSuchElementException;
 
 /**
  * Lazy customized stream iterator, useful for memory sensitive operations

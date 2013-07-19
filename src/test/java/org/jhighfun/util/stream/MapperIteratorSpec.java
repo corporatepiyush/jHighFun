@@ -1,4 +1,4 @@
-package org.jhighfun.util.batch;
+package org.jhighfun.util.stream;
 
 import org.junit.Test;
 

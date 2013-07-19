@@ -1,6 +1,6 @@
 package org.jhighfun.util;
 
-import org.jhighfun.util.batch.AbstractIterator;
+import org.jhighfun.util.stream.AbstractIterator;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,21 +30,21 @@ public final class CollectionUtil {
         return argsList;
     }
 
-    public static List FlattenList(Iterable... listArgs) {
-        final List flattenList = new LinkedList();
-        for (Iterable collection : listArgs) {
-            for (Object obj : collection) {
-                flattenList.add(obj);
+    public static <T> List<T> FlattenList(Iterable<T>... listArgs) {
+        final List<T> flattenList = new LinkedList<T>();
+        for (Iterable<T> collection : listArgs) {
+            for (T t : collection) {
+                flattenList.add(t);
             }
         }
         return flattenList;
     }
 
 
-    public static List SafeFlattenList(Iterable... listArgs) {
-        final List flattenList = new CopyOnWriteArrayList();
-        for (Iterable collection : listArgs) {
-            for (Object obj : collection) {
+    public static <T> List<T> SafeFlattenList(Iterable<T>... listArgs) {
+        final List<T> flattenList = new CopyOnWriteArrayList<T>();
+        for (Iterable<T> collection : listArgs) {
+            for (T obj : collection) {
                 flattenList.add(obj);
             }
         }
@@ -59,10 +59,10 @@ public final class CollectionUtil {
         return set;
     }
 
-    public static Set FlattenSet(Iterable... setArgs) {
-        final Set flattenSet = new HashSet();
-        for (Iterable collection : setArgs) {
-            for (Object obj : collection) {
+    public static <T> Set<T> FlattenSet(Iterable<T>... setArgs) {
+        final Set<T> flattenSet = new HashSet<T>();
+        for (Iterable<T> collection : setArgs) {
+            for (T obj : collection) {
                 flattenSet.add(obj);
             }
         }
@@ -85,10 +85,10 @@ public final class CollectionUtil {
         return map;
     }
 
-    public static Map FlattenMap(Map first, Map... maps) {
-        final Map flattenMap = new HashMap();
+    public static <K, V> Map<K, V> FlattenMap(Map<K, V> first, Map<K, V>... maps) {
+        final Map<K, V> flattenMap = new HashMap<K, V>();
         flattenMap.putAll(first);
-        for (Map map : maps) {
+        for (Map<K, V> map : maps) {
             flattenMap.putAll(map);
         }
         return flattenMap;

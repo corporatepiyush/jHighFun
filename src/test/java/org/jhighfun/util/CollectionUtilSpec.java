@@ -39,9 +39,8 @@ public class CollectionUtilSpec {
 
     @Test
     public void testListCompose() {
-        assertEquals(FlattenList(FlattenList(), FlattenList()), FlattenList());
         assertEquals(FlattenList(List(1, 2, 3), Set(4, 5, 6)), List(1, 2, 3, 4, 5, 6));
-        assertEquals(FlattenList(List(1, 2, 3), FlattenSet()), List(1, 2, 3));
+        assertEquals(FlattenList(List(1, 2, 3)), List(1, 2, 3));
     }
 
     @Test
@@ -93,9 +92,8 @@ public class CollectionUtilSpec {
 
     @Test
     public void testSetCompose() {
-        assertEquals(FlattenSet(FlattenSet(), FlattenSet()), FlattenSet());
         assertEquals(FlattenSet(Set(1, 2, 3), List(4, 5, 6)), Set(1, 2, 3, 4, 5, 6));
-        assertEquals(FlattenSet(Set(1, 2, 3), FlattenList()), Set(1, 2, 3));
+        assertEquals(FlattenSet(Set(1, 2, 3)), Set(1, 2, 3));
         assertEquals(FlattenSet(Set(1, 2, 3), Set(1, 2, 3)), Set(1, 2, 3));
     }
 

@@ -1,4 +1,4 @@
-package org.jhighfun.util.batch;
+package org.jhighfun.util.stream;
 
 import org.jhighfun.util.CollectionUtil;
 import org.jhighfun.util.DynamicIterable;

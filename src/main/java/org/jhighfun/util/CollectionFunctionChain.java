@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Cascading interface which enables availability of utility methods which cam be invoked on
- * List data structure to compose/write clean business logic flow of any kind, more suitable for batch
+ * List data structure to compose/write clean business logic flow of any kind, more suitable for stream
  * programming and data computation.
  *
  * @author Piyush Katariya
@@ -146,8 +146,8 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> union(Iterable<I> iterable) {
-        for (I item : iterable) {
+    public CollectionFunctionChain<I> union(Set<I> set) {
+        for (I item : set) {
             if (!this.collection.contains(item))
                 this.collection.add(item);
         }
@@ -155,9 +155,9 @@ public final class CollectionFunctionChain<I> {
     }
 
 
-    public CollectionFunctionChain<I> intersect(Iterable<I> iterable) {
+    public CollectionFunctionChain<I> intersect(Set<I> set) {
         final List<I> commonElements = new LinkedList<I>();
-        for (I item : iterable) {
+        for (I item : set) {
             if (this.collection.contains(item))
                 commonElements.add(item);
         }
@@ -210,7 +210,7 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public CollectionFunctionChain<I> removeAlikes(Function<Tuple2<I, I>, Boolean> likenessEvaluator) {
+    public CollectionFunctionChain<I> removeDuplicates(Function<Tuple2<I, I>, Boolean> likenessEvaluator) {
         final LinkedList<I> newList = new LinkedList<I>();
         Tuple2<I, I> tuple = new Tuple2<I, I>(null, null);
         while(this.collection.size() > 0){

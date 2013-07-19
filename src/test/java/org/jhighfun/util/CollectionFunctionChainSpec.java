@@ -708,7 +708,7 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
-        Collection<String> combinedList = chain.union(list1).extract();
+        Collection<String> combinedList = chain.union(FlattenSet(list1)).extract();
 
         List<String> expectedList = new LinkedList<String>();
         expectedList.add("Scala");
@@ -730,7 +730,7 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
-        Collection<String> combinedList = chain.intersect(list1).extract();
+        Collection<String> combinedList = chain.intersect(FlattenSet(list1)).extract();
 
         List<String> expectedList = new LinkedList<String>();
         expectedList.add("Java");
@@ -872,7 +872,7 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
-        assertEquals(chain.removeAlikes(new Function<Tuple2<String, String>, Boolean>() {
+        assertEquals(chain.removeDuplicates(new Function<Tuple2<String, String>, Boolean>() {
             public Boolean apply(Tuple2<String, String> tuple) {
                 return tuple._1.endsWith("JVM") && tuple._2.endsWith("JVM");
             }

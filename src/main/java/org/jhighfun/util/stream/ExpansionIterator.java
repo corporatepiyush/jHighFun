@@ -1,10 +1,9 @@
-package org.jhighfun.util.batch;
+package org.jhighfun.util.stream;
 
 
 import org.jhighfun.util.Function;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class ExpansionIterator<IN, OUT> extends AbstractIterator<OUT> {
 

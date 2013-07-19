@@ -1,11 +1,9 @@
 package org.jhighfun.util;
 
 
-import org.jhighfun.util.batch.ExtractorIterator;
 import org.junit.Test;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.jhighfun.util.CollectionUtil.List;

@@ -1,4 +1,4 @@
-package org.jhighfun.util.batch;
+package org.jhighfun.util.stream;
 
 import org.jhighfun.util.DynamicIterable;
 import org.jhighfun.util.FunctionUtil;
@@ -7,8 +7,6 @@ import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import static org.jhighfun.util.CollectionUtil.List;
 
 public class ConcurrentIteratorTest {
 

@@ -1,6 +1,6 @@
 package org.jhighfun.util;
 
-import org.jhighfun.util.batch.*;
+import org.jhighfun.util.stream.*;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -47,6 +47,15 @@ public class DynamicIterable<IN> implements Iterable<IN> {
 
     public DynamicIterable<List<IN>> extractSequences(Function<List<IN>, Boolean> function) {
         return new DynamicIterable<List<IN>>(new ExtractorIterator<IN>(this.iterator, function));
+    }
+
+    public <OUT> DynamicIterable<OUT> customize(CustomizedIterator<IN, OUT> customizedIterator) {
+        customizedIterator.setIterator(this.iterator);
+        return new DynamicIterable<OUT>(customizedIterator);
+    }
+
+    public <OUT> DynamicIterable<OUT> extend(DynamicIterable<OUT> dynamicIterable) {
+        return new DynamicIterable<OUT>(dynamicIterable.iterator());
     }
 
     public DynamicIterable<IN> execute(Task<IN> task) {
