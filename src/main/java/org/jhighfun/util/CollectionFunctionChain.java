@@ -20,11 +20,15 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain(Iterable<I> iterable) {
-        List<I> list = new LinkedList<I>();
-        for (I i : iterable) {
-            list.add(i);
+        if (iterable instanceof List) {
+            this.collection = (List<I>) iterable;
+        } else {
+            List<I> list = new LinkedList<I>();
+            for (I i : iterable) {
+                list.add(i);
+            }
+            this.collection = list;
         }
-        this.collection = list;
     }
 
 
