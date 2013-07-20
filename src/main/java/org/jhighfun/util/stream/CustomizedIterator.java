@@ -7,7 +7,7 @@ public abstract class CustomizedIterator<IN, OUT> extends AbstractIterator<OUT> 
 
     private Iterator<IN> iterator;
 
-    public void setIterator(Iterator<IN> iterator){
+    public void setIterator(Iterator<IN> iterator) {
         this.iterator = iterator;
     }
 }

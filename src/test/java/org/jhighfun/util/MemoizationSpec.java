@@ -1,6 +1,7 @@
 package org.jhighfun.util;
 
 
+import org.jhighfun.util.memoize.MemoizeConfig;
 import org.junit.Test;
 
 import java.util.LinkedList;

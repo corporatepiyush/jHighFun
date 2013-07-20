@@ -809,7 +809,7 @@ public class FunctionUtilSpec {
     }
 
     @Test
-    public void testCrossProduct(){
+    public void testCrossProduct() {
 
         Iterable<Integer> integers = LazyIntRange(1, 100);
 
@@ -824,9 +824,9 @@ public class FunctionUtilSpec {
 
         Iterator<String> iterator = product.iterator();
 
-        for (Integer integer : integers){
-            for(Long lon : longs){
-                 assertEquals(iterator.next(), new Tuple2<Integer, Long>(integer, lon).toString());
+        for (Integer integer : integers) {
+            for (Long lon : longs) {
+                assertEquals(iterator.next(), new Tuple2<Integer, Long>(integer, lon).toString());
             }
         }
 

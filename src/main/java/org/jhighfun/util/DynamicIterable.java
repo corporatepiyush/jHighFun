@@ -49,13 +49,9 @@ public class DynamicIterable<IN> implements Iterable<IN> {
         return new DynamicIterable<List<IN>>(new ExtractorIterator<IN>(this.iterator, function));
     }
 
-    public <OUT> DynamicIterable<OUT> customize(CustomizedIterator<IN, OUT> customizedIterator) {
+    public <OUT> DynamicIterable<OUT> _customize(CustomizedIterator<IN, OUT> customizedIterator) {
         customizedIterator.setIterator(this.iterator);
         return new DynamicIterable<OUT>(customizedIterator);
-    }
-
-    public <OUT> DynamicIterable<OUT> extend(DynamicIterable<OUT> dynamicIterable) {
-        return new DynamicIterable<OUT>(dynamicIterable.iterator());
     }
 
     public DynamicIterable<IN> execute(Task<IN> task) {
@@ -167,6 +163,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
             thread.join();
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         if (exception._2 != null) {
@@ -180,7 +177,7 @@ public class DynamicIterable<IN> implements Iterable<IN> {
         return new DynamicIterable<IN>(extract());
     }
 
-    public CollectionFunctionChain<IN> processAndChain() {
+    public CollectionFunctionChain<IN> _processAndChain() {
         return new CollectionFunctionChain<IN>(extract());
     }
 

@@ -102,7 +102,9 @@ public class CheckerSpec {
             }
         })
                 .whenMatchesWith(new Function<String, Boolean>() {
-                    public Boolean apply(String arg) { return arg.equals("@COPYRIGHT");  }
+                    public Boolean apply(String arg) {
+                        return arg.equals("@COPYRIGHT");
+                    }
                 }).thenExecute(new Task<String>() {
             public void execute(String input) {
                 tuple._2 = "bad";

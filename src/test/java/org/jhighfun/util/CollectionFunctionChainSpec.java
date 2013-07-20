@@ -217,7 +217,7 @@ public class CollectionFunctionChainSpec {
 
         assertEquals(batchedOutput.size(), 20);
 
-        for(List<String> batchedList : batchedOutput){
+        for (List<String> batchedList : batchedOutput) {
             assertEquals(batchedList.size(), 100);
         }
 
@@ -227,12 +227,12 @@ public class CollectionFunctionChainSpec {
     @Test
     public void testExpand() {
         List<String> list = new LinkedList<String>();
-            list.add("Scala");
-            list.add("Ruby");
+        list.add("Scala");
+        list.add("Ruby");
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
-        List<String> expandedOutput = chain.expand(new Function<String, Iterable<String>>(){
+        List<String> expandedOutput = chain.expand(new Function<String, Iterable<String>>() {
             public Iterable<String> apply(String arg) {
                 return List(arg, arg);
             }
@@ -740,7 +740,7 @@ public class CollectionFunctionChainSpec {
 
 
     @Test
-    public void testCrossProduct(){
+    public void testCrossProduct() {
 
         Iterable<Integer> integers = LazyIntRange(1, 100);
 
@@ -755,8 +755,8 @@ public class CollectionFunctionChainSpec {
 
         Iterator<String> iterator = product.iterator();
 
-        for (Integer integer : integers){
-            for(Long lon : longs){
+        for (Integer integer : integers) {
+            for (Long lon : longs) {
                 assertEquals(iterator.next(), new Tuple2<Integer, Long>(integer, lon).toString());
             }
         }
@@ -764,7 +764,7 @@ public class CollectionFunctionChainSpec {
     }
 
     @Test
-    public void testSelfProduct(){
+    public void testSelfProduct() {
 
         Iterable<Integer> integers = LazyIntRange(1, 100);
 
@@ -779,8 +779,8 @@ public class CollectionFunctionChainSpec {
 
         Iterator<String> iterator = product.iterator();
 
-        for (Integer integer : integers){
-            for (Integer integer1 : integers1){
+        for (Integer integer : integers) {
+            for (Integer integer1 : integers1) {
                 assertEquals(iterator.next(), new Tuple2<Integer, Integer>(integer, integer1).toString());
             }
         }

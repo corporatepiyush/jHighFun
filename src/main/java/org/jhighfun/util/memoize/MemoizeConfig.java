@@ -1,4 +1,4 @@
-package org.jhighfun.util;
+package org.jhighfun.util.memoize;
 
 
 import java.util.concurrent.TimeUnit;

@@ -8,7 +8,6 @@ import java.util.List;
 
 import static org.jhighfun.util.CollectionUtil.List;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class DynamicIterableSpec {
 
@@ -42,10 +41,10 @@ public class DynamicIterableSpec {
     }
 
     @Test
-    public void testChain(){
+    public void testChain() {
 
         List<String> lists = new DynamicIterable<String>(List("India", "UK", "US", "Singapore"))
-                .processAndChain()
+                ._processAndChain()
                 .extract();
 
         assertEquals(lists, List("India", "UK", "US", "Singapore"));
@@ -58,11 +57,11 @@ public class DynamicIterableSpec {
         Iterator<String> iterator = List("A", "B", "{", "C", "C", "}", "D", "{", "E", "E", "}").iterator();
 
         List<List<String>> actual = new DynamicIterable<String>(iterator).extractSequences(
-          new Function<List<String>, Boolean>() {
-              public Boolean apply(List<String> list) {
-                  return list.get(0).equals("{") && (list.size() <= 1 || !list.get(list.size() - 1).equals("}"));
-              }
-          }).extract();
+                new Function<List<String>, Boolean>() {
+                    public Boolean apply(List<String> list) {
+                        return list.get(0).equals("{") && (list.size() <= 1 || !list.get(list.size() - 1).equals("}"));
+                    }
+                }).extract();
 
         assertEquals(actual, List(List("{", "C", "C", "}"), List("{", "E", "E", "}")));
 

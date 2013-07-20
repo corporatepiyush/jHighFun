@@ -1,12 +1,14 @@
 package org.jhighfun.util;
 
-import org.jhighfun.internal.*;
+import org.jhighfun.internal.Config;
+import org.jhighfun.internal.TaskInputOutput;
+import org.jhighfun.internal.ThreadPoolFactory;
 import org.jhighfun.util.matcher.WhenChecker;
+import org.jhighfun.util.memoize.*;
 
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -956,164 +958,19 @@ public final class FunctionUtil {
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function) {
-        final Map<CacheObject<I>, Future<CacheObject<O>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<O>>>(100, 0.6f, 32);
-        return new Function<I, O>() {
-
-            public O apply(final I input) {
-
-                final CacheObject<I> inputCacheObject = new CacheObject<I>(input);
-                final Future<CacheObject<O>> memoizedOutput = memo.get(inputCacheObject);
-                try {
-                    if (memoizedOutput != null && memoizedOutput.get() != null) {
-                        return memoizedOutput.get().get();
-                    } else {
-
-                        FutureTask<CacheObject<O>> futureTask = new FutureTask<CacheObject<O>>(new Callable<CacheObject<O>>() {
-                            public CacheObject<O> call() throws Exception {
-                                return new CacheObject<O>(function.apply(input));
-                            }
-                        });
-
-                        memo.put(inputCacheObject, futureTask);
-                        futureTask.run();
-                        return futureTask.get().get();
-                    }
-                } catch (Throwable e) {
-                    return function.apply(input);
-                }
-            }
-        };
+        return new BasicFunctionMemoizer<I, O>(function);
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final MemoizeConfig config) {
-        final Map<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>(100, 0.6f, 32);
-        final Long maxPersistenceTime = config.getTimeUnit().toMillis(config.getTimeValue());
-        final AtomicBoolean isLRUInProgress = new AtomicBoolean(false);
-
-        return new Function<I, O>() {
-
-            public O apply(final I input) {
-
-                final CacheObject<I> inputCacheObject = new CacheObject<I>(input);
-                final long currentTimeinMillis = System.currentTimeMillis();
-
-                try {
-                    final Future<CacheObject<Tuple3<Long, Long, O>>> memoizedFutureOutput = memo.get(inputCacheObject);
-                    final CacheObject<Tuple3<Long, Long, O>> memoizedOutput;
-                    if (memoizedFutureOutput != null
-                            && (memoizedOutput = memoizedFutureOutput.get()) != null
-                            && (currentTimeinMillis - memoizedOutput.get()._1) <= maxPersistenceTime) {
-
-                        memoizedOutput.get()._2 = currentTimeinMillis;
-
-                        if (memo.size() > config.getSize() && !isLRUInProgress.get()) {
-                            highPriorityTaskThreadPool.submit(new Runnable() {
-                                public void run() {
-                                    isLRUInProgress.set(true);
-                                    while (memo.size() > config.getSize()) {
-                                        removeLeastRecentlyUsedRecord();
-                                    }
-                                    isLRUInProgress.set(false);
-                                }
-                            });
-                        }
-
-                        return memoizedOutput.get()._3;
-                    } else {
-
-                        FutureTask<CacheObject<Tuple3<Long, Long, O>>> futureTask = new FutureTask<CacheObject<Tuple3<Long, Long, O>>>(new Callable<CacheObject<Tuple3<Long, Long, O>>>() {
-                            public CacheObject<Tuple3<Long, Long, O>> call() throws Exception {
-                                return new CacheObject<Tuple3<Long, Long, O>>(new Tuple3<Long, Long, O>(currentTimeinMillis, currentTimeinMillis, function.apply(input)));
-                            }
-                        });
-
-                        memo.put(inputCacheObject, futureTask);
-                        futureTask.run();
-                        return futureTask.get().get()._3;
-                    }
-                } catch (Throwable e) {
-                    return function.apply(input);
-                }
-            }
-
-            private void removeLeastRecentlyUsedRecord() {
-                try {
-                    Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> toBeRemoved = reduce(memo.entrySet(), new Accumulator<Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>, Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>>() {
-                        public Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> accumulate(Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> former, Map.Entry<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> latter) {
-
-                            try {
-                                final Long lastAccessTimeFormer = former.getValue().get().get()._2;
-                                final Long lastAccessTimeLatter = latter.getValue().get().get()._2;
-
-                                if (lastAccessTimeFormer <= lastAccessTimeLatter) {
-                                    return former;
-                                } else {
-                                    return latter;
-                                }
-
-                            } catch (Throwable e) {
-                                return former;
-                            }
-                        }
-                    });
-
-                    memo.remove(toBeRemoved.getKey());
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-    }
-
-    public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(final Accumulator<ACCUM, EL> accumulator) {
-
-        final Map<CacheObject<Pair<ACCUM, EL>>, Future<CacheObject<ACCUM>>> memo = new ConcurrentHashMap<CacheObject<Pair<ACCUM, EL>>, Future<CacheObject<ACCUM>>>(100, 0.6f, 32);
-        return new Accumulator<ACCUM, EL>() {
-            public ACCUM accumulate(final ACCUM accum, final EL el) {
-                final CacheObject<Pair<ACCUM, EL>> pairCacheObject = new CacheObject<Pair<ACCUM, EL>>(new Pair<ACCUM, EL>(accum, el));
-                final Future<CacheObject<ACCUM>> memoizedOutput = memo.get(pairCacheObject);
-                try {
-                    if (memoizedOutput != null && memoizedOutput.get() != null) {
-                        return memoizedOutput.get().get();
-                    } else {
-
-                        FutureTask<CacheObject<ACCUM>> futureTask = new FutureTask<CacheObject<ACCUM>>(new Callable<CacheObject<ACCUM>>() {
-                            public CacheObject<ACCUM> call() throws Exception {
-                                return new CacheObject<ACCUM>(accumulator.accumulate(accum, el));
-                            }
-                        });
-
-                        memo.put(pairCacheObject, futureTask);
-                        futureTask.run();
-                        return futureTask.get().get();
-                    }
-                } catch (Throwable e) {
-                    return accumulator.accumulate(accum, el);
-                }
-            }
-        };
-
+        return new ConfigurableFunctionMemoizer<I, O>(function, config);
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final ManagedCache managedCache) {
-        return new Function<I, O>() {
+        return new ExternalManagedFunctionMemoizer<I, O>(function, managedCache);
+    }
 
-            public O apply(final I input) {
-
-                final O memoizedOutput = (O) managedCache.get(input);
-                try {
-                    if (memoizedOutput != null) {
-                        return memoizedOutput;
-                    } else {
-                        O output = function.apply(input);
-                        managedCache.put(input, output);
-                        return output;
-                    }
-                } catch (Throwable e) {
-                    return function.apply(input);
-                }
-            }
-        };
+    public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(final Accumulator<ACCUM, EL> accumulator) {
+        return new BasicAccumulatorMemoizer<ACCUM, EL>(accumulator);
     }
 
     public static Batch batch(int batchSize) {
@@ -1263,8 +1120,8 @@ public final class FunctionUtil {
     public static <X, Y, Z> Iterable<Z> product(Iterable<X> xs, Iterable<Y> ys, Function<Tuple2<X, Y>, Z> function) {
         List<Z> zs = new LinkedList<Z>();
         Tuple2<X, Y> tuple2 = new Tuple2<X, Y>(null, null);
-        for(X x :xs){
-            for(Y y : ys){
+        for (X x : xs) {
+            for (Y y : ys) {
                 tuple2._1 = x;
                 tuple2._2 = y;
                 zs.add(function.apply(tuple2));

@@ -1,5 +1,7 @@
 package org.jhighfun.util;
 
+import org.jhighfun.util.memoize.BasicAccumulatorMemoizer;
+
 /**
  * A monoid function which accepts carry over as first and current element of Iterable structure
  * as second input element and returns carry over
@@ -7,8 +9,12 @@ package org.jhighfun.util;
  * @author Piyush Katariya
  */
 
-public interface Accumulator<ACCUM, EL> {
+public abstract class Accumulator<ACCUM, EL> {
 
-    public ACCUM accumulate(ACCUM accumulator, EL element);
+    public abstract ACCUM accumulate(ACCUM accumulator, EL element);
+
+    public Accumulator<ACCUM, EL> memoize() {
+        return new BasicAccumulatorMemoizer<ACCUM, EL>(this);
+    }
 
 }
