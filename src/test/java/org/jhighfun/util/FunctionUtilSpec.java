@@ -13,8 +13,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static org.jhighfun.util.CollectionUtil.List;
-import static org.jhighfun.util.CollectionUtil.tuple;
+import static org.jhighfun.util.CollectionUtil.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -807,6 +806,30 @@ public class FunctionUtilSpec {
         });
         assertEquals(tuple2._1.toString(), "[Scala]");
         assertEquals(tuple2._2.toString(), "[Java]");
+    }
+
+    @Test
+    public void testCrossProduct(){
+
+        Iterable<Integer> integers = LazyIntRange(1, 100);
+
+        Iterable<Long> longs = LazyLongRange(101, 200);
+
+        Iterable<String> product = FunctionUtil.product(integers, longs, new Function<Tuple2<Integer, Long>, String>() {
+
+            public String apply(Tuple2<Integer, Long> tuple) {
+                return tuple.toString();
+            }
+        });
+
+        Iterator<String> iterator = product.iterator();
+
+        for (Integer integer : integers){
+            for(Long lon : longs){
+                 assertEquals(iterator.next(), new Tuple2<Integer, Long>(integer, lon).toString());
+            }
+        }
+
     }
 
     @Test

@@ -19,6 +19,15 @@ public final class CollectionFunctionChain<I> {
         this.collection = collection;
     }
 
+    public CollectionFunctionChain(Iterable<I> iterable) {
+        List<I> list = new LinkedList<I>();
+        for (I i : iterable) {
+            list.add(i);
+        }
+        this.collection = list;
+    }
+
+
     public <O> ObjectFunctionChain<O> toObject(Function<List<I>, O> converter) {
         return new ObjectFunctionChain<O>(converter.apply(this.collection));
     }
@@ -84,8 +93,8 @@ public final class CollectionFunctionChain<I> {
         return new ObjectFunctionChain<ACCUM>(FunctionUtil.foldLeft(this.collection, accum, accumulator));
     }
 
-    public <O> CollectionFunctionChain<O> foldLeft(List<O> accum,
-                                                   Accumulator<List<O>, I> accumulator) {
+    public <O> CollectionFunctionChain<O> foldLeft(Collection<O> accum,
+                                                   Accumulator<Collection<O>, I> accumulator) {
         return new CollectionFunctionChain<O>(FunctionUtil.foldLeft(this.collection, accum, accumulator));
     }
 
@@ -94,8 +103,8 @@ public final class CollectionFunctionChain<I> {
         return new ObjectFunctionChain<ACCUM>(FunctionUtil.foldRight(this.collection, accum, accumulator));
     }
 
-    public <O> CollectionFunctionChain<O> foldRight(List<O> accum,
-                                                    Accumulator<List<O>, I> accumulator) {
+    public <O> CollectionFunctionChain<O> foldRight(Collection<O> accum,
+                                                    Accumulator<Collection<O>, I> accumulator) {
         return new CollectionFunctionChain<O>(FunctionUtil.foldRight(this.collection, accum, accumulator));
     }
 
@@ -167,7 +176,7 @@ public final class CollectionFunctionChain<I> {
 
     public CollectionFunctionChain<I> slice(int from, int to) {
 
-        if(from < 0 || to < 0) {
+        if (from < 0 || to < 0) {
             throw new IllegalArgumentException("Please provide positive value.");
         }
 
@@ -183,7 +192,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> limit(int to) {
-        if(to < 1) {
+        if (to < 1) {
             throw new IllegalArgumentException("Please provide value greater than ZERO.");
         }
 
@@ -213,15 +222,15 @@ public final class CollectionFunctionChain<I> {
     public CollectionFunctionChain<I> removeDuplicates(Function<Tuple2<I, I>, Boolean> likenessEvaluator) {
         final LinkedList<I> newList = new LinkedList<I>();
         Tuple2<I, I> tuple = new Tuple2<I, I>(null, null);
-        while(this.collection.size() > 0){
+        while (this.collection.size() > 0) {
             I first = this.collection.remove(0);
             newList.add(first);
             Iterator<I> iterator = this.collection.iterator();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 tuple._1 = first;
                 tuple._2 = iterator.next();
-                if(likenessEvaluator.apply(tuple)){
-                       iterator.remove();
+                if (likenessEvaluator.apply(tuple)) {
+                    iterator.remove();
                 }
             }
         }
@@ -373,6 +382,15 @@ public final class CollectionFunctionChain<I> {
         }
 
         return new CollectionFunctionChain<O>(expandedList);
+    }
+
+
+    public <J, K> CollectionFunctionChain<K> product(Iterable<J> ys, Function<Tuple2<I, J>, K> function) {
+        return new CollectionFunctionChain<K>(FunctionUtil.product(this.collection, ys, function));
+    }
+
+    public <O> CollectionFunctionChain<O> product(Function<Tuple2<I, I>, O> function) {
+        return new CollectionFunctionChain<O>(FunctionUtil.product(this.collection, this.collection, function));
     }
 
     @Override

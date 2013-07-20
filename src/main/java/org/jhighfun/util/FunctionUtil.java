@@ -1260,6 +1260,18 @@ public final class FunctionUtil {
         return new WhenChecker<T>(object);
     }
 
+    public static <X, Y, Z> Iterable<Z> product(Iterable<X> xs, Iterable<Y> ys, Function<Tuple2<X, Y>, Z> function) {
+        List<Z> zs = new LinkedList<Z>();
+        Tuple2<X, Y> tuple2 = new Tuple2<X, Y>(null, null);
+        for(X x :xs){
+            for(Y y : ys){
+                tuple2._1 = x;
+                tuple2._2 = y;
+                zs.add(function.apply(tuple2));
+            }
+        }
+        return zs;
+    }
 }
 
 final class Batch implements WorkDivisionStrategy {

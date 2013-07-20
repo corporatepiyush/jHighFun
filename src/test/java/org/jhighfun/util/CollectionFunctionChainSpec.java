@@ -740,6 +740,55 @@ public class CollectionFunctionChainSpec {
 
 
     @Test
+    public void testCrossProduct(){
+
+        Iterable<Integer> integers = LazyIntRange(1, 100);
+
+        Iterable<Long> longs = LazyLongRange(101, 200);
+
+        Iterable<String> product = new CollectionFunctionChain<Integer>(integers).product(longs, new Function<Tuple2<Integer, Long>, String>() {
+
+            public String apply(Tuple2<Integer, Long> tuple) {
+                return tuple.toString();
+            }
+        }).extract();
+
+        Iterator<String> iterator = product.iterator();
+
+        for (Integer integer : integers){
+            for(Long lon : longs){
+                assertEquals(iterator.next(), new Tuple2<Integer, Long>(integer, lon).toString());
+            }
+        }
+
+    }
+
+    @Test
+    public void testSelfProduct(){
+
+        Iterable<Integer> integers = LazyIntRange(1, 100);
+
+        Iterable<Integer> integers1 = LazyIntRange(1, 100);
+
+        Iterable<String> product = new CollectionFunctionChain<Integer>(integers).product(new Function<Tuple2<Integer, Integer>, String>() {
+
+            public String apply(Tuple2<Integer, Integer> tuple) {
+                return tuple.toString();
+            }
+        }).extract();
+
+        Iterator<String> iterator = product.iterator();
+
+        for (Integer integer : integers){
+            for (Integer integer1 : integers1){
+                assertEquals(iterator.next(), new Tuple2<Integer, Integer>(integer, integer1).toString());
+            }
+        }
+
+    }
+
+
+    @Test
     public void testSlice() {
 
         List<String> list = new LinkedList<String>();
