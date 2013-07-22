@@ -1,8 +1,8 @@
 package org.jhighfun.util.stream;
 
 import org.jhighfun.util.CollectionUtil;
-import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.Function;
+import org.jhighfun.util.TaskStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ConfigurableFunctionMemoizer<I, O> extends Function<I, O> {
 
     private final Function<I, O> function;
-
     private final Map<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>(100, 0.6f, 32);
     private final AtomicBoolean isLRUDeletionInProgress = new AtomicBoolean(false);
     private final MemoizeConfig config;
@@ -25,7 +24,7 @@ public class ConfigurableFunctionMemoizer<I, O> extends Function<I, O> {
     public ConfigurableFunctionMemoizer(Function<I, O> function, MemoizeConfig config) {
         this.function = function;
         this.config = config;
-        maxPersistenceTime = config.getTimeUnit().toMillis(config.getTimeValue());
+        this.maxPersistenceTime = config.getTimeUnit().toMillis(config.getTimeValue());
     }
 
 
@@ -36,15 +35,15 @@ public class ConfigurableFunctionMemoizer<I, O> extends Function<I, O> {
         final long currentTimeinMillis = System.currentTimeMillis();
 
         try {
-            final Future<CacheObject<Tuple3<Long, Long, O>>> memoizedFutureOutput = memo.get(inputCacheObject);
+            final Future<CacheObject<Tuple3<Long, Long, O>>> memoizedFutureOutput = this.memo.get(inputCacheObject);
             final CacheObject<Tuple3<Long, Long, O>> memoizedOutput;
             if (memoizedFutureOutput != null
                     && (memoizedOutput = memoizedFutureOutput.get()) != null
-                    && (currentTimeinMillis - memoizedOutput.get()._1) <= maxPersistenceTime) {
+                    && (currentTimeinMillis - memoizedOutput.get()._1) <= this.maxPersistenceTime) {
 
                 memoizedOutput.get()._2 = currentTimeinMillis;
 
-                if (memo.size() > config.getSize() && !isLRUDeletionInProgress.get()) {
+                if (this.memo.size() > this.config.getSize() && !this.isLRUDeletionInProgress.get()) {
                     new Thread(new Runnable() {
                         public void run() {
                             isLRUDeletionInProgress.set(true);
@@ -65,12 +64,12 @@ public class ConfigurableFunctionMemoizer<I, O> extends Function<I, O> {
                     }
                 });
 
-                memo.put(inputCacheObject, futureTask);
+                this.memo.put(inputCacheObject, futureTask);
                 futureTask.run();
                 return futureTask.get().get()._3;
             }
         } catch (Throwable e) {
-            return function.apply(input);
+            return this.function.apply(input);
         }
     }
 

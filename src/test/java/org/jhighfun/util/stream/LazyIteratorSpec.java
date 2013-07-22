@@ -1,7 +1,7 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.Function;
+import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.Tuple2;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -23,7 +23,7 @@ public class BasicFunctionMemoizer<I, O> extends Function<I, O> {
     public O apply(final I input) {
 
         final CacheObject<I> inputCacheObject = new CacheObject<I>(input);
-        final Future<CacheObject<O>> memoizedOutput = memo.get(inputCacheObject);
+        final Future<CacheObject<O>> memoizedOutput = this.memo.get(inputCacheObject);
         try {
             if (memoizedOutput != null && memoizedOutput.get() != null) {
                 return memoizedOutput.get().get();
@@ -35,12 +35,12 @@ public class BasicFunctionMemoizer<I, O> extends Function<I, O> {
                     }
                 });
 
-                memo.put(inputCacheObject, futureTask);
+                this.memo.put(inputCacheObject, futureTask);
                 futureTask.run();
                 return futureTask.get().get();
             }
         } catch (Throwable e) {
-            return function.apply(input);
+            return this.function.apply(input);
         }
     }
 }

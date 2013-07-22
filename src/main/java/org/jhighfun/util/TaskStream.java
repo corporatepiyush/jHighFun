@@ -33,6 +33,10 @@ public class TaskStream<IN> implements Iterable<IN> {
         return new TaskStream<List<IN>>(new BatchIterator<IN>(this.iterator, batchSize));
     }
 
+    public TaskStream<IN> buffer(int bufferSize) {
+        return new TaskStream<IN>(new BufferIterator<IN>(this.iterator, bufferSize));
+    }
+
     public <OUT> TaskStream<OUT> map(Function<IN, OUT> function) {
         return new TaskStream<OUT>(new MapperIterator<IN, OUT>(this.iterator, function));
     }

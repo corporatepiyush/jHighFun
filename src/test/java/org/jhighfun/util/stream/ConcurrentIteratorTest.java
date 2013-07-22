@@ -1,8 +1,8 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.FunctionUtil;
 import org.jhighfun.util.RecordProcessor;
+import org.jhighfun.util.TaskStream;
 import org.junit.Test;
 
 import java.util.LinkedList;

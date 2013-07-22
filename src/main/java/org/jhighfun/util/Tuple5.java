@@ -19,7 +19,6 @@ public final class Tuple5<F, S, T, FO, FI> {
         this._2 = second;
         this._3 = third;
         this._4 = fourth;
-
         this._5 = fifth;
     }
 

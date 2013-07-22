@@ -1136,7 +1136,7 @@ final class Batch implements WorkDivisionStrategy {
 
     public Batch(int size) {
         this.size = size;
-        if(size < 1) {
+        if (size < 1) {
             throw new IllegalArgumentException("Please provide batch size greater than ZERO.");
         }
 
@@ -1176,7 +1176,7 @@ final class Parallel implements WorkDivisionStrategy {
     }
 
     public Parallel(int threads) {
-        if(threads < 1) {
+        if (threads < 1) {
             throw new IllegalArgumentException("Please provide thread count greater than ZERO.");
         }
         this.threads = threads;
