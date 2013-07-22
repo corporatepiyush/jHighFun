@@ -1,6 +1,6 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.DynamicIterable;
+import org.jhighfun.util.TaskStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -23,7 +23,7 @@ public class BatchIteratorSpec {
 
         int first = 1;
         int last = batchSize;
-        for (List<Integer> batch : new DynamicIterable<List<Integer>>(integerBatchIterator)) {
+        for (List<Integer> batch : new TaskStream<List<Integer>>(integerBatchIterator)) {
             assertEquals(batch, IntRange(first, last));
             first = last + 1;
             last = last + batchSize;
@@ -38,7 +38,7 @@ public class BatchIteratorSpec {
         List<String> stringList = List("India", "Singapore");
         BatchIterator<String> integerBatchIterator = new BatchIterator<String>(stringList.iterator(), batchSize);
 
-        List<List<String>> list = new DynamicIterable<List<String>>(integerBatchIterator)
+        List<List<String>> list = new TaskStream<List<String>>(integerBatchIterator)
                 .extract();
 
         assertEquals(List(stringList), list);

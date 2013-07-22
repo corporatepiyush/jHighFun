@@ -142,7 +142,7 @@ public final class CollectionUtil {
             throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
         Iterable<Long> range = null;
         if (from > to) {
-            range = new DynamicIterable<Long>(new AbstractIterator<Long>() {
+            range = new TaskStream<Long>(new AbstractIterator<Long>() {
 
                 private long i = from;
 
@@ -165,7 +165,7 @@ public final class CollectionUtil {
 
             });
         } else {
-            range = new DynamicIterable<Long>(new AbstractIterator<Long>() {
+            range = new TaskStream<Long>(new AbstractIterator<Long>() {
 
                 private long i = from;
 
@@ -202,7 +202,7 @@ public final class CollectionUtil {
             throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
         Iterable<Integer> range;
         if (from > to) {
-            range = new DynamicIterable<Integer>(new AbstractIterator<Integer>() {
+            range = new TaskStream<Integer>(new AbstractIterator<Integer>() {
 
                 private int i = from;
 
@@ -225,7 +225,7 @@ public final class CollectionUtil {
 
             });
         } else {
-            range = new DynamicIterable<Integer>(new AbstractIterator<Integer>() {
+            range = new TaskStream<Integer>(new AbstractIterator<Integer>() {
 
                 private int i = from;
 

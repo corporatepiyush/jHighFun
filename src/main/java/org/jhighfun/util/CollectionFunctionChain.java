@@ -338,8 +338,8 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-    public DynamicIterable<I> asStream() {
-        return new DynamicIterable<I>(this.collection);
+    public TaskStream<I> asTaskStream() {
+        return new TaskStream<I>(this.collection);
     }
 
     public List<I> extract() {

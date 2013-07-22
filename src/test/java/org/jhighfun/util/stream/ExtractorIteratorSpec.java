@@ -1,6 +1,6 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.DynamicIterable;
+import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.Function;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,7 @@ public class ExtractorIteratorSpec {
         });
 
         List<List<String>> actual = new LinkedList<List<String>>();
-        for (List<String> list : new DynamicIterable<List<String>>(extractorIterator)) {
+        for (List<String> list : new TaskStream<List<String>>(extractorIterator)) {
             actual.add(list);
         }
 

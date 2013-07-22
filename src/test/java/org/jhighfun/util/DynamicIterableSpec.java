@@ -14,7 +14,7 @@ public class DynamicIterableSpec {
     @Test
     public void test() {
 
-        List<String> lists = new DynamicIterable<String>(List("India", "UK", "US", "Singapore"))
+        List<String> lists = new TaskStream<String>(List("India", "UK", "US", "Singapore"))
                 .filter(new Function<String, Boolean>() {
                     public Boolean apply(String arg) {
                         return arg.contains("a");
@@ -43,7 +43,7 @@ public class DynamicIterableSpec {
     @Test
     public void testChain() {
 
-        List<String> lists = new DynamicIterable<String>(List("India", "UK", "US", "Singapore"))
+        List<String> lists = new TaskStream<String>(List("India", "UK", "US", "Singapore"))
                 ._processAndChain()
                 .extract();
 
@@ -56,7 +56,7 @@ public class DynamicIterableSpec {
 
         Iterator<String> iterator = List("A", "B", "{", "C", "C", "}", "D", "{", "E", "E", "}").iterator();
 
-        List<List<String>> actual = new DynamicIterable<String>(iterator).extractSequences(
+        List<List<String>> actual = new TaskStream<String>(iterator).extractSequences(
                 new Function<List<String>, Boolean>() {
                     public Boolean apply(List<String> list) {
                         return list.get(0).equals("{") && (list.size() <= 1 || !list.get(list.size() - 1).equals("}"));

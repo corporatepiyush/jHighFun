@@ -1,6 +1,6 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.DynamicIterable;
+import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.FunctionUtil;
 import org.jhighfun.util.RecordProcessor;
 import org.junit.Test;
@@ -19,11 +19,11 @@ public class ConcurrentIteratorTest {
             list.add(i);
         }
 
-        final DynamicIterable<Integer> dynamicIterable = new DynamicIterable<Integer>(new ConcurrentIterator<Integer>(list.iterator()));
+        final TaskStream<Integer> taskStream = new TaskStream<Integer>(new ConcurrentIterator<Integer>(list.iterator()));
 
         FunctionUtil.each(list, new RecordProcessor<Integer>() {
             public void process(Integer record) {
-                for (Integer integer : dynamicIterable) ;
+                for (Integer integer : taskStream) ;
             }
         }, FunctionUtil.parallel(100));
 

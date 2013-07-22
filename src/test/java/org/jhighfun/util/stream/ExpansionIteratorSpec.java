@@ -1,7 +1,7 @@
 package org.jhighfun.util.stream;
 
 import org.jhighfun.util.CollectionUtil;
-import org.jhighfun.util.DynamicIterable;
+import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.Function;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class ExpansionIteratorSpec {
         });
 
         int index = 10;
-        for (int integer : new DynamicIterable<Integer>(iterator)) {
+        for (int integer : new TaskStream<Integer>(iterator)) {
             assertEquals(integer, index++);
         }
 

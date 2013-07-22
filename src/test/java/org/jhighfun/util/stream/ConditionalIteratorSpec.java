@@ -1,6 +1,6 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.DynamicIterable;
+import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.Function;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +24,7 @@ public class ConditionalIteratorSpec {
 
         ConditionalIterator<Integer> conditionalIterator = new ConditionalIterator<Integer>(IntRange(1, 100).iterator(), spy);
 
-        for (Integer integer : new DynamicIterable<Integer>(conditionalIterator)) {
+        for (Integer integer : new TaskStream<Integer>(conditionalIterator)) {
             assertTrue(integer % 4 == 0);
         }
 

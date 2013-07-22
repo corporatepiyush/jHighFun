@@ -500,7 +500,7 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<Integer> chain = new CollectionFunctionChain<Integer>(list);
 
-        DynamicIterable<Integer> integers = chain.asStream();
+        TaskStream<Integer> integers = chain.asTaskStream();
 
         assertEquals(list, FlattenList(integers));
     }

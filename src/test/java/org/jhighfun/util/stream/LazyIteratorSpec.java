@@ -1,6 +1,6 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.DynamicIterable;
+import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.Function;
 import org.jhighfun.util.Tuple2;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class LazyIteratorSpec {
         );
 
         int index = 1;
-        for (int integer : new DynamicIterable<Integer>(lazyIterator)) {
+        for (int integer : new TaskStream<Integer>(lazyIterator)) {
             assertEquals(integer, index++);
         }
         assertEquals(index, load);

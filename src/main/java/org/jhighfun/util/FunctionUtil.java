@@ -699,16 +699,16 @@ public final class FunctionUtil {
         return new ObjectFunctionChain<I>(object);
     }
 
-    public static <I> DynamicIterable<I> stream(Iterable<I> iterable) {
-        return new DynamicIterable<I>(iterable);
+    public static <I> TaskStream<I> taskStream(Iterable<I> iterable) {
+        return new TaskStream<I>(iterable);
     }
 
-    public static <I> DynamicIterable<I> stream(Iterator<I> iterator) {
-        return new DynamicIterable<I>(iterator);
+    public static <I> TaskStream<I> taskStream(Iterator<I> iterator) {
+        return new TaskStream<I>(iterator);
     }
 
-    public static <INIT, IN> DynamicIterable<IN> lazyStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
-        return new DynamicIterable<IN>(initialInput, function, predicate);
+    public static <INIT, IN> TaskStream<IN> lazyTaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
+        return new TaskStream<IN>(initialInput, function, predicate);
     }
 
     public static <I, O> CurriedFunction<I, O> curry(Function<List<I>, O> function, List<I> fixedInputs) {
