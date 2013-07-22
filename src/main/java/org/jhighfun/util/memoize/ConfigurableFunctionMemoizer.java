@@ -18,7 +18,7 @@ public class ConfigurableFunctionMemoizer<I, O> extends Function<I, O> {
     private final Function<I, O> function;
 
     private final Map<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>> memo = new ConcurrentHashMap<CacheObject<I>, Future<CacheObject<Tuple3<Long, Long, O>>>>(100, 0.6f, 32);
-    private final AtomicBoolean isLRUInProgress = new AtomicBoolean(false);
+    private final AtomicBoolean isLRUDeletionInProgress = new AtomicBoolean(false);
     private final MemoizeConfig config;
     private Long maxPersistenceTime;
 
@@ -44,14 +44,14 @@ public class ConfigurableFunctionMemoizer<I, O> extends Function<I, O> {
 
                 memoizedOutput.get()._2 = currentTimeinMillis;
 
-                if (memo.size() > config.getSize() && !isLRUInProgress.get()) {
+                if (memo.size() > config.getSize() && !isLRUDeletionInProgress.get()) {
                     new Thread(new Runnable() {
                         public void run() {
-                            isLRUInProgress.set(true);
+                            isLRUDeletionInProgress.set(true);
                             while (memo.size() > config.getSize()) {
                                 removeLeastRecentlyUsedRecord();
                             }
-                            isLRUInProgress.set(false);
+                            isLRUDeletionInProgress.set(false);
                         }
                     }).start();
                 }
