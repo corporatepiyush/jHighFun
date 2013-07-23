@@ -1005,13 +1005,26 @@ public final class FunctionUtil {
         return new ForkAndJoin<T>(object);
     }
 
-    public static <T> void divideAndConquer(Collection<T> collection, final Task<Collection<T>> task, WorkDivisionStrategy partition) {
+    public static <T> void divideAndConquer(Iterable<T> collection, final Task<Collection<T>> task, WorkDivisionStrategy partition) {
         final Collection<Collection<T>> collections = partition.divide(collection);
         each(collections, new RecordProcessor<Collection<T>>() {
             public void process(Collection<T> items) {
                 task.execute(items);
             }
         }, parallel(collections.size()));
+    }
+
+    public static <IN, OUT> Collection<OUT> divideAndConquer(Iterable<IN> collection, final Function<Collection<IN>, Collection<OUT>> function, WorkDivisionStrategy workDivisionStrategy) {
+        Collection<Collection<IN>> collections = workDivisionStrategy.divide(collection);
+        return chain(collections)
+                .map(function, parallel(collections.size()))
+                .expand(new Function<Collection<OUT>, Iterable<OUT>>() {
+                    @Override
+                    public Iterable<OUT> apply(Collection<OUT> collection1) {
+                        return collection1;
+                    }
+                })
+                .extract();
     }
 
     public static <T> List<T> extractWithIndex(List<T> list, Function<Integer, Boolean> predicate) {
@@ -1117,7 +1130,7 @@ public final class FunctionUtil {
         return new WhenChecker<T>(object);
     }
 
-    public static <X, Y, Z> Iterable<Z> product(Iterable<X> xs, Iterable<Y> ys, Function<Tuple2<X, Y>, Z> function) {
+    public static <X, Y, Z> Iterable<Z> crossProduct(Iterable<X> xs, Iterable<Y> ys, Function<Tuple2<X, Y>, Z> function) {
         List<Z> zs = new LinkedList<Z>();
         Tuple2<X, Y> tuple2 = new Tuple2<X, Y>(null, null);
         for (X x : xs) {

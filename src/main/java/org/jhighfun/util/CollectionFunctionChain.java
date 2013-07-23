@@ -181,7 +181,7 @@ public final class CollectionFunctionChain<I> {
     public CollectionFunctionChain<I> slice(int from, int to) {
 
         if (from < 0 || to < 0) {
-            throw new IllegalArgumentException("Please provide positive value.");
+            throw new IllegalArgumentException("Please provide positive values for 'from' and 'to' to carry out slicing of collection.");
         }
 
         final List<I> sliced = new LinkedList<I>();
@@ -197,7 +197,7 @@ public final class CollectionFunctionChain<I> {
 
     public CollectionFunctionChain<I> limit(int to) {
         if (to < 1) {
-            throw new IllegalArgumentException("Please provide value greater than ZERO.");
+            throw new IllegalArgumentException("Please provide 'limit' value greater than ZERO.");
         }
 
         return slice(0, to - 1);
@@ -251,9 +251,21 @@ public final class CollectionFunctionChain<I> {
         return new CollectionForkAndJoin<I>(this);
     }
 
-    public CollectionFunctionChain<I> divideAndConquer(Task<Collection<I>> task, WorkDivisionStrategy partition) {
-        FunctionUtil.divideAndConquer(this.collection, task, partition);
+    public CollectionFunctionChain<I> divideAndConquer(final Task<List<I>> task, WorkDivisionStrategy partition) {
+        FunctionUtil.divideAndConquer(this.collection, new Task<Collection<I>>() {
+            public void execute(Collection<I> input) {
+                task.execute((List<I>) input);
+            }
+        }, partition);
         return this;
+    }
+
+    public <O> CollectionFunctionChain<O> divideAndConquer(final Function<List<I>, List<O>> function, WorkDivisionStrategy partition) {
+        return new CollectionFunctionChain<O>((List<O>) FunctionUtil.divideAndConquer(this.collection, new Function<Collection<I>, Collection<O>>() {
+            public Collection<O> apply(Collection<I> collection1) {
+                return function.apply((List<I>) collection1);
+            }
+        }, partition));
     }
 
     public CollectionFunctionChain<I> execute(Task<List<I>> task) {
@@ -351,7 +363,11 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<List<I>> batch(int batchSize) {
-        batchSize = Math.abs(batchSize);
+
+        if (batchSize < 1) {
+            throw new IllegalArgumentException("Please provide 'batch' size greater than ZERO.");
+        }
+
         List<List<I>> batchCollection = new LinkedList<List<I>>();
 
         int batchCount = (this.collection.size() / batchSize) + ((this.collection.size() % batchSize) > 0 ? 1 : 0);
@@ -389,12 +405,12 @@ public final class CollectionFunctionChain<I> {
     }
 
 
-    public <J, K> CollectionFunctionChain<K> product(Iterable<J> ys, Function<Tuple2<I, J>, K> function) {
-        return new CollectionFunctionChain<K>(FunctionUtil.product(this.collection, ys, function));
+    public <J, K> CollectionFunctionChain<K> crossProduct(Iterable<J> ys, Function<Tuple2<I, J>, K> function) {
+        return new CollectionFunctionChain<K>(FunctionUtil.crossProduct(this.collection, ys, function));
     }
 
-    public <O> CollectionFunctionChain<O> product(Function<Tuple2<I, I>, O> function) {
-        return new CollectionFunctionChain<O>(FunctionUtil.product(this.collection, this.collection, function));
+    public <O> CollectionFunctionChain<O> selfProduct(Function<Tuple2<I, I>, O> function) {
+        return new CollectionFunctionChain<O>(FunctionUtil.crossProduct(this.collection, this.collection, function));
     }
 
     @Override

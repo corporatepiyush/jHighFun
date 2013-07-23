@@ -9,13 +9,13 @@ public class RepeatConditionEvaluator<T> {
         this.task = task;
     }
 
-    public void times(Integer times) {
+    public void times(int times) {
         for (int loop = 0; loop < times; loop++) {
             this.task.execute();
         }
     }
 
-    public void times(Integer times, WorkDivisionStrategy strategy) {
+    public void times(int times, WorkDivisionStrategy strategy) {
         FunctionUtil.each(CollectionUtil.IntRange(1, times), new RecordProcessor<Integer>() {
             public void process(Integer i) {
                 task.execute();

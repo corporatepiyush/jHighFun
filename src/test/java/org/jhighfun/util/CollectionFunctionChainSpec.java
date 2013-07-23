@@ -746,7 +746,7 @@ public class CollectionFunctionChainSpec {
 
         Iterable<Long> longs = LazyLongRange(101, 200);
 
-        Iterable<String> product = new CollectionFunctionChain<Integer>(integers).product(longs, new Function<Tuple2<Integer, Long>, String>() {
+        Iterable<String> product = new CollectionFunctionChain<Integer>(integers).crossProduct(longs, new Function<Tuple2<Integer, Long>, String>() {
 
             public String apply(Tuple2<Integer, Long> tuple) {
                 return tuple.toString();
@@ -770,7 +770,7 @@ public class CollectionFunctionChainSpec {
 
         Iterable<Integer> integers1 = LazyIntRange(1, 100);
 
-        Iterable<String> product = new CollectionFunctionChain<Integer>(integers).product(new Function<Tuple2<Integer, Integer>, String>() {
+        Iterable<String> product = new CollectionFunctionChain<Integer>(integers).selfProduct(new Function<Tuple2<Integer, Integer>, String>() {
 
             public String apply(Tuple2<Integer, Integer> tuple) {
                 return tuple.toString();

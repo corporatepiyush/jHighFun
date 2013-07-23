@@ -815,7 +815,7 @@ public class FunctionUtilSpec {
 
         Iterable<Long> longs = LazyLongRange(101, 200);
 
-        Iterable<String> product = FunctionUtil.product(integers, longs, new Function<Tuple2<Integer, Long>, String>() {
+        Iterable<String> product = FunctionUtil.crossProduct(integers, longs, new Function<Tuple2<Integer, Long>, String>() {
 
             public String apply(Tuple2<Integer, Long> tuple) {
                 return tuple.toString();
