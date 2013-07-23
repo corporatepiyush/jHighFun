@@ -31,7 +31,8 @@ public class LazyIteratorSpec {
         );
 
         int index = 1;
-        for (int integer : new TaskStream<Integer>(lazyIterator)) {
+        while (lazyIterator.hasNext()) {
+            int integer = lazyIterator.next();
             assertEquals(integer, index++);
         }
         assertEquals(index, load);

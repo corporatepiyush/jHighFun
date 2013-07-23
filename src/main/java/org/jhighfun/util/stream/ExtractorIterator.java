@@ -9,12 +9,12 @@ import java.util.List;
 
 public class ExtractorIterator<T> extends AbstractIterator<List<T>> {
 
-    private final Iterator<T> iterator;
+    private final AbstractIterator<T> iterator;
     private final Function<List<T>, Boolean> function;
 
     private List<T> current;
 
-    public ExtractorIterator(Iterator<T> iterator, Function<List<T>, Boolean> function) {
+    public ExtractorIterator(AbstractIterator<T> iterator, Function<List<T>, Boolean> function) {
         this.iterator = iterator;
         this.function = function;
     }

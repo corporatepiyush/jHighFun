@@ -15,17 +15,17 @@ import java.util.NoSuchElementException;
 
 public final class ConditionalIterator<T> extends AbstractIterator<T> {
 
-    private final Iterator<T> conditionalIterator;
+    private final AbstractIterator<T> conditionalIterator;
     private final Function<T, Boolean> predicate;
     private T current;
     private Task<T> task;
 
-    public ConditionalIterator(Iterator<T> conditionalIterator, Function<T, Boolean> predicate) {
+    public ConditionalIterator(AbstractIterator<T> conditionalIterator, Function<T, Boolean> predicate) {
         this.conditionalIterator = conditionalIterator;
         this.predicate = predicate;
     }
 
-    public ConditionalIterator(Iterator<T> iterator, Function<T, Boolean> predicate, Task<T> task) {
+    public ConditionalIterator(AbstractIterator<T> iterator, Function<T, Boolean> predicate, Task<T> task) {
         this.conditionalIterator = iterator;
         this.predicate = predicate;
         this.task = task;

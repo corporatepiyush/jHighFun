@@ -7,10 +7,10 @@ import java.util.Iterator;
 
 public class ExecutorIterator<T> extends AbstractIterator<T> {
 
-    private final Iterator<T> executorIterator;
+    private final AbstractIterator<T> executorIterator;
     private final Task<T> task;
 
-    public ExecutorIterator(Iterator<T> iterator, Task<T> task) {
+    public ExecutorIterator(AbstractIterator<T> iterator, Task<T> task) {
         this.executorIterator = iterator;
         this.task = task;
     }

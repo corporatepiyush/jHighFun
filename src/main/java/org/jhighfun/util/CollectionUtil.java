@@ -142,7 +142,7 @@ public final class CollectionUtil {
             throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
         Iterable<Long> range = null;
         if (from > to) {
-            range = new TaskStream<Long>(new AbstractIterator<Long>() {
+            range = new DynamicIterable<Long>(new Iterator<Long>() {
 
                 private long i = from;
 
@@ -163,9 +163,13 @@ public final class CollectionUtil {
                     }
                 }
 
+                public void remove() {
+                    //To change body of implemented methods use File | Settings | File Templates.
+                }
+
             });
         } else {
-            range = new TaskStream<Long>(new AbstractIterator<Long>() {
+            range = new DynamicIterable<Long>(new Iterator<Long>() {
 
                 private long i = from;
 
@@ -184,6 +188,10 @@ public final class CollectionUtil {
                     } else {
                         throw new NoSuchElementException();
                     }
+                }
+
+                public void remove() {
+                    //To change body of implemented methods use File | Settings | File Templates.
                 }
 
             });
@@ -202,7 +210,7 @@ public final class CollectionUtil {
             throw new IllegalArgumentException("'step' should be a number greater than ZERO.");
         Iterable<Integer> range;
         if (from > to) {
-            range = new TaskStream<Integer>(new AbstractIterator<Integer>() {
+            range = new DynamicIterable<Integer>(new Iterator<Integer>() {
 
                 private int i = from;
 
@@ -223,9 +231,13 @@ public final class CollectionUtil {
                     }
                 }
 
+                public void remove() {
+                    //To change body of implemented methods use File | Settings | File Templates.
+                }
+
             });
         } else {
-            range = new TaskStream<Integer>(new AbstractIterator<Integer>() {
+            range = new DynamicIterable<Integer>(new Iterator<Integer>() {
 
                 private int i = from;
 
@@ -244,6 +256,10 @@ public final class CollectionUtil {
                     } else {
                         throw new NoSuchElementException();
                     }
+                }
+
+                public void remove() {
+                    //To change body of implemented methods use File | Settings | File Templates.
                 }
 
             });

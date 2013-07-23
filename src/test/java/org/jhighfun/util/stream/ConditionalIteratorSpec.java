@@ -22,9 +22,10 @@ public class ConditionalIteratorSpec {
             }
         });
 
-        ConditionalIterator<Integer> conditionalIterator = new ConditionalIterator<Integer>(IntRange(1, 100).iterator(), spy);
+        ConditionalIterator<Integer> conditionalIterator = new ConditionalIterator<Integer>(new AbstractIteratorAdapter<Integer>(IntRange(1, 100).iterator()), spy);
 
-        for (Integer integer : new TaskStream<Integer>(conditionalIterator)) {
+        while (conditionalIterator.hasNext()) {
+            Integer integer = conditionalIterator.next();
             assertTrue(integer % 4 == 0);
         }
 

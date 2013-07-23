@@ -21,7 +21,7 @@ public class ExtractorIteratorSpec {
 
         Iterator<String> iterator = List("A", "B", "{", "C", "C", "}", "D", "{", "E", "E", "}").iterator();
 
-        ExtractorIterator<String> extractorIterator = new ExtractorIterator<String>(iterator, new Function<List<String>, Boolean>() {
+        ExtractorIterator<String> extractorIterator = new ExtractorIterator<String>(new AbstractIteratorAdapter<String>(iterator), new Function<List<String>, Boolean>() {
             public Boolean apply(List<String> list) {
 
                 return list.get(0).equals("{") && (list.size() <= 1 || !list.get(list.size() - 1).equals("}"));
@@ -29,7 +29,8 @@ public class ExtractorIteratorSpec {
         });
 
         List<List<String>> actual = new LinkedList<List<String>>();
-        for (List<String> list : new TaskStream<List<String>>(extractorIterator)) {
+        while ( extractorIterator.hasNext()) {
+            List<String> list = extractorIterator.next();
             actual.add(list);
         }
 

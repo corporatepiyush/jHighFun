@@ -19,11 +19,11 @@ public class ConcurrentIteratorTest {
             list.add(i);
         }
 
-        final TaskStream<Integer> taskStream = new TaskStream<Integer>(new ConcurrentIterator<Integer>(list.iterator()));
+        final TaskStream<Integer> taskStream = new TaskStream<Integer>(new ConcurrentIterator<Integer>(new AbstractIteratorAdapter<Integer>(list.iterator())));
 
         FunctionUtil.each(list, new RecordProcessor<Integer>() {
             public void process(Integer record) {
-                for (Integer integer : taskStream) ;
+                taskStream._process();
             }
         }, FunctionUtil.parallel(100));
 

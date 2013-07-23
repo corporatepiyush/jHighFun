@@ -6,10 +6,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ConcurrentIterator<T> extends AbstractIterator<T> {
 
-    private final Iterator<T> iterator;
+    private final AbstractIterator<T> iterator;
     private final ReentrantLock lock = new ReentrantLock(true);
 
-    public ConcurrentIterator(Iterator<T> iterator) {
+    public ConcurrentIterator(AbstractIterator<T> iterator) {
         this.iterator = iterator;
     }
 

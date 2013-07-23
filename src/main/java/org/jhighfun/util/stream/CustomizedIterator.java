@@ -5,9 +5,9 @@ import java.util.Iterator;
 
 public abstract class CustomizedIterator<IN, OUT> extends AbstractIterator<OUT> {
 
-    private Iterator<IN> iterator;
+    private AbstractIterator<IN> iterator;
 
-    public void setIterator(Iterator<IN> iterator) {
+    public void setIterator(AbstractIterator<IN> iterator) {
         this.iterator = iterator;
     }
 }

@@ -7,21 +7,20 @@ import java.util.Iterator;
 
 public class ExpansionIterator<IN, OUT> extends AbstractIterator<OUT> {
 
-    private final Iterator<IN> expansionIterator;
+    private final AbstractIterator<IN> expansionIterator;
     private final Function<IN, Iterable<OUT>> function;
 
     private Iterator<OUT> currentIterator;
     private Boolean innerIteratorExhausted = true;
 
-    public ExpansionIterator(Iterator<IN> iterator, Function<IN, Iterable<OUT>> function) {
+    public ExpansionIterator(AbstractIterator<IN> iterator, Function<IN, Iterable<OUT>> function) {
         this.expansionIterator = iterator;
         this.function = function;
     }
 
     public final boolean hasNext() {
         if (this.innerIteratorExhausted && this.expansionIterator.hasNext()) {
-            IN next = this.expansionIterator.next();
-            this.currentIterator = this.function.apply(next).iterator();
+            this.currentIterator = this.function.apply(this.expansionIterator.next()).iterator();
             this.innerIteratorExhausted = false;
         }
         boolean hasNext = this.currentIterator.hasNext();

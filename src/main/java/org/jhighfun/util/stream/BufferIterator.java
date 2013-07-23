@@ -7,11 +7,11 @@ import java.util.List;
 
 public class BufferIterator<T> extends AbstractIterator<T> {
 
-    private final Iterator<T> iterator;
+    private final AbstractIterator<T> iterator;
     private final int bufferSize;
     private List<T> buffer = new LinkedList<T>();
 
-    public BufferIterator(Iterator<T> iterator, int bufferSize) {
+    public BufferIterator(AbstractIterator<T> iterator, int bufferSize) {
         this.iterator = iterator;
         this.bufferSize = bufferSize;
     }
@@ -24,6 +24,7 @@ public class BufferIterator<T> extends AbstractIterator<T> {
                 if (i == this.bufferSize) {
                     break;
                 }
+                i++;
             }
         }
         return this.buffer.isEmpty();

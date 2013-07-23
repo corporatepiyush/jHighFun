@@ -16,14 +16,15 @@ public class ExpansionIteratorSpec {
     @Test
     public void test() {
 
-        ExpansionIterator<Integer, Integer> iterator = new ExpansionIterator<Integer, Integer>(CollectionUtil.IntRange(10, 100, 10).iterator(), new Function<Integer, Iterable<Integer>>() {
+        ExpansionIterator<Integer, Integer> iterator = new ExpansionIterator<Integer, Integer>(new AbstractIteratorAdapter<Integer>(CollectionUtil.IntRange(10, 100, 10).iterator()), new Function<Integer, Iterable<Integer>>() {
             public Iterable<Integer> apply(Integer arg) {
                 return IntRange(arg, arg + 10);
             }
         });
 
         int index = 10;
-        for (int integer : new TaskStream<Integer>(iterator)) {
+        while (iterator.hasNext()) {
+            int integer = iterator.next();
             assertEquals(integer, index++);
         }
 

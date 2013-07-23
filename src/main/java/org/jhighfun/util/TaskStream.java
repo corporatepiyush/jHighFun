@@ -9,16 +9,20 @@ import java.util.List;
 /**
  * @author Piyush Katariya
  */
-public class TaskStream<IN> implements Iterable<IN> {
+public class TaskStream<IN>  {
 
-    private final Iterator<IN> iterator;
+    private final AbstractIterator<IN> iterator;
 
-    public TaskStream(Iterator<IN> iterator) {
+    public TaskStream(AbstractIterator<IN> iterator) {
         this.iterator = iterator;
     }
 
+    public TaskStream(Iterator<IN> iterator) {
+        this.iterator = new AbstractIteratorAdapter<IN>(iterator);
+    }
+
     public TaskStream(Iterable<IN> iterable) {
-        this.iterator = iterable.iterator();
+        this.iterator = new AbstractIteratorAdapter<IN>(iterable);
     }
 
     public <INIT> TaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
@@ -193,12 +197,8 @@ public class TaskStream<IN> implements Iterable<IN> {
         return list;
     }
 
-    public <O> O extract(Function<Iterable<IN>, O> extractor) {
-        return extractor.apply(this);
-    }
-
-    public Iterator<IN> iterator() {
-        return this.iterator;
+    public <O> O extract(Function<AbstractIterator<IN>, O> extractor) {
+        return extractor.apply(this.iterator);
     }
 
 }

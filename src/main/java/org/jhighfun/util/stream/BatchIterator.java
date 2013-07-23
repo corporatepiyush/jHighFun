@@ -13,10 +13,10 @@ import java.util.List;
 
 public class BatchIterator<T> extends AbstractIterator<List<T>> {
 
-    private final Iterator<T> batchIterator;
+    private final AbstractIterator<T> batchIterator;
     private final int batchSize;
 
-    public BatchIterator(Iterator<T> iterator, int batchSize) {
+    public BatchIterator(AbstractIterator<T> iterator, int batchSize) {
         this.batchIterator = iterator;
         this.batchSize = Math.abs(batchSize);
     }

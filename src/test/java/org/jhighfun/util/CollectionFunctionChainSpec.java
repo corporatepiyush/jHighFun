@@ -502,7 +502,7 @@ public class CollectionFunctionChainSpec {
 
         TaskStream<Integer> integers = chain.asTaskStream();
 
-        assertEquals(list, FlattenList(integers));
+        assertEquals(list, integers.extract());
     }
 
     @Test
