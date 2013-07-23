@@ -29,15 +29,15 @@ public class TaskStream<IN>  {
         this.iterator = new LazyIterator<INIT, IN>(initialInput, function, predicate);
     }
 
-    public <OUT> TaskStream<OUT> expand(Function<IN, Iterable<OUT>> function) {
+    public <OUT> TaskStream<OUT> _expand(Function<IN, Iterable<OUT>> function) {
         return new TaskStream<OUT>(new ExpansionIterator<IN, OUT>(this.iterator, function));
     }
 
-    public TaskStream<List<IN>> batch(int batchSize) {
+    public TaskStream<List<IN>> _batch(int batchSize) {
         return new TaskStream<List<IN>>(new BatchIterator<IN>(this.iterator, batchSize));
     }
 
-    public TaskStream<IN> buffer(int bufferSize) {
+    public TaskStream<IN> _buffer(int bufferSize) {
         return new TaskStream<IN>(new BufferIterator<IN>(this.iterator, bufferSize));
     }
 

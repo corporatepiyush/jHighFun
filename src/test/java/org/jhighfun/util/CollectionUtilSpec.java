@@ -31,8 +31,8 @@ public class CollectionUtilSpec {
         List<String> stringList = SafeList("One", "Two");
 
         assertEquals(SafeList(1, 2, 1).size(), 3);
-        assertEquals(SafeFlattenList().size(), 0);
-        assertEquals(SafeFlattenList().getClass(), CopyOnWriteArrayList.class);
+        assertEquals(FlattenSafeList().size(), 0);
+        assertEquals(FlattenSafeList().getClass(), CopyOnWriteArrayList.class);
 
     }
 

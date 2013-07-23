@@ -21,15 +21,15 @@ public class DynamicIterableSpec {
                     }
                 })
                 ._process()
-                .batch(2)
-                .expand(new Function<List<String>, Iterable<String>>() {
+                ._batch(2)
+                ._expand(new Function<List<String>, Iterable<String>>() {
                     public Iterable<String> apply(List<String> arg) {
                         return arg;
                     }
                 })
                 ._processExclusively()
-                .batch(2)
-                .expand(new Function<List<String>, Iterable<String>>() {
+                ._batch(2)
+                ._expand(new Function<List<String>, Iterable<String>>() {
                     public Iterable<String> apply(List<String> arg) {
                         return arg;
                     }

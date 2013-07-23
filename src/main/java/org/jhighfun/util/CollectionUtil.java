@@ -41,7 +41,7 @@ public final class CollectionUtil {
     }
 
 
-    public static <T> List<T> SafeFlattenList(Iterable<T>... listArgs) {
+    public static <T> List<T> FlattenSafeList(Iterable<T>... listArgs) {
         final List<T> flattenList = new CopyOnWriteArrayList<T>();
         for (Iterable<T> collection : listArgs) {
             for (T obj : collection) {
@@ -70,7 +70,7 @@ public final class CollectionUtil {
     }
 
     public static <K, V> Map<K, V> Map(Pair<K, V>... entries) {
-        final Map<K, V> map = new HashMap<K, V>();
+        final Map<K, V> map = new LinkedHashMap<K, V>();
         for (Pair<K, V> pair : entries) {
             map.put(pair.getKey(), pair.getValue());
         }
@@ -94,8 +94,22 @@ public final class CollectionUtil {
         return flattenMap;
     }
 
+
+    public static <K, V> Map<K, V> FlattenSafeMap(Map<K, V> first, Map<K, V>... maps) {
+        final Map<K, V> flattenMap = new ConcurrentHashMap<K, V>();
+        flattenMap.putAll(first);
+        for (Map<K, V> map : maps) {
+            flattenMap.putAll(map);
+        }
+        return flattenMap;
+    }
+
     public static <K, V> Pair<K, V> Entry(K key, V value) {
         return new Pair<K, V>(key, value);
+    }
+
+    public static <F> Tuple1<F> tuple(F first) {
+        return new Tuple1<F>(first);
     }
 
     public static <F, S> Tuple2<F, S> tuple(F first, S second) {
@@ -112,6 +126,10 @@ public final class CollectionUtil {
 
     public static <F, S, T, FO, FI> Tuple5<F, S, T, FO, FI> tuple(F first, S second, T third, FO fourth, FI fifth) {
         return new Tuple5<F, S, T, FO, FI>(first, second, third, fourth, fifth);
+    }
+
+    public static <F, S, T, FO, FI, SI> Tuple6<F, S, T, FO, FI, SI> tuple(F first, S second, T third, FO fourth, FI fifth, SI six) {
+        return new Tuple6<F, S, T, FO, FI, SI>(first, second, third, fourth, fifth, six);
     }
 
     public static List<Integer> IntRange(int from, int to, int step) {
