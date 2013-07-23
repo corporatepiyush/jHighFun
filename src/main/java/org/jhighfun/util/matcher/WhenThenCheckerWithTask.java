@@ -18,7 +18,7 @@ public final class WhenThenCheckerWithTask<IN> implements WhenCheckerWithTask<IN
         this.tasks.add(task);
     }
 
-    public ThenTaskExecutor<IN> whenMatchesWith(final IN matchingInput) {
+    public ThenTaskExecutor<IN> ifEquals(final IN matchingInput) {
         this.conditions.add(new Function<IN, Boolean>() {
             public Boolean apply(IN arg) {
                 return matchingInput != null && matchingInput.equals(inputObject);
@@ -27,7 +27,7 @@ public final class WhenThenCheckerWithTask<IN> implements WhenCheckerWithTask<IN
         return this;
     }
 
-    public ThenTaskExecutor<IN> whenMatchesWith(Function<IN, Boolean> function) {
+    public ThenTaskExecutor<IN> ifEquals(Function<IN, Boolean> function) {
         this.conditions.add(function);
         return this;
     }

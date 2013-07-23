@@ -18,7 +18,7 @@ public final class WhenThenCheckerWithOutput<IN, OUT> implements WhenFunctionExe
         this.outputFunctions.add(outputFunction);
     }
 
-    public ThenFunctionExecutor<IN, OUT> whenMatchesWith(final IN matchingInput) {
+    public ThenFunctionExecutor<IN, OUT> ifEquals(final IN matchingInput) {
         this.conditions.add(new Function<IN, Boolean>() {
             public Boolean apply(IN arg) {
                 return matchingInput != null && matchingInput.equals(inputObject);
@@ -27,7 +27,7 @@ public final class WhenThenCheckerWithOutput<IN, OUT> implements WhenFunctionExe
         return this;
     }
 
-    public ThenFunctionExecutor<IN, OUT> whenMatchesWith(Function<IN, Boolean> condition) {
+    public ThenFunctionExecutor<IN, OUT> ifEquals(Function<IN, Boolean> condition) {
         this.conditions.add(condition);
         return this;
     }
