@@ -3,12 +3,12 @@ package org.jhighfun.util.stream;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ConcurrentStreamer<T> extends AbstractStreamer<T> {
+public class ConcurrentStreamIterator<T> extends AbstractStreamIterator<T> {
 
-    private final AbstractStreamer<T> iterator;
+    private final AbstractStreamIterator<T> iterator;
     private final ReentrantLock lock = new ReentrantLock(true);
 
-    public ConcurrentStreamer(AbstractStreamer<T> iterator) {
+    public ConcurrentStreamIterator(AbstractStreamIterator<T> iterator) {
         this.iterator = iterator;
     }
 

@@ -5,15 +5,15 @@ import org.jhighfun.util.Function;
 
 import java.util.Iterator;
 
-public class ExpansionStreamer<IN, OUT> extends AbstractStreamer<OUT> {
+public class ExpansionStreamIterator<IN, OUT> extends AbstractStreamIterator<OUT> {
 
-    private final AbstractStreamer<IN> expansionIterator;
+    private final AbstractStreamIterator<IN> expansionIterator;
     private final Function<IN, Iterable<OUT>> function;
 
     private Iterator<OUT> currentIterator;
     private Boolean innerIteratorExhausted = true;
 
-    public ExpansionStreamer(AbstractStreamer<IN> iterator, Function<IN, Iterable<OUT>> function) {
+    public ExpansionStreamIterator(AbstractStreamIterator<IN> iterator, Function<IN, Iterable<OUT>> function) {
         this.expansionIterator = iterator;
         this.function = function;
     }

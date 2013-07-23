@@ -3,12 +3,12 @@ package org.jhighfun.util.stream;
 
 import org.jhighfun.util.Task;
 
-public class ExecutorStreamer<T> extends AbstractStreamer<T> {
+public class ExecutorStreamIterator<T> extends AbstractStreamIterator<T> {
 
-    private final AbstractStreamer<T> executorIterator;
+    private final AbstractStreamIterator<T> executorIterator;
     private final Task<T> task;
 
-    public ExecutorStreamer(AbstractStreamer<T> iterator, Task<T> task) {
+    public ExecutorStreamIterator(AbstractStreamIterator<T> iterator, Task<T> task) {
         this.executorIterator = iterator;
         this.task = task;
     }

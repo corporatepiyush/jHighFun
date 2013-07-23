@@ -20,7 +20,7 @@ public class ExtractorIteratorSpec {
 
         Iterator<String> iterator = List("A", "B", "{", "C", "C", "}", "D", "{", "E", "E", "}").iterator();
 
-        ExtractorStreamer<String> extractorIterator = new ExtractorStreamer<String>(new AbstractStreamerAdapter<String>(iterator), new Function<List<String>, Boolean>() {
+        ExtractorStreamIterator<String> extractorIterator = new ExtractorStreamIterator<String>(new AbstractStreamIteratorAdapter<String>(iterator), new Function<List<String>, Boolean>() {
             public Boolean apply(List<String> list) {
 
                 return list.get(0).equals("{") && (list.size() <= 1 || !list.get(list.size() - 1).equals("}"));

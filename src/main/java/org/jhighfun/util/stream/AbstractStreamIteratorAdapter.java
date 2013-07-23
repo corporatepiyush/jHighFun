@@ -2,15 +2,15 @@ package org.jhighfun.util.stream;
 
 import java.util.Iterator;
 
-public class AbstractStreamerAdapter<T> extends AbstractStreamer<T> {
+public class AbstractStreamIteratorAdapter<T> extends AbstractStreamIterator<T> {
 
     private final Iterator<T> iterator;
 
-    public AbstractStreamerAdapter(Iterator<T> iterator) {
+    public AbstractStreamIteratorAdapter(Iterator<T> iterator) {
         this.iterator = iterator;
     }
 
-    public AbstractStreamerAdapter(Iterable<T> iterable) {
+    public AbstractStreamIteratorAdapter(Iterable<T> iterable) {
         this.iterator = iterable.iterator();
     }
 

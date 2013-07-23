@@ -12,19 +12,19 @@ import java.util.NoSuchElementException;
  * @author Piyush Katariya
  */
 
-public final class ConditionalStreamer<T> extends AbstractStreamer<T> {
+public final class ConditionalStreamIterator<T> extends AbstractStreamIterator<T> {
 
-    private final AbstractStreamer<T> conditionalIterator;
+    private final AbstractStreamIterator<T> conditionalIterator;
     private final Function<T, Boolean> predicate;
     private T current;
     private Task<T> task;
 
-    public ConditionalStreamer(AbstractStreamer<T> conditionalIterator, Function<T, Boolean> predicate) {
+    public ConditionalStreamIterator(AbstractStreamIterator<T> conditionalIterator, Function<T, Boolean> predicate) {
         this.conditionalIterator = conditionalIterator;
         this.predicate = predicate;
     }
 
-    public ConditionalStreamer(AbstractStreamer<T> iterator, Function<T, Boolean> predicate, Task<T> task) {
+    public ConditionalStreamIterator(AbstractStreamIterator<T> iterator, Function<T, Boolean> predicate, Task<T> task) {
         this.conditionalIterator = iterator;
         this.predicate = predicate;
         this.task = task;

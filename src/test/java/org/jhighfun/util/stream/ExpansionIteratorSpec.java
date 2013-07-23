@@ -15,7 +15,7 @@ public class ExpansionIteratorSpec {
     @Test
     public void test() {
 
-        ExpansionStreamer<Integer, Integer> iterator = new ExpansionStreamer<Integer, Integer>(new AbstractStreamerAdapter<Integer>(CollectionUtil.IntRange(10, 100, 10).iterator()), new Function<Integer, Iterable<Integer>>() {
+        ExpansionStreamIterator<Integer, Integer> iterator = new ExpansionStreamIterator<Integer, Integer>(new AbstractStreamIteratorAdapter<Integer>(CollectionUtil.IntRange(10, 100, 10).iterator()), new Function<Integer, Iterable<Integer>>() {
             public Iterable<Integer> apply(Integer arg) {
                 return IntRange(arg, arg + 10);
             }

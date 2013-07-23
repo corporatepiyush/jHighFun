@@ -6,14 +6,14 @@ import org.jhighfun.util.Function;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ExtractorStreamer<T> extends AbstractStreamer<List<T>> {
+public class ExtractorStreamIterator<T> extends AbstractStreamIterator<List<T>> {
 
-    private final AbstractStreamer<T> iterator;
+    private final AbstractStreamIterator<T> iterator;
     private final Function<List<T>, Boolean> function;
 
     private List<T> current;
 
-    public ExtractorStreamer(AbstractStreamer<T> iterator, Function<List<T>, Boolean> function) {
+    public ExtractorStreamIterator(AbstractStreamIterator<T> iterator, Function<List<T>, Boolean> function) {
         this.iterator = iterator;
         this.function = function;
     }

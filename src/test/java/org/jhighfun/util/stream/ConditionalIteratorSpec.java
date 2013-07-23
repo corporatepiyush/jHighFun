@@ -21,7 +21,7 @@ public class ConditionalIteratorSpec {
             }
         });
 
-        ConditionalStreamer<Integer> conditionalIterator = new ConditionalStreamer<Integer>(new AbstractStreamerAdapter<Integer>(IntRange(1, 100).iterator()), spy);
+        ConditionalStreamIterator<Integer> conditionalIterator = new ConditionalStreamIterator<Integer>(new AbstractStreamIteratorAdapter<Integer>(IntRange(1, 100).iterator()), spy);
 
         while (conditionalIterator.hasNext()) {
             Integer integer = conditionalIterator.next();

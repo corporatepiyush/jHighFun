@@ -10,12 +10,12 @@ import java.util.List;
  * @author Piyush Katariya
  */
 
-public class BatchStreamer<T> extends AbstractStreamer<List<T>> {
+public class BatchStreamIterator<T> extends AbstractStreamIterator<List<T>> {
 
-    private final AbstractStreamer<T> batchIterator;
+    private final AbstractStreamIterator<T> batchIterator;
     private final int batchSize;
 
-    public BatchStreamer(AbstractStreamer<T> iterator, int batchSize) {
+    public BatchStreamIterator(AbstractStreamIterator<T> iterator, int batchSize) {
         this.batchIterator = iterator;
         this.batchSize = Math.abs(batchSize);
     }

@@ -11,63 +11,63 @@ import java.util.List;
  */
 public class TaskStream<IN>  {
 
-    private final AbstractStreamer<IN> iterator;
+    private final AbstractStreamIterator<IN> iterator;
 
-    public TaskStream(AbstractStreamer<IN> iterator) {
+    public TaskStream(AbstractStreamIterator<IN> iterator) {
         this.iterator = iterator;
     }
 
     public TaskStream(Iterator<IN> iterator) {
-        this.iterator = new AbstractStreamerAdapter<IN>(iterator);
+        this.iterator = new AbstractStreamIteratorAdapter<IN>(iterator);
     }
 
     public TaskStream(Iterable<IN> iterable) {
-        this.iterator = new AbstractStreamerAdapter<IN>(iterable);
+        this.iterator = new AbstractStreamIteratorAdapter<IN>(iterable);
     }
 
     public <INIT> TaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
-        this.iterator = new LazyStreamer<INIT, IN>(initialInput, function, predicate);
+        this.iterator = new LazyStreamIterator<INIT, IN>(initialInput, function, predicate);
     }
 
     public <OUT> TaskStream<OUT> _expand(Function<IN, Iterable<OUT>> function) {
-        return new TaskStream<OUT>(new ExpansionStreamer<IN, OUT>(this.iterator, function));
+        return new TaskStream<OUT>(new ExpansionStreamIterator<IN, OUT>(this.iterator, function));
     }
 
     public TaskStream<List<IN>> _batch(int batchSize) {
-        return new TaskStream<List<IN>>(new BatchStreamer<IN>(this.iterator, batchSize));
+        return new TaskStream<List<IN>>(new BatchStreamIterator<IN>(this.iterator, batchSize));
     }
 
     public TaskStream<IN> _buffer(int bufferSize) {
-        return new TaskStream<IN>(new BufferStreamer<IN>(this.iterator, bufferSize));
+        return new TaskStream<IN>(new BufferStreamIterator<IN>(this.iterator, bufferSize));
     }
 
     public <OUT> TaskStream<OUT> map(Function<IN, OUT> function) {
-        return new TaskStream<OUT>(new MapperStreamer<IN, OUT>(this.iterator, function));
+        return new TaskStream<OUT>(new MapperStreamIterator<IN, OUT>(this.iterator, function));
     }
 
     public TaskStream<IN> filter(Function<IN, Boolean> function) {
-        return new TaskStream<IN>(new ConditionalStreamer<IN>(this.iterator, function));
+        return new TaskStream<IN>(new ConditionalStreamIterator<IN>(this.iterator, function));
     }
 
     public TaskStream<IN> filter(Function<IN, Boolean> function, Task<IN> task) {
-        return new TaskStream<IN>(new ConditionalStreamer<IN>(this.iterator, function, task));
+        return new TaskStream<IN>(new ConditionalStreamIterator<IN>(this.iterator, function, task));
     }
 
     public TaskStream<List<IN>> extractSequences(Function<List<IN>, Boolean> function) {
-        return new TaskStream<List<IN>>(new ExtractorStreamer<IN>(this.iterator, function));
+        return new TaskStream<List<IN>>(new ExtractorStreamIterator<IN>(this.iterator, function));
     }
 
-    public <OUT> TaskStream<OUT> _customize(CustomizedStreamer<IN, OUT> customizedIterator) {
-        customizedIterator.setIterator(this.iterator);
+    public <OUT> TaskStream<OUT> _customize(CustomizedStreamIterator<IN, OUT> customizedIterator) {
+        customizedIterator.setCustomizedIterator(this.iterator);
         return new TaskStream<OUT>(customizedIterator);
     }
 
     public TaskStream<IN> execute(Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamer<IN>(this.iterator, task));
+        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, task));
     }
 
     public TaskStream<IN> executeAsync(final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamer<IN>(this.iterator, new Task<IN>() {
+        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeAsync(new Block() {
                     public void execute() {
@@ -79,7 +79,7 @@ public class TaskStream<IN>  {
     }
 
     public TaskStream<IN> executeLater(final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamer<IN>(this.iterator, new Task<IN>() {
+        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeLater(new Block() {
                     public void execute() {
@@ -91,7 +91,7 @@ public class TaskStream<IN>  {
     }
 
     public TaskStream<IN> executeWithThrottle(final ExecutionThrottler executionThrottler, final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamer<IN>(this.iterator, new Task<IN>() {
+        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeWithThrottle(executionThrottler, new Block() {
                     public void execute() {
@@ -103,7 +103,7 @@ public class TaskStream<IN>  {
     }
 
     public TaskStream<IN> executeAsyncWithThrottle(final ExecutionThrottler executionThrottler, final AsyncTask<IN> asyncTask, final CallbackTask<IN> callbackTask) {
-        return new TaskStream<IN>(new ExecutorStreamer<IN>(this.iterator, new Task<IN>() {
+        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeAsyncWithThrottle(executionThrottler, asyncTask, callbackTask);
             }
@@ -111,7 +111,7 @@ public class TaskStream<IN>  {
     }
 
     public TaskStream<IN> executeAsyncWithThrottle(final ExecutionThrottler executionThrottler, final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamer<IN>(this.iterator, new Task<IN>() {
+        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Block() {
                     public void execute() {
@@ -123,7 +123,7 @@ public class TaskStream<IN>  {
     }
 
     public TaskStream<IN> executeWithGlobalLock(final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamer<IN>(this.iterator, new Task<IN>() {
+        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeWithGlobalLock(new Block() {
                     public void execute() {
@@ -135,7 +135,7 @@ public class TaskStream<IN>  {
     }
 
     public TaskStream<IN> executeWithLock(final Operation operation, final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamer<IN>(this.iterator, new Task<IN>() {
+        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
                 FunctionUtil.executeWithLock(operation, new Block() {
                     public void execute() {
@@ -147,7 +147,7 @@ public class TaskStream<IN>  {
     }
 
     public TaskStream<IN> _ensureThreadSafety() {
-        return new TaskStream<IN>(new ConcurrentStreamer<IN>(this.iterator));
+        return new TaskStream<IN>(new ConcurrentStreamIterator<IN>(this.iterator));
     }
 
 
@@ -197,7 +197,7 @@ public class TaskStream<IN>  {
         return list;
     }
 
-    public <O> O extract(Function<AbstractStreamer<IN>, O> extractor) {
+    public <O> O extract(Function<AbstractStreamIterator<IN>, O> extractor) {
         return extractor.apply(this.iterator);
     }
 

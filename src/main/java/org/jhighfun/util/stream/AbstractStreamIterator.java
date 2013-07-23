@@ -3,7 +3,7 @@ package org.jhighfun.util.stream;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public abstract class AbstractStreamer<T> {
+public abstract class AbstractStreamIterator<T> {
 
     public abstract boolean hasNext();
 

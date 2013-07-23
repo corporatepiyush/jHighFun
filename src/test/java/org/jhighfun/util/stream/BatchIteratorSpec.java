@@ -19,7 +19,7 @@ public class BatchIteratorSpec {
 
         List<Integer> integerList = IntRange(1, 100);
         int batchSize = 10;
-        BatchStreamer<Integer> integerBatchIterator = new BatchStreamer<Integer>(new AbstractStreamerAdapter<Integer>(integerList.iterator()), batchSize);
+        BatchStreamIterator<Integer> integerBatchIterator = new BatchStreamIterator<Integer>(new AbstractStreamIteratorAdapter<Integer>(integerList.iterator()), batchSize);
 
         int first = 1;
         int last = batchSize;
@@ -37,7 +37,7 @@ public class BatchIteratorSpec {
 
         int batchSize = 2;
         List<String> stringList = List("India", "Singapore");
-        BatchStreamer<String> integerBatchIterator = new BatchStreamer<String>(new AbstractStreamerAdapter<String>(stringList.iterator()), batchSize);
+        BatchStreamIterator<String> integerBatchIterator = new BatchStreamIterator<String>(new AbstractStreamIteratorAdapter<String>(stringList.iterator()), batchSize);
 
         List<List<String>> list = new TaskStream<List<String>>(integerBatchIterator)
                 .extract();
