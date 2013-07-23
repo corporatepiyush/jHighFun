@@ -1,15 +1,14 @@
 package org.jhighfun.util.stream;
 
 
-import java.util.Iterator;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ConcurrentIterator<T> extends AbstractIterator<T> {
+public class ConcurrentStreamer<T> extends AbstractStreamer<T> {
 
-    private final AbstractIterator<T> iterator;
+    private final AbstractStreamer<T> iterator;
     private final ReentrantLock lock = new ReentrantLock(true);
 
-    public ConcurrentIterator(AbstractIterator<T> iterator) {
+    public ConcurrentStreamer(AbstractStreamer<T> iterator) {
         this.iterator = iterator;
     }
 

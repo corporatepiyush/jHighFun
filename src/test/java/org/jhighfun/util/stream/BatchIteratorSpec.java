@@ -1,6 +1,5 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.DynamicIterable;
 import org.jhighfun.util.TaskStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +19,7 @@ public class BatchIteratorSpec {
 
         List<Integer> integerList = IntRange(1, 100);
         int batchSize = 10;
-        BatchIterator<Integer> integerBatchIterator = new BatchIterator<Integer>(new AbstractIteratorAdapter<Integer>(integerList.iterator()), batchSize);
+        BatchStreamer<Integer> integerBatchIterator = new BatchStreamer<Integer>(new AbstractStreamerAdapter<Integer>(integerList.iterator()), batchSize);
 
         int first = 1;
         int last = batchSize;
@@ -38,7 +37,7 @@ public class BatchIteratorSpec {
 
         int batchSize = 2;
         List<String> stringList = List("India", "Singapore");
-        BatchIterator<String> integerBatchIterator = new BatchIterator<String>(new AbstractIteratorAdapter<String>(stringList.iterator()), batchSize);
+        BatchStreamer<String> integerBatchIterator = new BatchStreamer<String>(new AbstractStreamerAdapter<String>(stringList.iterator()), batchSize);
 
         List<List<String>> list = new TaskStream<List<String>>(integerBatchIterator)
                 .extract();

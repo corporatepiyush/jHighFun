@@ -1,7 +1,5 @@
 package org.jhighfun.util;
 
-import org.jhighfun.util.stream.AbstractIterator;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;

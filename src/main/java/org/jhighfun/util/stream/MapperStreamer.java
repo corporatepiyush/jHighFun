@@ -3,14 +3,12 @@ package org.jhighfun.util.stream;
 
 import org.jhighfun.util.Function;
 
-import java.util.Iterator;
+public class MapperStreamer<I, O> extends AbstractStreamer<O> {
 
-public class MapperIterator<I, O> extends AbstractIterator<O> {
-
-    private final AbstractIterator<I> mapperIterator;
+    private final AbstractStreamer<I> mapperIterator;
     private final Function<I, O> function;
 
-    public MapperIterator(AbstractIterator<I> iterator, Function<I, O> function) {
+    public MapperStreamer(AbstractStreamer<I> iterator, Function<I, O> function) {
         this.mapperIterator = iterator;
         this.function = function;
     }

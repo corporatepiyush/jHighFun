@@ -1,7 +1,6 @@
 package org.jhighfun.util.stream;
 
 import org.jhighfun.util.Function;
-import org.jhighfun.util.TaskStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -22,7 +21,7 @@ public class ConditionalIteratorSpec {
             }
         });
 
-        ConditionalIterator<Integer> conditionalIterator = new ConditionalIterator<Integer>(new AbstractIteratorAdapter<Integer>(IntRange(1, 100).iterator()), spy);
+        ConditionalStreamer<Integer> conditionalIterator = new ConditionalStreamer<Integer>(new AbstractStreamerAdapter<Integer>(IntRange(1, 100).iterator()), spy);
 
         while (conditionalIterator.hasNext()) {
             Integer integer = conditionalIterator.next();

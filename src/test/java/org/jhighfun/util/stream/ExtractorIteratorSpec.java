@@ -1,7 +1,6 @@
 package org.jhighfun.util.stream;
 
 import org.jhighfun.util.Function;
-import org.jhighfun.util.TaskStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -21,7 +20,7 @@ public class ExtractorIteratorSpec {
 
         Iterator<String> iterator = List("A", "B", "{", "C", "C", "}", "D", "{", "E", "E", "}").iterator();
 
-        ExtractorIterator<String> extractorIterator = new ExtractorIterator<String>(new AbstractIteratorAdapter<String>(iterator), new Function<List<String>, Boolean>() {
+        ExtractorStreamer<String> extractorIterator = new ExtractorStreamer<String>(new AbstractStreamerAdapter<String>(iterator), new Function<List<String>, Boolean>() {
             public Boolean apply(List<String> list) {
 
                 return list.get(0).equals("{") && (list.size() <= 1 || !list.get(list.size() - 1).equals("}"));
