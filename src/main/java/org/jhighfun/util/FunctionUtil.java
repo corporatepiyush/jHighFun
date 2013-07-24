@@ -1018,7 +1018,7 @@ public final class FunctionUtil {
         Collection<Collection<IN>> collections = workDivisionStrategy.divide(collection);
         return chain(collections)
                 .map(function, parallel(collections.size()))
-                .expand(new Function<Collection<OUT>, Iterable<OUT>>() {
+                .flatMap(new Function<Collection<OUT>, Iterable<OUT>>() {
                     @Override
                     public Iterable<OUT> apply(Collection<OUT> collection1) {
                         return collection1;

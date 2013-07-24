@@ -391,7 +391,7 @@ public final class CollectionFunctionChain<I> {
         return new CollectionFunctionChain<List<I>>(batchCollection);
     }
 
-    public <O> CollectionFunctionChain<O> expand(Function<I, Iterable<O>> function) {
+    public <O> CollectionFunctionChain<O> flatMap(Function<I, Iterable<O>> function) {
         List<O> expandedList = new LinkedList<O>();
 
         for (I element : this.collection) {

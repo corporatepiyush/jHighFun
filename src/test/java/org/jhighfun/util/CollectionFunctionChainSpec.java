@@ -232,7 +232,7 @@ public class CollectionFunctionChainSpec {
 
         CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
 
-        List<String> expandedOutput = chain.expand(new Function<String, Iterable<String>>() {
+        List<String> expandedOutput = chain.flatMap(new Function<String, Iterable<String>>() {
             public Iterable<String> apply(String arg) {
                 return List(arg, arg);
             }

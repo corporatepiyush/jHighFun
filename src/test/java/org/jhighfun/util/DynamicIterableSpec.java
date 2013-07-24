@@ -22,14 +22,14 @@ public class DynamicIterableSpec {
                 })
                 ._process()
                 ._batch(2)
-                ._expand(new Function<List<String>, Iterable<String>>() {
+                .flatMap(new Function<List<String>, Iterable<String>>() {
                     public Iterable<String> apply(List<String> arg) {
                         return arg;
                     }
                 })
                 ._processExclusively()
                 ._batch(2)
-                ._expand(new Function<List<String>, Iterable<String>>() {
+                .flatMap(new Function<List<String>, Iterable<String>>() {
                     public Iterable<String> apply(List<String> arg) {
                         return arg;
                     }

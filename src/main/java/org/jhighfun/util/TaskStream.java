@@ -29,7 +29,7 @@ public class TaskStream<IN>  {
         this.iterator = new LazyStreamIterator<INIT, IN>(initialInput, function, predicate);
     }
 
-    public <OUT> TaskStream<OUT> _expand(Function<IN, Iterable<OUT>> function) {
+    public <OUT> TaskStream<OUT> flatMap(Function<IN, Iterable<OUT>> function) {
         return new TaskStream<OUT>(new ExpansionStreamIterator<IN, OUT>(this.iterator, function));
     }
 
