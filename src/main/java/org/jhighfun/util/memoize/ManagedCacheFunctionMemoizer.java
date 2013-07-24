@@ -4,12 +4,12 @@ package org.jhighfun.util.memoize;
 import org.jhighfun.util.Function;
 import org.jhighfun.util.ManagedCache;
 
-public class ExternalManagedFunctionMemoizer<I, O> extends Function<I, O> {
+public class ManagedCacheFunctionMemoizer<I, O> extends Function<I, O> {
 
     private final Function<I, O> function;
     private final ManagedCache managedCache;
 
-    public ExternalManagedFunctionMemoizer(Function<I, O> function, ManagedCache managedCache) {
+    public ManagedCacheFunctionMemoizer(Function<I, O> function, ManagedCache managedCache) {
         this.function = function;
         this.managedCache = managedCache;
     }

@@ -966,7 +966,7 @@ public final class FunctionUtil {
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final ManagedCache managedCache) {
-        return new ExternalManagedFunctionMemoizer<I, O>(function, managedCache);
+        return new ManagedCacheFunctionMemoizer<I, O>(function, managedCache);
     }
 
     public static <ACCUM, EL> Accumulator<ACCUM, EL> memoize(final Accumulator<ACCUM, EL> accumulator) {
@@ -1141,6 +1141,20 @@ public final class FunctionUtil {
             }
         }
         return zs;
+    }
+
+    public static <I, J> Map<J, List<I>> groupBy(Iterable<I> iterable, Function<I, J> function) {
+        Map<J, List<I>> map = new HashMap<J, List<I>>();
+        for (I i : iterable) {
+            J j = function.apply(i);
+            List<I> list = map.get(j);
+            if(list == null) {
+                list = new LinkedList<I>();
+                map.put(j, list);
+            }
+            list.add(i);
+        }
+        return map;
     }
 }
 

@@ -936,7 +936,7 @@ public class CollectionFunctionChainSpec {
         list.add(3);
         list.add(4);
 
-        Task<Collection<Integer>> mockTask = mock(Task.class);
+        Task<List<Integer>> mockTask = mock(Task.class);
 
         new CollectionFunctionChain<Integer>(list).divideAndConquer(mockTask, FunctionUtil.batch(2));
 
@@ -964,7 +964,7 @@ public class CollectionFunctionChainSpec {
         list.add(4);
         list.add(5);
 
-        Task<Collection<Integer>> mockTask = mock(Task.class);
+        Task<List<Integer>> mockTask = mock(Task.class);
 
         new CollectionFunctionChain<Integer>(list).divideAndConquer(mockTask, FunctionUtil.parallel(3));
 
@@ -1029,6 +1029,23 @@ public class CollectionFunctionChainSpec {
 
         verify(mockTask, times(1)).execute(list);
         verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any((Runnable.class)));
+    }
+
+    @Test
+    public void testGroupBy(){
+
+        List<String> list = List("a", "b", "a", "c", "c", "d");
+
+        Map<Character, List<String>> results = new CollectionFunctionChain<String>(list).groupBy(new Function<String, Character>() {
+
+            @Override
+            public Character apply(String arg) {
+                return arg.charAt(0);
+            }
+        }).extract();
+
+
+        assertEquals(results, Map(Entry('a', List("a","a")), Entry('b', List("b")), Entry('c', List("c","c")), Entry('d', List("d"))));
     }
 
     @Test

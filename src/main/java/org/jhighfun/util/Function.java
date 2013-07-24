@@ -2,7 +2,7 @@ package org.jhighfun.util;
 
 import org.jhighfun.util.memoize.BasicFunctionMemoizer;
 import org.jhighfun.util.memoize.ConfigurableFunctionMemoizer;
-import org.jhighfun.util.memoize.ExternalManagedFunctionMemoizer;
+import org.jhighfun.util.memoize.ManagedCacheFunctionMemoizer;
 import org.jhighfun.util.memoize.MemoizeConfig;
 
 /**
@@ -21,7 +21,7 @@ public abstract class Function<I, O> {
     }
 
     public Function<I, O> memoize(ManagedCache managedCache) {
-        return new ExternalManagedFunctionMemoizer<I, O>(this, managedCache);
+        return new ManagedCacheFunctionMemoizer<I, O>(this, managedCache);
     }
 
     public Function<I, O> memoize(MemoizeConfig memoizeConfig) {

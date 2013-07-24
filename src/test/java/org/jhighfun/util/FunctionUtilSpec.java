@@ -972,4 +972,21 @@ public class FunctionUtilSpec {
         assertTrue(true);
     }
 
+    @Test
+    public void testGroupBy(){
+
+        List<String> list = List("a", "b", "a", "c", "c", "d");
+
+        Map<Character, List<String>> results = FunctionUtil.groupBy(list, new Function<String, Character>() {
+
+            @Override
+            public Character apply(String arg) {
+                return arg.charAt(0);
+            }
+        });
+
+
+        assertEquals(results, Map(Entry('a', List("a","a")), Entry('b', List("b")), Entry('c', List("c","c")), Entry('d', List("d"))));
+    }
+
 }

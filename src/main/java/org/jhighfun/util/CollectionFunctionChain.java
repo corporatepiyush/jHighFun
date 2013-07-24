@@ -268,6 +268,10 @@ public final class CollectionFunctionChain<I> {
         }, partition));
     }
 
+    public <J> ObjectFunctionChain<Map<J, List<I>>> groupBy(Function<I, J> function) {
+        return new ObjectFunctionChain<Map<J, List<I>>>(FunctionUtil.groupBy(this.collection, function));
+    }
+
     public CollectionFunctionChain<I> execute(Task<List<I>> task) {
         task.execute(this.collection);
         return this;
@@ -391,6 +395,7 @@ public final class CollectionFunctionChain<I> {
         return new CollectionFunctionChain<List<I>>(batchCollection);
     }
 
+
     public <O> CollectionFunctionChain<O> flatMap(Function<I, Iterable<O>> function) {
         List<O> expandedList = new LinkedList<O>();
 
@@ -403,7 +408,6 @@ public final class CollectionFunctionChain<I> {
 
         return new CollectionFunctionChain<O>(expandedList);
     }
-
 
     public <J, K> CollectionFunctionChain<K> crossProduct(Iterable<J> ys, Function<Tuple2<I, J>, K> function) {
         return new CollectionFunctionChain<K>(FunctionUtil.crossProduct(this.collection, ys, function));
