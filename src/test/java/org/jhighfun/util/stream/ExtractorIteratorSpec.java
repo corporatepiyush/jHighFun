@@ -28,7 +28,7 @@ public class ExtractorIteratorSpec {
         });
 
         List<List<String>> actual = new LinkedList<List<String>>();
-        while ( extractorIterator.hasNext()) {
+        while (extractorIterator.hasNext()) {
             List<String> list = extractorIterator.next();
             actual.add(list);
         }

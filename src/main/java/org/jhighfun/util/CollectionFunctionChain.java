@@ -409,6 +409,10 @@ public final class CollectionFunctionChain<I> {
         return new CollectionFunctionChain<O>(expandedList);
     }
 
+    public ObjectFunctionChain<Tuple2<List<I>, List<I>>> partition(Function<I, Boolean> function) {
+        return new ObjectFunctionChain<Tuple2<List<I>, List<I>>>(FunctionUtil.partition(this.collection, function));
+    }
+
     public <J, K> CollectionFunctionChain<K> crossProduct(Iterable<J> ys, Function<Tuple2<I, J>, K> function) {
         return new CollectionFunctionChain<K>(FunctionUtil.crossProduct(this.collection, ys, function));
     }

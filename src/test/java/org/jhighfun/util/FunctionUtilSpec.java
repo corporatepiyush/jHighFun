@@ -792,14 +792,14 @@ public class FunctionUtilSpec {
     }
 
     @Test
-    public void testSplit() {
+    public void testPartition() {
 
         Set<String> set = new HashSet<String>();
         set.add("Scala");
         set.add("Java");
 
 
-        Tuple2<Collection<String>, Collection<String>> tuple2 = FunctionUtil.partition(set, new Function<String, Boolean>() {
+        Tuple2<List<String>, List<String>> tuple2 = FunctionUtil.partition(set, new Function<String, Boolean>() {
             public Boolean apply(String s) {
                 return s.contains("Scala");
             }
@@ -973,7 +973,7 @@ public class FunctionUtilSpec {
     }
 
     @Test
-    public void testGroupBy(){
+    public void testGroupBy() {
 
         List<String> list = List("a", "b", "a", "c", "c", "d");
 
@@ -986,7 +986,7 @@ public class FunctionUtilSpec {
         });
 
 
-        assertEquals(results, Map(Entry('a', List("a","a")), Entry('b', List("b")), Entry('c', List("c","c")), Entry('d', List("d"))));
+        assertEquals(results, Map(Entry('a', List("a", "a")), Entry('b', List("b")), Entry('c', List("c", "c")), Entry('d', List("d"))));
     }
 
 }

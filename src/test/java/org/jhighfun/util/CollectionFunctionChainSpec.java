@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import support.Language;
 import support.Person;
 
 import java.lang.reflect.Field;
@@ -310,6 +311,42 @@ public class CollectionFunctionChainSpec {
 
     }
 
+
+    @Test
+    public void testForSortByWithSetterGetter() {
+        Language java = new Language(false, "Java");
+        Language javascript = new Language(true, "Javascript");
+        Language ruby = new Language(true, "Ruby");
+        Language scala = new Language(true, "Scala");
+
+        List<Language> inputList = new LinkedList<Language>();
+        inputList.add(java);
+        inputList.add(ruby);
+        inputList.add(javascript);
+        inputList.add(scala);
+
+        //---sort by age
+
+        List<Language> expectedList = new LinkedList<Language>();
+        expectedList.add(java);
+        expectedList.add(ruby);
+        expectedList.add(javascript);
+        expectedList.add(scala);
+
+
+        assertEquals(new CollectionFunctionChain<Language>(inputList).sortBy("functional").extract(), expectedList);
+
+        //---sort by salary, name
+
+        expectedList = new LinkedList<Language>();
+        expectedList.add(java);
+        expectedList.add(javascript);
+        expectedList.add(ruby);
+        expectedList.add(scala);
+
+        assertEquals(new CollectionFunctionChain<Language>(inputList).sortBy("name").extract(), expectedList);
+
+    }
 
     @Test
     public void testEach() {
@@ -1032,7 +1069,7 @@ public class CollectionFunctionChainSpec {
     }
 
     @Test
-    public void testGroupBy(){
+    public void testGroupBy() {
 
         List<String> list = List("a", "b", "a", "c", "c", "d");
 
@@ -1045,7 +1082,25 @@ public class CollectionFunctionChainSpec {
         }).extract();
 
 
-        assertEquals(results, Map(Entry('a', List("a","a")), Entry('b', List("b")), Entry('c', List("c","c")), Entry('d', List("d"))));
+        assertEquals(results, Map(Entry('a', List("a", "a")), Entry('b', List("b")), Entry('c', List("c", "c")), Entry('d', List("d"))));
+    }
+
+    @Test
+    public void testPartition() {
+
+        List<String> set = new LinkedList<String>();
+        set.add("Scala");
+        set.add("Java");
+
+
+        Tuple2<List<String>, List<String>> tuple2 = new CollectionFunctionChain<String>(set).partition(new Function<String, Boolean>() {
+            public Boolean apply(String s) {
+                return s.contains("Scala");
+            }
+        }).extract();
+
+        assertEquals(tuple2._1.toString(), "[Scala]");
+        assertEquals(tuple2._2.toString(), "[Java]");
     }
 
     @Test

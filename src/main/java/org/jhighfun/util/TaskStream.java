@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author Piyush Katariya
  */
-public class TaskStream<IN>  {
+public class TaskStream<IN> {
 
     private final AbstractStreamIterator<IN> iterator;
 

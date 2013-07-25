@@ -1,6 +1,5 @@
 package org.jhighfun.util.stream;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public abstract class AbstractStreamIterator<T> {

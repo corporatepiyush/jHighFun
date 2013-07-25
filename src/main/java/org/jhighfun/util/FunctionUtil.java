@@ -7,6 +7,8 @@ import org.jhighfun.util.matcher.WhenChecker;
 import org.jhighfun.util.memoize.*;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
@@ -516,7 +518,7 @@ public final class FunctionUtil {
         }
 
         final Iterator<T> iterator = inputList.iterator();
-        final List<Field> fieldList = new ArrayList<Field>();
+        final List<Function<T, Object>> fieldList = new ArrayList<Function<T, Object>>();
         final List<T> list = new LinkedList<T>();
 
         if (iterator.hasNext()) {
@@ -528,12 +530,46 @@ public final class FunctionUtil {
                 try {
                     final Field field = tClass.getDeclaredField(memberVar);
 
-                    if (field != null) {
-                        field.setAccessible(true);
-                        fieldList.add(field);
+                    String methodName;
+                    if (field.getType().equals(Boolean.TYPE)) {
+                        methodName = "is" + field.getName().substring(0, 0).toUpperCase() + field.getName().substring(1);
+                    } else {
+                        methodName = "get" + field.getName().substring(0, 0).toUpperCase() + field.getName().substring(1);
                     }
 
-                } catch (NoSuchFieldException e) {
+                    try {
+                        final Method method = t.getClass().getDeclaredMethod(methodName, new Class[]{});
+
+                        fieldList.add(new Function<T, Object>() {
+                            @Override
+                            public Object apply(T object) {
+                                try {
+                                    return method.invoke(object, null);
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                                return null;
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        field.setAccessible(true);
+                        fieldList.add(new Function<T, Object>() {
+                            @Override
+                            public Object apply(T object) {
+                                try {
+                                    return field.get(object);
+                                } catch (IllegalAccessException e1) {
+                                    e1.printStackTrace();
+                                }
+                                return null;
+                            }
+                        });
+                    }
+
+                } catch (Exception e) {
                     e.printStackTrace();
                     throw new RuntimeException(e);
                 }
@@ -553,17 +589,12 @@ public final class FunctionUtil {
                 int compareResult = 0;
 
                 for (int i = 0; i < fieldLength; i++) {
-
-                    try {
-                        compareResult = ((Comparable) fieldList.get(i).get(o1)).compareTo(fieldList.get(i).get(o2));
-                        if (compareResult != 0) {
-                            break;
-                        }
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
+                    Comparable comparable = (Comparable) fieldList.get(i).apply(o1);
+                    Object o = fieldList.get(i).apply(o2);
+                    compareResult = comparable.compareTo(o);
+                    if (compareResult != 0) {
+                        break;
                     }
-
                 }
 
                 return compareResult;
@@ -601,10 +632,10 @@ public final class FunctionUtil {
     }
 
 
-    public static <T> Tuple2<Collection<T>, Collection<T>> partition(Iterable<T> input, Function<T, Boolean> predicate) {
+    public static <T> Tuple2<List<T>, List<T>> partition(Iterable<T> input, Function<T, Boolean> predicate) {
 
-        final Collection<T> list1 = new LinkedList<T>();
-        final Collection<T> list2 = new LinkedList<T>();
+        final List<T> list1 = new LinkedList<T>();
+        final List<T> list2 = new LinkedList<T>();
 
         final Collection<Collection<T>> out = new LinkedList<Collection<T>>();
 
@@ -617,7 +648,7 @@ public final class FunctionUtil {
 
         out.add(list1);
         out.add(list1);
-        return new Tuple2<Collection<T>, Collection<T>>(list1, list2);
+        return new Tuple2<List<T>, List<T>>(list1, list2);
     }
 
     public static <K, V> void each(Map<K, V> map, KeyValueRecordProcessor<K, V> keyValueRecordProcessor) {
@@ -1148,7 +1179,7 @@ public final class FunctionUtil {
         for (I i : iterable) {
             J j = function.apply(i);
             List<I> list = map.get(j);
-            if(list == null) {
+            if (list == null) {
                 list = new LinkedList<I>();
                 map.put(j, list);
             }

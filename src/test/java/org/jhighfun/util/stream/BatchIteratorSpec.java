@@ -24,7 +24,7 @@ public class BatchIteratorSpec {
         int first = 1;
         int last = batchSize;
         while (integerBatchIterator.hasNext()) {
-            List<Integer> batch  = integerBatchIterator.next();
+            List<Integer> batch = integerBatchIterator.next();
             assertEquals(batch, IntRange(first, last));
             first = last + 1;
             last = last + batchSize;
