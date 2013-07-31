@@ -528,33 +528,55 @@ public final class FunctionUtil {
 
             for (String memberVar : memberVars) {
                 try {
-                    final Field field = tClass.getDeclaredField(memberVar);
 
                     String methodName;
-                    if (field.getType().equals(Boolean.TYPE)) {
-                        methodName = "is" + field.getName().substring(0, 0).toUpperCase() + field.getName().substring(1);
-                    } else {
-                        methodName = "get" + field.getName().substring(0, 0).toUpperCase() + field.getName().substring(1);
-                    }
-
                     try {
-                        final Method method = t.getClass().getDeclaredMethod(methodName, new Class[]{});
 
-                        fieldList.add(new Function<T, Object>() {
-                            @Override
-                            public Object apply(T object) {
-                                try {
-                                    return method.invoke(object, null);
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
+                        try {
+
+                            methodName = "is" + memberVar.substring(0, 1).toUpperCase() + memberVar.substring(1);
+                            final Method isMethod = t.getClass().getDeclaredMethod(methodName, new Class[]{});
+
+                            fieldList.add(new Function<T, Object>() {
+                                @Override
+                                public Object apply(T object) {
+                                    try {
+                                        return isMethod.invoke(object, null);
+                                    } catch (IllegalAccessException e) {
+                                        e.printStackTrace();
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                    return null;
                                 }
-                                return null;
-                            }
-                        });
+                            });
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                            methodName = "get" + memberVar.substring(0, 1).toUpperCase() + memberVar.substring(1);
+
+                            final Method getMethod = t.getClass().getDeclaredMethod(methodName, new Class[]{});
+
+                            fieldList.add(new Function<T, Object>() {
+                                @Override
+                                public Object apply(T object) {
+                                    try {
+                                        return getMethod.invoke(object, null);
+                                    } catch (IllegalAccessException e) {
+                                        e.printStackTrace();
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                    return null;
+                                }
+                            });
+                        }
 
                     } catch (Exception e) {
+
+                        e.printStackTrace();
+                        final Field field = tClass.getDeclaredField(memberVar);
                         field.setAccessible(true);
                         fieldList.add(new Function<T, Object>() {
                             @Override

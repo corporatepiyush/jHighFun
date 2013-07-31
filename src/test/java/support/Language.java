@@ -2,20 +2,20 @@ package support;
 
 public class Language {
 
-    private boolean functional;
+    private boolean FunctionaL;
     private String name;
 
     public Language(boolean functional, String name) {
-        this.functional = functional;
+        this.FunctionaL = functional;
         this.name = name;
     }
 
     public boolean isFunctional() {
-        return functional;
+        return FunctionaL;
     }
 
     public void setFunctional(boolean functional) {
-        this.functional = functional;
+        this.FunctionaL = functional;
     }
 
     public String getName() {
@@ -33,7 +33,7 @@ public class Language {
 
         Language language = (Language) o;
 
-        if (functional != language.functional) return false;
+        if (FunctionaL != language.FunctionaL) return false;
         if (name != null ? !name.equals(language.name) : language.name != null) return false;
 
         return true;
@@ -41,7 +41,7 @@ public class Language {
 
     @Override
     public int hashCode() {
-        int result = (functional ? 1 : 0);
+        int result = (FunctionaL ? 1 : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
