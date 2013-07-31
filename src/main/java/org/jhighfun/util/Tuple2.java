@@ -24,6 +24,8 @@ public final class Tuple2<F, S> {
 
         Tuple2 tuple2 = (Tuple2) o;
 
+        if (tuple2._1 == _1 && tuple2._2 == _2) return true;
+
         if (_1 != null ? !_1.equals(tuple2._1) : tuple2._1 != null) return false;
         if (_2 != null ? !_2.equals(tuple2._2) : tuple2._2 != null) return false;
 

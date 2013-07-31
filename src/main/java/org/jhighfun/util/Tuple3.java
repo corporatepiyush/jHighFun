@@ -25,6 +25,8 @@ public final class Tuple3<F, S, T> {
 
         Tuple3 tuple3 = (Tuple3) o;
 
+        if (tuple3._1 == _1 && tuple3._2 == _2 && tuple3._3 == _3) return true;
+
         if (_1 != null ? !_1.equals(tuple3._1) : tuple3._1 != null) return false;
         if (_2 != null ? !_2.equals(tuple3._2) : tuple3._2 != null) return false;
         if (_3 != null ? !_3.equals(tuple3._3) : tuple3._3 != null) return false;

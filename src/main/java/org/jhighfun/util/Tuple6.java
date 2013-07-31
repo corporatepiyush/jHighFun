@@ -31,6 +31,9 @@ public final class Tuple6<F, S, T, FO, FI, SI> {
 
         Tuple6 tuple6 = (Tuple6) o;
 
+        if (tuple6._1 == _1 && tuple6._2 == _2 && tuple6._3 == _3 && tuple6._4 == _4 && tuple6._5 == _5 && tuple6._6 == _6)
+            return true;
+
         if (_1 != null ? !_1.equals(tuple6._1) : tuple6._1 != null) return false;
         if (_2 != null ? !_2.equals(tuple6._2) : tuple6._2 != null) return false;
         if (_3 != null ? !_3.equals(tuple6._3) : tuple6._3 != null) return false;

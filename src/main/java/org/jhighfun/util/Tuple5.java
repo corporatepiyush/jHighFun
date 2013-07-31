@@ -29,6 +29,8 @@ public final class Tuple5<F, S, T, FO, FI> {
 
         Tuple5 tuple5 = (Tuple5) o;
 
+        if (tuple5._1 == _1 && tuple5._2 == _2 && tuple5._3 == _3 && tuple5._4 == _4 && tuple5._5 == _5) return true;
+
         if (_1 != null ? !_1.equals(tuple5._1) : tuple5._1 != null) return false;
         if (_2 != null ? !_2.equals(tuple5._2) : tuple5._2 != null) return false;
         if (_3 != null ? !_3.equals(tuple5._3) : tuple5._3 != null) return false;

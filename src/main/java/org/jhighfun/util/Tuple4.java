@@ -28,6 +28,8 @@ public final class Tuple4<F, S, T, FO> {
 
         Tuple4 tuple4 = (Tuple4) o;
 
+        if (tuple4._1 == _1 && tuple4._2 == _2 && tuple4._3 == _3 && tuple4._4 == _4) return true;
+
         if (_1 != null ? !_1.equals(tuple4._1) : tuple4._1 != null) return false;
         if (_2 != null ? !_2.equals(tuple4._2) : tuple4._2 != null) return false;
         if (_3 != null ? !_3.equals(tuple4._3) : tuple4._3 != null) return false;

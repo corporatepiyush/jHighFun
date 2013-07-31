@@ -21,6 +21,8 @@ public final class Tuple1<F> {
 
         Tuple1 tuple1 = (Tuple1) o;
 
+        if (tuple1._1 == _1) return true;
+
         if (_1 != null ? !_1.equals(tuple1._1) : tuple1._1 != null) return false;
 
         return true;
