@@ -7,7 +7,7 @@ package org.jhighfun.util;
  * @author Piyush Katariya
  */
 
-public final class Tuple2<F, S> {
+public final class Tuple2<F, S> extends Tuple {
 
     public F _1;
     public S _2;
@@ -46,4 +46,5 @@ public final class Tuple2<F, S> {
                 ", _2=" + _2 +
                 '}';
     }
+
 }

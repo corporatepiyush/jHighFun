@@ -7,7 +7,7 @@ package org.jhighfun.util;
  * @author Piyush Katariya
  */
 
-public final class Tuple4<F, S, T, FO> {
+public final class Tuple4<F, S, T, FO> extends Tuple {
 
     public F _1;
     public S _2;

@@ -6,7 +6,7 @@ package org.jhighfun.util;
  * @author Piyush Katariya
  */
 
-public final class Tuple1<F> {
+public final class Tuple1<F> extends Tuple {
 
     public F _1;
 
@@ -39,5 +39,6 @@ public final class Tuple1<F> {
                 "_1=" + _1 +
                 '}';
     }
+
 }
 
