@@ -67,43 +67,43 @@ public final class CollectionUtil {
         return flattenSet;
     }
 
-    public static <K, V> Map<K, V> Map(Pair<K, V>... entries) {
-        final Map<K, V> map = new LinkedHashMap<K, V>();
-        for (Pair<K, V> pair : entries) {
+    public static Map Map(Pair... entries) {
+        final Map map = new LinkedHashMap();
+        for (Pair pair : entries) {
             map.put(pair.getKey(), pair.getValue());
         }
         return map;
     }
 
-    public static <K, V> Map<K, V> SafeMap(Pair<K, V>... entries) {
-        final Map<K, V> map = new ConcurrentHashMap<K, V>();
-        for (Pair<K, V> pair : entries) {
+    public static Map SafeMap(Pair... entries) {
+        final Map map = new ConcurrentHashMap();
+        for (Pair pair : entries) {
             map.put(pair.getKey(), pair.getValue());
         }
         return map;
     }
 
-    public static <K, V> Map<K, V> FlattenMap(Map<K, V> first, Map<K, V>... maps) {
-        final Map<K, V> flattenMap = new HashMap<K, V>();
+    public static Map FlattenMap(Map first, Map... maps) {
+        final Map flattenMap = new HashMap();
         flattenMap.putAll(first);
-        for (Map<K, V> map : maps) {
+        for (Map map : maps) {
             flattenMap.putAll(map);
         }
         return flattenMap;
     }
 
 
-    public static <K, V> Map<K, V> FlattenSafeMap(Map<K, V> first, Map<K, V>... maps) {
-        final Map<K, V> flattenMap = new ConcurrentHashMap<K, V>();
+    public static Map FlattenSafeMap(Map first, Map... maps) {
+        final Map flattenMap = new ConcurrentHashMap();
         flattenMap.putAll(first);
-        for (Map<K, V> map : maps) {
+        for (Map map : maps) {
             flattenMap.putAll(map);
         }
         return flattenMap;
     }
 
-    public static <K, V> Pair<K, V> Entry(K key, V value) {
-        return new Pair<K, V>(key, value);
+    public static Pair Entry(Object key, Object value) {
+        return new Pair(key, value);
     }
 
     public static <F> Tuple1<F> tuple(F first) {
@@ -180,7 +180,7 @@ public final class CollectionUtil {
                 }
 
                 public void remove() {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    throw new UnsupportedOperationException();
                 }
 
             });
@@ -207,7 +207,7 @@ public final class CollectionUtil {
                 }
 
                 public void remove() {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    throw new UnsupportedOperationException();
                 }
 
             });
@@ -248,7 +248,7 @@ public final class CollectionUtil {
                 }
 
                 public void remove() {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    throw new UnsupportedOperationException();
                 }
 
             });
@@ -275,7 +275,7 @@ public final class CollectionUtil {
                 }
 
                 public void remove() {
-                    //To change body of implemented methods use File | Settings | File Templates.
+                    throw new UnsupportedOperationException();
                 }
 
             });

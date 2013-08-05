@@ -28,7 +28,6 @@ public class SorterStreamIterator<T> extends AbstractStreamIterator<T> {
             }
 
             Collections.sort(list, comparator);
-            System.out.println(list);
             this.iterator = new AbstractStreamIteratorAdapter<T>(list.iterator());
             this.fetchingDone = true;
         }
