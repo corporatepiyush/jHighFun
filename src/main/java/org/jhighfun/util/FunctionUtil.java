@@ -1080,7 +1080,7 @@ public final class FunctionUtil {
                 .extract();
     }
 
-    public static <T> List<T> extractWithIndex(List<T> list, Function<Integer, Boolean> predicate) {
+    public static <T> List<T> filterWithIndex(List<T> list, Function<Integer, Boolean> predicate) {
 
         List<T> outList = new LinkedList<T>();
         int index = 0;

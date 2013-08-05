@@ -628,7 +628,7 @@ public class CollectionFunctionChainSpec {
 
         List<String> list = List("hello", "Mr.", "FirstName", "LastName");
 
-        List<String> outList = new CollectionFunctionChain(list).extractWithIndex(new Function<Integer, Boolean>() {
+        List<String> outList = new CollectionFunctionChain(list).filterWithIndex(new Function<Integer, Boolean>() {
             public Boolean apply(Integer index) {
                 return index % 2 == 0;
             }
@@ -928,24 +928,6 @@ public class CollectionFunctionChainSpec {
 
         assertEquals(chain.reverse().extract(), List("Ruby", "Groovy", "Java", "Scala"));
     }
-
-
-    @Test
-    public void testRemoveDuplicates() {
-
-        List<String> list = new LinkedList<String>();
-        list.add("Scala");
-        list.add("Java");
-        list.add("Java");
-        list.add("Groovy");
-        list.add("Ruby");
-        list.add("Ruby");
-
-        CollectionFunctionChain<String> chain = new CollectionFunctionChain<String>(list);
-
-        assertEquals(chain.removeDuplicates().extract(), List("Scala", "Java", "Groovy", "Ruby"));
-    }
-
 
     @Test
     public void testRemoveAlikes() {

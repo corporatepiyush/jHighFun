@@ -56,7 +56,7 @@ public class DynamicIterableSpec {
 
         Iterator<String> iterator = List("A", "B", "{", "C", "C", "}", "D", "{", "E", "E", "}").iterator();
 
-        List<List<String>> actual = new TaskStream<String>(iterator).extractSequences(
+        List<List<String>> actual = new TaskStream<String>(iterator).filterSequences(
                 new Function<List<String>, Boolean>() {
                     public Boolean apply(List<String> list) {
                         return list.get(0).equals("{") && (list.size() <= 1 || !list.get(list.size() - 1).equals("}"));

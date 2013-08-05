@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Cascading interface which enables availability of utility methods which cam be invoked on
- * List data structure to compose/write clean business logic flow of any kind, more suitable for stream
+ * List data structure to compose/write clean business logic flow of any kind, more suitable for batch
  * programming and data computation.
  *
  * @author Piyush Katariya
@@ -132,8 +132,8 @@ public final class CollectionFunctionChain<I> {
         return new ObjectFunctionChain<Integer>(FunctionUtil.count(this.collection, predicate));
     }
 
-    public CollectionFunctionChain<I> extractWithIndex(Function<Integer, Boolean> predicate) {
-        this.collection = FunctionUtil.extractWithIndex(this.collection, predicate);
+    public CollectionFunctionChain<I> filterWithIndex(Function<Integer, Boolean> predicate) {
+        this.collection = FunctionUtil.filterWithIndex(this.collection, predicate);
         return this;
     }
 
@@ -212,17 +212,6 @@ public final class CollectionFunctionChain<I> {
         return this;
     }
 
-
-    public CollectionFunctionChain<I> removeDuplicates() {
-        final LinkedList<I> newList = new LinkedList<I>();
-        for (I element : this.collection) {
-            if (!newList.contains(element))
-                newList.add(element);
-        }
-        this.collection = newList;
-        return this;
-    }
-
     public CollectionFunctionChain<I> removeDuplicates(Function<Tuple2<I, I>, Boolean> likenessEvaluator) {
         final LinkedList<I> newList = new LinkedList<I>();
         Tuple2<I, I> tuple = new Tuple2<I, I>(null, null);
@@ -273,7 +262,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> execute(Task<List<I>> task) {
-        task.execute(this.collection);
+        task.execute(new LinkedList<I>(this.collection));
         return this;
     }
 

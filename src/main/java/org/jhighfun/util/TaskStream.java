@@ -2,6 +2,7 @@ package org.jhighfun.util;
 
 import org.jhighfun.util.stream.*;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,21 +46,33 @@ public class TaskStream<IN> {
         return new TaskStream<OUT>(new MapperStreamIterator<IN, OUT>(this.iterator, function));
     }
 
+    public <OUT, CARRY> TaskStream<OUT> collectWithCarryOver(CARRY initialValue, Function<Tuple2<CARRY, IN>, Tuple2<CARRY, OUT>> function) {
+        return new TaskStream<OUT>(new MapperWithCarryOverStreamIterator<IN, OUT, CARRY>(this.iterator, initialValue, function));
+    }
+
     public TaskStream<IN> filter(Function<IN, Boolean> function) {
         return new TaskStream<IN>(new ConditionalStreamIterator<IN>(this.iterator, function));
     }
 
-    public TaskStream<IN> filter(Function<IN, Boolean> function, Task<IN> task) {
+    public TaskStream<IN> filterAndExecuteUnfiltered(Function<IN, Boolean> function, Task<IN> task) {
         return new TaskStream<IN>(new ConditionalStreamIterator<IN>(this.iterator, function, task));
     }
 
-    public TaskStream<List<IN>> extractSequences(Function<List<IN>, Boolean> function) {
+    public TaskStream<List<IN>> filterSequences(Function<List<IN>, Boolean> function) {
         return new TaskStream<List<IN>>(new ExtractorStreamIterator<IN>(this.iterator, function));
     }
 
-    public <OUT> TaskStream<OUT> _customize(CustomizedStreamIterator<IN, OUT> customizedIterator) {
+    public TaskStream<IN> sortWith(Comparator<IN> comparator) {
+        return new TaskStream<IN>(new SorterStreamIterator<IN>(this.iterator, comparator));
+    }
+
+    public <OUT> TaskStream<OUT> _customizedOperation(CustomizedStreamIterator<IN, OUT> customizedIterator) {
         customizedIterator.setCustomizedIterator(this.iterator);
         return new TaskStream<OUT>(customizedIterator);
+    }
+
+    public <OUT> TaskStream<OUT> transform(Function<AbstractStreamIterator<IN>, AbstractStreamIterator<OUT>> function) {
+        return new TaskStream<OUT>(function.apply(this.iterator));
     }
 
     public TaskStream<IN> execute(Task<IN> task) {
@@ -149,7 +162,6 @@ public class TaskStream<IN> {
     public TaskStream<IN> _ensureThreadSafety() {
         return new TaskStream<IN>(new ConcurrentStreamIterator<IN>(this.iterator));
     }
-
 
     public TaskStream<IN> _processExclusively() {
         final List<IN> list = new LinkedList<IN>();

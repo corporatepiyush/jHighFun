@@ -8,7 +8,7 @@ public abstract class AbstractStreamIterator<T> {
 
     public abstract T next();
 
-    public void remove() {
+    public void skip() {
         if (hasNext())
             next();
         else
