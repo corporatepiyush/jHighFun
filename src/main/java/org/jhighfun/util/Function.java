@@ -27,4 +27,8 @@ public abstract class Function<I, O> {
     public Function<I, O> memoize(MemoizeConfig memoizeConfig) {
         return new ConfigurableFunctionMemoizer<I, O>(this, memoizeConfig);
     }
+
+    public Function<I, O> proxy(FunctionInvocationHandler<I, O> handler) {
+        return new FunctionProxy<I, O>(this, handler);
+    }
 }
