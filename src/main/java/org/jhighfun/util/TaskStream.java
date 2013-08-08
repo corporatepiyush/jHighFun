@@ -79,30 +79,6 @@ public class TaskStream<IN> {
         return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, task));
     }
 
-    public TaskStream<IN> executeAsync(final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
-            public void execute(final IN input) {
-                FunctionUtil.executeAsync(new Runnable() {
-                    public void run() {
-                        task.execute(input);
-                    }
-                });
-            }
-        }));
-    }
-
-    public TaskStream<IN> executeLater(final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
-            public void execute(final IN input) {
-                FunctionUtil.executeLater(new Runnable() {
-                    public void run() {
-                        task.execute(input);
-                    }
-                });
-            }
-        }));
-    }
-
     public TaskStream<IN> executeWithGlobalLock(final Task<IN> task) {
         return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {

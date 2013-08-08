@@ -90,8 +90,8 @@ public final class ObjectFunctionChain<I> {
     }
 
     public ObjectFunctionChain<I> executeAwait(final Task<I> task, Integer time, TimeUnit timeUnit) {
-        FunctionUtil.executeAwait(new Block() {
-            public void execute() {
+        FunctionUtil.executeAwait(new Runnable() {
+            public void run() {
                 task.execute(object);
             }
         }, time, timeUnit);

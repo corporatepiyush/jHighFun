@@ -23,6 +23,8 @@ public final class CollectionFunctionChain<I> {
     public CollectionFunctionChain(Iterable<I> iterable) {
         if (iterable instanceof List) {
             this.collection = (List<I>) iterable;
+        } else if(iterable instanceof Collection){
+            this.collection = new LinkedList<I>((Collection) iterable);
         } else {
             List<I> list = new LinkedList<I>();
             for (I i : iterable) {
@@ -315,8 +317,8 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> executeAwait(final Task<List<I>> task, Integer time, TimeUnit timeUnit) {
-        FunctionUtil.executeAwait(new Block() {
-            public void execute() {
+        FunctionUtil.executeAwait(new Runnable() {
+            public void run() {
                 task.execute(collection);
             }
         }, time, timeUnit);

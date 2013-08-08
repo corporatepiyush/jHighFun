@@ -915,8 +915,8 @@ public class FunctionUtilSpec {
 
         // what if task executes later
 
-        Block codeBlockSpy = spy(new Block() {
-            public void execute() {
+        Runnable codeBlockSpy = spy(new Runnable() {
+            public void run() {
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
@@ -932,12 +932,12 @@ public class FunctionUtilSpec {
         System.out.print((System.currentTimeMillis() - startTime));
         assertTrue((System.currentTimeMillis() - startTime) < 200);
         Thread.sleep(100);
-        verify(codeBlockSpy).execute();
+        verify(codeBlockSpy).run();
 
         // what if task executes earlier
 
-        codeBlockSpy = spy(new Block() {
-            public void execute() {
+        codeBlockSpy = spy(new Runnable() {
+            public void run() {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -951,15 +951,15 @@ public class FunctionUtilSpec {
         FunctionUtil.executeAwait(codeBlockSpy, 200, TimeUnit.MILLISECONDS);
 
         assertTrue((System.currentTimeMillis() - startTime) < 200);
-        verify(codeBlockSpy).execute();
+        verify(codeBlockSpy).run();
 
     }
 
     @Test(expected = TimeoutException.class)
     public void testExecuteWithTimeoutForMoreExecutionTime() throws TimeoutException {
 
-        Block codeBlockSpy = spy(new Block() {
-            public void execute() {
+        Runnable codeBlockSpy = spy(new Runnable() {
+            public void run() {
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
@@ -974,8 +974,8 @@ public class FunctionUtilSpec {
     @Test
     public void testExecuteWithTimeoutForLessExecutionTime() throws TimeoutException {
 
-        Block codeBlockSpy = spy(new Block() {
-            public void execute() {
+        Runnable codeBlockSpy = spy(new Runnable() {
+            public void run() {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {

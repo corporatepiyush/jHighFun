@@ -738,10 +738,7 @@ public final class FunctionUtil {
     }
 
     public static <I> CollectionFunctionChain<I> chain(Iterable<I> iterable) {
-        if (iterable instanceof List)
-            return new CollectionFunctionChain<I>((List<I>) iterable);
-        else
-            return new CollectionFunctionChain<I>(CollectionUtil.FlattenList(iterable));
+            return new CollectionFunctionChain<I>(iterable);
     }
 
     public static <I> ObjectFunctionChain<I> chain(I object) {
@@ -963,7 +960,7 @@ public final class FunctionUtil {
         }
     }
 
-    public static void executeWithTimeout(final Block codeBlock, Integer time, TimeUnit timeUnit) throws TimeoutException {
+    public static void executeWithTimeout(final Runnable codeBlock, Integer time, TimeUnit timeUnit) throws TimeoutException {
 
         final LinkedList<Throwable> exceptions = new LinkedList<Throwable>();
 
@@ -971,7 +968,7 @@ public final class FunctionUtil {
             highPriorityTaskThreadPool.submit(new Runnable() {
                 public void run() {
                     try {
-                        codeBlock.execute();
+                        codeBlock.run();
                     } catch (Throwable e) {
                         exceptions.add(e);
                         e.printStackTrace();
@@ -992,14 +989,14 @@ public final class FunctionUtil {
 
     }
 
-    public static void executeAwait(final Block codeBlock, Integer time, TimeUnit timeUnit) {
+    public static void executeAwait(final Runnable codeBlock, Integer time, TimeUnit timeUnit) {
 
         final List<Throwable> exception = new LinkedList<Throwable>();
         try {
             highPriorityTaskThreadPool.submit(new Runnable() {
                 public void run() {
                     try {
-                        codeBlock.execute();
+                        codeBlock.run();
                     } catch (Throwable e) {
                         e.printStackTrace();
                         exception.add(e);
