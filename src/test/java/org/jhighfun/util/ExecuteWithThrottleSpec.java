@@ -6,8 +6,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.lang.reflect.Field;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -54,6 +53,22 @@ public class ExecuteWithThrottleSpec {
 
         verify(codeBlockMock, times(1)).execute();
 
+    }
+
+    @Test
+    public void testExecuteAsyncWithFutureAndThrottler() throws Exception {
+        init();
+        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
+
+            public String execute() {
+                return "Completed";
+            }
+        });
+
+        Future<String> future = FunctionUtil.executeAsyncWithThrottle(throttler, asyncTaskSpy);
+        future.get().equals("Completed");
+        verify(mapSpy, times(1)).get(throttler);
+        verify(asyncTaskSpy, times(1)).execute();
     }
 
     @Test

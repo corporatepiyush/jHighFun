@@ -552,8 +552,6 @@ public final class FunctionUtil {
                             });
 
                         } catch (Exception e) {
-                            e.printStackTrace();
-
                             methodName = "get" + memberVar.substring(0, 1).toUpperCase() + memberVar.substring(1);
 
                             final Method getMethod = t.getClass().getDeclaredMethod(methodName, new Class[]{});
@@ -575,7 +573,6 @@ public final class FunctionUtil {
 
                     } catch (Exception e) {
 
-                        e.printStackTrace();
                         final Field field = tClass.getDeclaredField(memberVar);
                         field.setAccessible(true);
                         fieldList.add(new Function<T, Object>() {
@@ -925,6 +922,16 @@ public final class FunctionUtil {
         });
     }
 
+    public static <T> Future<T> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final AsyncTask<T> asyncTask) {
+        ExecutorService executorService = getThrottler(executionThrottler);
+
+        return executorService.submit(new Callable<T>() {
+            public T call() throws Exception {
+                return asyncTask.execute();
+            }
+        });
+    }
+
     private static ExecutorService getThrottler(ExecutionThrottler executionThrottler) {
         ExecutorService executorService = throttlerPoolMap.get(executionThrottler);
 
@@ -1092,29 +1099,6 @@ public final class FunctionUtil {
         return outList;
     }
 
-    private static <T> void eachWithConditionChain(Collection<T> collection, Tuple2<Function<T, Boolean>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Function<T, Boolean>, RecordProcessor<T>>... predicateRecordProcessors) {
-        List<Tuple2<Function<T, Boolean>, RecordProcessor<T>>> predicateRecordProcessorList = CollectionUtil.FlattenList(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
-        for (T t : collection) {
-            for (Tuple2<Function<T, Boolean>, RecordProcessor<T>> tuple : predicateRecordProcessorList) {
-                if (tuple._1.apply(t)) {
-                    tuple._2.process(t);
-                }
-            }
-        }
-    }
-
-    private static <T> void eachWithOptionChain(Collection<T> collection, Tuple2<Function<T, Boolean>, RecordProcessor<T>> predicateRecordProcessor, Tuple2<Function<T, Boolean>, RecordProcessor<T>>... predicateRecordProcessors) {
-        List<Tuple2<Function<T, Boolean>, RecordProcessor<T>>> predicateRecordProcessorList = CollectionUtil.FlattenList(List(predicateRecordProcessor), Arrays.asList(predicateRecordProcessors));
-        for (T t : collection) {
-            for (Tuple2<Function<T, Boolean>, RecordProcessor<T>> tuple : predicateRecordProcessorList) {
-                if (tuple._1.apply(t)) {
-                    tuple._2.process(t);
-                    break;
-                }
-            }
-        }
-    }
-
     public static <T1, T2> Collection<Tuple2<T1, T2>> zip(Collection<T1> first, Collection<T2> second) {
 
         if (first.size() > second.size() || first.size() < second.size()) {
@@ -1208,6 +1192,14 @@ public final class FunctionUtil {
             list.add(i);
         }
         return map;
+    }
+
+    public static <T> Future<T> executeAsync(final AsyncTask<T> asyncTask) {
+        return mediumPriorityAsyncTaskThreadPool.submit(new Callable<T>() {
+            public T call() throws Exception {
+                return asyncTask.execute();
+            }
+        });
     }
 }
 

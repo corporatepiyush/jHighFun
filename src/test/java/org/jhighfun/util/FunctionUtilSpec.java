@@ -111,6 +111,25 @@ public class FunctionUtilSpec {
         verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
     }
 
+
+    @Test
+    public void testExecuteAsyncWithFuture() throws ExecutionException, InterruptedException {
+
+        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
+
+            public String execute() {
+                return "Completed";
+            }
+        });
+
+        Future<String> future = FunctionUtil.executeAsync(asyncTaskSpy);
+        future.get().equals("Completed");
+
+        verify(asyncTaskSpy, times(1)).execute();
+        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Callable.class));
+    }
+
+
     @Test
     public void testExecuteAsyncWithCallback() {
 
