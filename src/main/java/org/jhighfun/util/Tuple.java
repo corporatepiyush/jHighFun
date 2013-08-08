@@ -2,7 +2,7 @@ package org.jhighfun.util;
 
 import java.io.Serializable;
 
-public abstract class Tuple implements Serializable {
+public abstract class Tuple implements Serializable, Cloneable {
 
     public enum Index {
         _1, _2, _3, _4, _5, _6
