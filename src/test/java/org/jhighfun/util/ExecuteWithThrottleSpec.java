@@ -6,7 +6,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.lang.reflect.Field;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -34,33 +37,33 @@ public class ExecuteWithThrottleSpec {
     @Test
     public void testExecuteWithThrottle() throws Exception {
         init();
-        Block codeBlockMock = mock(Block.class);
+        Runnable codeBlockMock = mock(Runnable.class);
         FunctionUtil.executeWithThrottle(throttler, codeBlockMock);
 
         verify(mapSpy, times(1)).get(throttler);
-        verify(codeBlockMock, times(1)).execute();
+        verify(codeBlockMock, times(1)).run();
 
     }
 
     @Test
     public void testExecuteAsyncWithThrottle() throws Exception {
         init();
-        Block codeBlockMock = mock(Block.class);
+        Runnable codeBlockMock = mock(Runnable.class);
         FunctionUtil.executeAsyncWithThrottle(throttler, codeBlockMock);
 
         verify(mapSpy, times(1)).get(throttler);
         Thread.sleep(200);
 
-        verify(codeBlockMock, times(1)).execute();
+        verify(codeBlockMock, times(1)).run();
 
     }
 
     @Test
     public void testExecuteAsyncWithFutureAndThrottler() throws Exception {
         init();
-        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
+        Callable<String> asyncTaskSpy = spy(new Callable<String>() {
 
-            public String execute() {
+            public String call() {
                 return "Completed";
             }
         });
@@ -68,18 +71,18 @@ public class ExecuteWithThrottleSpec {
         Future<String> future = FunctionUtil.executeAsyncWithThrottle(throttler, asyncTaskSpy);
         future.get().equals("Completed");
         verify(mapSpy, times(1)).get(throttler);
-        verify(asyncTaskSpy, times(1)).execute();
+        verify(asyncTaskSpy, times(1)).call();
     }
 
     @Test
     public void testExecuteAsyncWithThrottle_callback() throws Exception {
         init();
-        AsyncTask<Object> asyncTask = mock(AsyncTask.class);
+        Callable<Object> asyncTask = mock(Callable.class);
         CallbackTask<Object> callbackTask = mock(CallbackTask.class);
 
 
         Object asyncTaskResult = new Object();
-        when(asyncTask.execute()).thenReturn(asyncTaskResult);
+        when(asyncTask.call()).thenReturn(asyncTaskResult);
 
         FunctionUtil.executeAsyncWithThrottle(throttler, asyncTask, callbackTask);
 
@@ -87,7 +90,7 @@ public class ExecuteWithThrottleSpec {
         Thread.sleep(200);
 
 
-        verify(asyncTask, times(1)).execute();
+        verify(asyncTask, times(1)).call();
         ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
         verify(callbackTask, times(1)).execute(argument.capture());
 

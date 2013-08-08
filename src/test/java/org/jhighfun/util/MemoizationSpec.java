@@ -188,8 +188,8 @@ public class MemoizationSpec {
             loadList.add(i);
         }
 
-        FunctionUtil.executeAsync(new Block() {
-            public void execute() {
+        FunctionUtil.executeAsync(new Runnable() {
+            public void run() {
                 memoizedFunction.apply(CollectionUtil.List("I", "am", "the", "Almighty"));
             }
         });

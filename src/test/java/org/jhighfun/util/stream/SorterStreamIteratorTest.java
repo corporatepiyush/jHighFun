@@ -6,12 +6,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public class SorterStreamIteratorTest {
 
     @Test
-    public void test(){
+    public void test() {
 
         List<Integer> list = new LinkedList<Integer>();
 
@@ -33,7 +34,7 @@ public class SorterStreamIteratorTest {
             expected.add(i);
         }
 
-        for(Integer integer : expected) {
+        for (Integer integer : expected) {
             iterator.hasNext();
             Integer next = iterator.next();
             assertEquals(integer, next);

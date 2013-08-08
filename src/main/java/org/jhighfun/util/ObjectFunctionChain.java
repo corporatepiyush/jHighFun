@@ -3,6 +3,7 @@ package org.jhighfun.util;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,8 +45,8 @@ public final class ObjectFunctionChain<I> {
     }
 
     public ObjectFunctionChain<I> executeAsync(final Task<I> task) {
-        FunctionUtil.executeAsync(new Block() {
-            public void execute() {
+        FunctionUtil.executeAsync(new Runnable() {
+            public void run() {
                 task.execute(object);
             }
         });
@@ -53,8 +54,8 @@ public final class ObjectFunctionChain<I> {
     }
 
     public ObjectFunctionChain<I> executeLater(final Task<I> task) {
-        FunctionUtil.executeLater(new Block() {
-            public void execute() {
+        FunctionUtil.executeLater(new Runnable() {
+            public void run() {
                 task.execute(object);
             }
         });
@@ -80,8 +81,8 @@ public final class ObjectFunctionChain<I> {
     }
 
     public ObjectFunctionChain<I> executeWithThrottle(ExecutionThrottler executionThrottler, final Task<I> task) {
-        FunctionUtil.executeWithThrottle(executionThrottler, new Block() {
-            public void execute() {
+        FunctionUtil.executeWithThrottle(executionThrottler, new Runnable() {
+            public void run() {
                 task.execute(object);
             }
         });
@@ -98,8 +99,8 @@ public final class ObjectFunctionChain<I> {
     }
 
     public ObjectFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Task<I> task) {
-        FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Block() {
-            public void execute() {
+        FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Runnable() {
+            public void run() {
                 task.execute(object);
             }
         });
@@ -107,8 +108,8 @@ public final class ObjectFunctionChain<I> {
     }
 
     public <O> ObjectFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Function<I, O> asyncTask, final CallbackTask<O> callbackTask) {
-        FunctionUtil.executeAsyncWithThrottle(executionThrottler, new AsyncTask<O>() {
-            public O execute() {
+        FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Callable<O>() {
+            public O call() {
                 return asyncTask.apply(object);
             }
         }, callbackTask);

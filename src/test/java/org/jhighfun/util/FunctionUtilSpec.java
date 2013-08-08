@@ -96,28 +96,25 @@ public class FunctionUtilSpec {
     }
 
     @Test
-    public void testExecuteAsync() {
+    public void testExecuteAsync() throws ExecutionException, InterruptedException {
 
-        Block mockBlock = mock(Block.class);
+        Runnable mockBlock = mock(Runnable.class);
 
-        FunctionUtil.executeAsync(mockBlock);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Future future = FunctionUtil.executeAsync(mockBlock);
 
-        verify(mockBlock, times(1)).execute();
+        future.get();
+
+        verify(mockBlock, times(1)).run();
         verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
     }
 
 
     @Test
-    public void testExecuteAsyncWithFuture() throws ExecutionException, InterruptedException {
+    public void testExecuteAsyncWithFuture() throws Exception {
 
-        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
+        Callable<String> asyncTaskSpy = spy(new Callable<String>() {
 
-            public String execute() {
+            public String call() {
                 return "Completed";
             }
         });
@@ -125,16 +122,16 @@ public class FunctionUtilSpec {
         Future<String> future = FunctionUtil.executeAsync(asyncTaskSpy);
         future.get().equals("Completed");
 
-        verify(asyncTaskSpy, times(1)).execute();
+        verify(asyncTaskSpy, times(1)).call();
         verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Callable.class));
     }
 
 
     @Test
-    public void testExecuteAsyncWithCallback() {
+    public void testExecuteAsyncWithCallback() throws Exception {
 
-        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
-            public String execute() {
+        Callable<String> asyncTaskSpy = spy(new Callable<String>() {
+            public String call() {
                 return "output";
             }
         });
@@ -149,7 +146,7 @@ public class FunctionUtilSpec {
 
         ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
 
-        verify(asyncTaskSpy, times(1)).execute();
+        verify(asyncTaskSpy, times(1)).call();
         verify(callbackTaskMock, times(1)).execute(argument.capture());
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
         assertEquals(argument.getValue().getOutput(), "output");
@@ -160,10 +157,10 @@ public class FunctionUtilSpec {
 
 
     @Test
-    public void testExecuteAsyncWithCallbackWithException() {
+    public void testExecuteAsyncWithCallbackWithException() throws Exception {
 
-        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
-            public String execute() {
+        Callable<String> asyncTaskSpy = spy(new Callable<String>() {
+            public String call() {
                 if (1 < 2) throw new RuntimeException();
                 return "output";
             }
@@ -179,7 +176,7 @@ public class FunctionUtilSpec {
 
         ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
 
-        verify(asyncTaskSpy, times(1)).execute();
+        verify(asyncTaskSpy, times(1)).call();
         verify(callbackTaskMock, times(1)).execute(argument.capture());
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
         assertEquals(argument.getValue().getOutput(), null);
@@ -191,7 +188,7 @@ public class FunctionUtilSpec {
     @Test
     public void testExecuteLater() {
 
-        Block mockBlock = mock(Block.class);
+        Runnable mockBlock = mock(Runnable.class);
 
         FunctionUtil.executeLater(mockBlock);
         try {
@@ -200,15 +197,15 @@ public class FunctionUtilSpec {
             e.printStackTrace();
         }
 
-        verify(mockBlock, times(1)).execute();
+        verify(mockBlock, times(1)).run();
         verify(spyLowPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
     }
 
     @Test
-    public void testExecuteLaterWithCallback() {
+    public void testExecuteLaterWithCallback() throws Exception {
 
-        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
-            public String execute() {
+        Callable<String> asyncTaskSpy = spy(new Callable<String>() {
+            public String call() {
                 return "output";
             }
         });
@@ -223,7 +220,7 @@ public class FunctionUtilSpec {
 
         ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
 
-        verify(asyncTaskSpy, times(1)).execute();
+        verify(asyncTaskSpy, times(1)).call();
         verify(callbackTaskMock, times(1)).execute(argument.capture());
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
         assertEquals(argument.getValue().getOutput(), "output");
@@ -234,10 +231,10 @@ public class FunctionUtilSpec {
 
 
     @Test
-    public void testExecuteLaterWithCallbackWithException() {
+    public void testExecuteLaterWithCallbackWithException() throws Exception {
 
-        AsyncTask<String> asyncTaskSpy = spy(new AsyncTask<String>() {
-            public String execute() {
+        Callable<String> asyncTaskSpy = spy(new Callable<String>() {
+            public String call() {
                 if (1 < 2) throw new RuntimeException();
                 return "output";
             }
@@ -246,14 +243,14 @@ public class FunctionUtilSpec {
 
         FunctionUtil.executeLater(asyncTaskSpy, callbackTaskMock);
         try {
-            Thread.sleep(10);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         ArgumentCaptor<AsyncTaskHandle> argument = ArgumentCaptor.forClass(AsyncTaskHandle.class);
 
-        verify(asyncTaskSpy, times(1)).execute();
+        verify(asyncTaskSpy, times(1)).call();
         verify(callbackTaskMock, times(1)).execute(argument.capture());
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
         assertEquals(argument.getValue().getOutput(), null);

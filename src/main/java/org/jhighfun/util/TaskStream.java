@@ -82,8 +82,8 @@ public class TaskStream<IN> {
     public TaskStream<IN> executeAsync(final Task<IN> task) {
         return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
-                FunctionUtil.executeAsync(new Block() {
-                    public void execute() {
+                FunctionUtil.executeAsync(new Runnable() {
+                    public void run() {
                         task.execute(input);
                     }
                 });
@@ -94,40 +94,8 @@ public class TaskStream<IN> {
     public TaskStream<IN> executeLater(final Task<IN> task) {
         return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
             public void execute(final IN input) {
-                FunctionUtil.executeLater(new Block() {
-                    public void execute() {
-                        task.execute(input);
-                    }
-                });
-            }
-        }));
-    }
-
-    public TaskStream<IN> executeWithThrottle(final ExecutionThrottler executionThrottler, final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
-            public void execute(final IN input) {
-                FunctionUtil.executeWithThrottle(executionThrottler, new Block() {
-                    public void execute() {
-                        task.execute(input);
-                    }
-                });
-            }
-        }));
-    }
-
-    public TaskStream<IN> executeAsyncWithThrottle(final ExecutionThrottler executionThrottler, final AsyncTask<IN> asyncTask, final CallbackTask<IN> callbackTask) {
-        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
-            public void execute(final IN input) {
-                FunctionUtil.executeAsyncWithThrottle(executionThrottler, asyncTask, callbackTask);
-            }
-        }));
-    }
-
-    public TaskStream<IN> executeAsyncWithThrottle(final ExecutionThrottler executionThrottler, final Task<IN> task) {
-        return new TaskStream<IN>(new ExecutorStreamIterator<IN>(this.iterator, new Task<IN>() {
-            public void execute(final IN input) {
-                FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Block() {
-                    public void execute() {
+                FunctionUtil.executeLater(new Runnable() {
+                    public void run() {
                         task.execute(input);
                     }
                 });

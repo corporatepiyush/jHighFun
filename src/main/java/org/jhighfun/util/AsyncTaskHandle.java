@@ -1,5 +1,7 @@
 package org.jhighfun.util;
 
+import java.util.concurrent.Callable;
+
 /**
  * A future handle to a AsyncTask which also holds either output or exception
  * due to execution of AsyncTask task.
@@ -8,26 +10,26 @@ package org.jhighfun.util;
  */
 public final class AsyncTaskHandle<T> {
 
-    private final AsyncTask<T> asyncTask;
+    private final Callable<T> asyncTask;
     private final Throwable exception;
     private final T output;
 
-    public AsyncTaskHandle(AsyncTask<T> asyncTask, T output, Throwable exception) {
+    public AsyncTaskHandle(Callable<T> asyncTask, T output, Throwable exception) {
         this.asyncTask = asyncTask;
         this.output = output;
         this.exception = exception;
     }
 
-    public AsyncTask<T> getAsyncTask() {
-        return asyncTask;
+    public Callable<T> getAsyncTask() {
+        return this.asyncTask;
     }
 
     public Throwable getException() {
-        return exception;
+        return this.exception;
     }
 
     public T getOutput() {
-        return output;
+        return this.output;
     }
 
 }

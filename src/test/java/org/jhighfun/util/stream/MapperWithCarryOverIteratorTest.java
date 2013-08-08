@@ -6,12 +6,13 @@ import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public class MapperWithCarryOverIteratorTest {
 
     @Test
-    public void test(){
+    public void test() {
 
         List<Integer> list = new LinkedList<Integer>();
 
@@ -26,9 +27,9 @@ public class MapperWithCarryOverIteratorTest {
             }
         });
 
-        for(int integer : list.subList(0, list.size())) {
-             iterator.hasNext();
-             assertEquals(integer + integer, iterator.next().intValue());
+        for (int integer : list.subList(0, list.size())) {
+            iterator.hasNext();
+            assertEquals(integer + integer, iterator.next().intValue());
         }
 
     }

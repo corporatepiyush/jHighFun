@@ -5,6 +5,7 @@ import org.jhighfun.internal.TaskInputOutput;
 import org.jhighfun.internal.ThreadPoolFactory;
 import org.jhighfun.util.matcher.WhenChecker;
 import org.jhighfun.util.memoize.*;
+import org.jhighfun.util.stream.AbstractStreamIterator;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,8 +14,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static org.jhighfun.util.CollectionUtil.List;
 
 /**
  * Set of reusable utility methods to present finer interfaces to do a given job in
@@ -757,6 +756,10 @@ public final class FunctionUtil {
         return new TaskStream<I>(iterator);
     }
 
+    public static <I> TaskStream<I> taskStream(AbstractStreamIterator<I> iterator) {
+        return new TaskStream<I>(iterator);
+    }
+
     public static <INIT, IN> TaskStream<IN> lazyTaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
         return new TaskStream<IN>(initialInput, function, predicate);
     }
@@ -769,27 +772,23 @@ public final class FunctionUtil {
         return new CurriedFunction<I, O>(function, Arrays.asList(fixedInputs));
     }
 
-    public static void executeAsync(final Block codeBlock) {
-        mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
+    public static Future executeAsync(final Runnable runnable) {
+        return mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
-                try {
-                    codeBlock.execute();
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
+                runnable.run();
             }
         });
     }
 
-    public static <T> void executeAsync(final AsyncTask<T> asyncTask, final CallbackTask callbackTask) {
+    public static <T> void executeAsync(final Callable<T> callable, final CallbackTask callbackTask) {
         mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
                 AsyncTaskHandle<T> asyncTaskHandle = null;
                 try {
-                    T output = asyncTask.execute();
-                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, output, null);
+                    T output = callable.call();
+                    asyncTaskHandle = new AsyncTaskHandle<T>(callable, output, null);
                 } catch (Throwable e) {
-                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, null, e);
+                    asyncTaskHandle = new AsyncTaskHandle<T>(callable, null, e);
                 } finally {
                     try {
                         callbackTask.execute(asyncTaskHandle);
@@ -801,11 +800,11 @@ public final class FunctionUtil {
         });
     }
 
-    public static void executeLater(final Block codeBlock) {
+    public static void executeLater(final Runnable runnable) {
         lowPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
                 try {
-                    codeBlock.execute();
+                    runnable.run();
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -813,12 +812,12 @@ public final class FunctionUtil {
         });
     }
 
-    public static <T> void executeLater(final AsyncTask<T> asyncTask, final CallbackTask callbackTask) {
+    public static <T> void executeLater(final Callable<T> asyncTask, final CallbackTask callbackTask) {
         lowPriorityAsyncTaskThreadPool.submit(new Runnable() {
             public void run() {
                 AsyncTaskHandle<T> asyncTaskHandle = null;
                 try {
-                    T output = asyncTask.execute();
+                    T output = asyncTask.call();
                     asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, output, null);
                 } catch (Throwable e) {
                     asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, null, e);
@@ -859,7 +858,7 @@ public final class FunctionUtil {
         }
     }
 
-    public static void executeWithThrottle(ExecutionThrottler executionThrottler, final Block codeBlock) {
+    public static void executeWithThrottle(ExecutionThrottler executionThrottler, final Runnable runnable) {
         ExecutorService executorService = getThrottler(executionThrottler);
 
         final Tuple2<String, Throwable> exception = new Tuple2<String, Throwable>("Exception", null);
@@ -867,7 +866,7 @@ public final class FunctionUtil {
             executorService.submit(new Runnable() {
                 public void run() {
                     try {
-                        codeBlock.execute();
+                        runnable.run();
                     } catch (Throwable e) {
                         exception._2 = e;
                         e.printStackTrace();
@@ -884,7 +883,7 @@ public final class FunctionUtil {
         }
     }
 
-    public static <T> void executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final AsyncTask<T> asyncTask, final CallbackTask<T> callbackTask) {
+    public static <T> void executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Callable<T> callable, final CallbackTask<T> callbackTask) {
 
         ExecutorService executorService = getThrottler(executionThrottler);
 
@@ -892,10 +891,10 @@ public final class FunctionUtil {
             public void run() {
                 AsyncTaskHandle<T> asyncTaskHandle = null;
                 try {
-                    T output = asyncTask.execute();
-                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, output, null);
+                    T output = callable.call();
+                    asyncTaskHandle = new AsyncTaskHandle<T>(callable, output, null);
                 } catch (Throwable e) {
-                    asyncTaskHandle = new AsyncTaskHandle<T>(asyncTask, null, e);
+                    asyncTaskHandle = new AsyncTaskHandle<T>(callable, null, e);
                 } finally {
                     try {
                         callbackTask.execute(asyncTaskHandle);
@@ -908,13 +907,13 @@ public final class FunctionUtil {
     }
 
 
-    public static void executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Block codeBlock) {
+    public static Future executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Runnable runnable) {
         ExecutorService executorService = getThrottler(executionThrottler);
 
-        executorService.submit(new Runnable() {
+        return executorService.submit(new Runnable() {
             public void run() {
                 try {
-                    codeBlock.execute();
+                    runnable.run();
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -922,12 +921,12 @@ public final class FunctionUtil {
         });
     }
 
-    public static <T> Future<T> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final AsyncTask<T> asyncTask) {
+    public static <T> Future<T> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Callable<T> callable) {
         ExecutorService executorService = getThrottler(executionThrottler);
 
         return executorService.submit(new Callable<T>() {
             public T call() throws Exception {
-                return asyncTask.execute();
+                return callable.call();
             }
         });
     }
@@ -1194,10 +1193,10 @@ public final class FunctionUtil {
         return map;
     }
 
-    public static <T> Future<T> executeAsync(final AsyncTask<T> asyncTask) {
+    public static <T> Future<T> executeAsync(final Callable<T> callable) {
         return mediumPriorityAsyncTaskThreadPool.submit(new Callable<T>() {
             public T call() throws Exception {
-                return asyncTask.execute();
+                return callable.call();
             }
         });
     }
