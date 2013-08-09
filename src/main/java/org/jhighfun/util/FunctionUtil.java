@@ -238,14 +238,15 @@ public final class FunctionUtil {
         filterParallel(collectionList, predicate, List.class);
         return chain(inputOutputs)
                 .filter(new Function<TaskInputOutput<T, Boolean>, Boolean>() {
-                    public Boolean apply(TaskInputOutput<T, Boolean> task) {
-                        return task.getOutput();
+                    public Boolean apply(TaskInputOutput<T, Boolean> task) {return task.getOutput();
                     }
-                }).map(new Function<TaskInputOutput<T, Boolean>, T>() {
+                })
+                .map(new Function<TaskInputOutput<T, Boolean>, T>() {
                     public T apply(TaskInputOutput<T, Boolean> arg) {
                         return arg.getInput();
                     }
-                }).extract();
+                })
+                .extract();
 
     }
 
@@ -268,7 +269,7 @@ public final class FunctionUtil {
                     public Boolean apply(TaskInputOutput<T, Boolean> task) {
                         return task.getOutput();
                     }
-                }).foldLeft((Set<T>) CollectionUtil.FlattenSet(), new Accumulator<Set<T>, TaskInputOutput<T, Boolean>>() {
+                }).foldLeft((Set<T>) CollectionUtil.Set(), new Accumulator<Set<T>, TaskInputOutput<T, Boolean>>() {
                     public Set<T> accumulate(Set<T> accumulator, TaskInputOutput<T, Boolean> task) {
                         accumulator.add(task.getInput());
                         return accumulator;
