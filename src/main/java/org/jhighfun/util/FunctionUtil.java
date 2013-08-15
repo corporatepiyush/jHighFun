@@ -758,6 +758,74 @@ public final class FunctionUtil {
     }
 
 
+    public static <T> int count(Iterable<T> inputList, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
+
+        Collection<Collection<T>> collections = workDivisionStrategy.divide(inputList);
+
+        final Tuple2<Throwable, Boolean> exception = new Tuple2<Throwable, Boolean>(null, false);
+
+        Callable<Integer>[] workers = new Callable[collections.size()];
+        Future<Integer>[] futures = new Future[collections.size()];
+
+        int i = 0;
+        for (final Collection<T> collection : collections) {
+            workers[i++] = new Callable<Integer>() {
+                public Integer call() {
+                    int count = 0;
+                    try {
+                        for (T t : collection) {
+                            if (exception._1 != null) {
+                                break;
+                            }
+                            if (predicate.apply(t)) {
+                                count++;
+                            }
+                        }
+
+                    } catch (Throwable e) {
+                        exception._1 = e;
+                        e.printStackTrace();
+                    }
+                    return count;
+                }
+            };
+        }
+
+        for (i = 1; i < futures.length; i++) {
+            futures[i] = highPriorityTaskThreadPool.submit(workers[i]);
+        }
+
+        final int[] count = new int[futures.length];
+
+        try {
+            count[0] = workers[0].call();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        for (i = 1; i < futures.length; i++) {
+            try {
+                count[i] = futures[i].get();
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+        }
+
+        if (exception._1 != null) {
+            throw new RuntimeException(exception._1);
+        }
+
+        int totalCount = 0;
+        for (i = 0; i < count.length; i++) {
+            totalCount = totalCount + count[i];
+        }
+
+        return totalCount;
+    }
+
+
     public static <T> Tuple2<List<T>, List<T>> partition(Iterable<T> input, Function<T, Boolean> predicate) {
 
         final List<T> list1 = new LinkedList<T>();

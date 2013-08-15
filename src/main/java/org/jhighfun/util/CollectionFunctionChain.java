@@ -143,6 +143,10 @@ public final class CollectionFunctionChain<I> {
         return new ObjectFunctionChain<Integer>(FunctionUtil.count(this.collection, predicate));
     }
 
+    public ObjectFunctionChain<Integer> count(Function<I, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
+        return new ObjectFunctionChain<Integer>(FunctionUtil.count(this.collection, predicate, workDivisionStrategy));
+    }
+
     public CollectionFunctionChain<I> filterWithIndex(Function<Integer, Boolean> predicate) {
         this.collection = FunctionUtil.filterWithIndex(this.collection, predicate);
         return this;

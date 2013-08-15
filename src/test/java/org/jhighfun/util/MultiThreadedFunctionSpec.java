@@ -291,4 +291,25 @@ public class MultiThreadedFunctionSpec {
         assertTrue(bool);
         verify(spyHighPriorityTaskThreadPool, times(2 + 4)).submit(any(Runnable.class));
     }
+
+
+    @Test
+    public void testCountFunction() {
+
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 10000; i++) {
+            list.add("Scala");
+            list.add("Java");
+        }
+
+        int count = FunctionUtil.count(list, new Function<String, Boolean>() {
+
+            public Boolean apply(String string) {
+                return string.contains("v");
+            }
+        }, FunctionUtil.parallel(3));
+
+        assertEquals(count, 10000);
+        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Callable.class));
+    }
 }

@@ -624,7 +624,7 @@ public class CollectionFunctionChainSpec {
     }
 
     @Test
-    public void testEveryFunction() {
+    public void testEveryFunctionWithThreads() {
 
         List<String> list = new LinkedList<String>();
         for (int i = 1; i <= 10000; i++) {
@@ -655,7 +655,7 @@ public class CollectionFunctionChainSpec {
     }
 
     @Test
-    public void testAnyFunction() {
+    public void testAnyFunctionWithThreads() {
 
         List<String> list = new LinkedList<String>();
         for (int i = 1; i <= 10000; i++) {
@@ -685,6 +685,26 @@ public class CollectionFunctionChainSpec {
         verify(spyHighPriorityTaskThreadPool, times(2 + 4)).submit(any(Runnable.class));
     }
 
+
+    @Test
+    public void testCountFunctionWithThreads() {
+
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 10000; i++) {
+            list.add("Scala");
+            list.add("Java");
+        }
+
+        int count = new CollectionFunctionChain<String>(list).count(new Function<String, Boolean>() {
+
+            public Boolean apply(String string) {
+                return string.contains("v");
+            }
+        }, FunctionUtil.parallel(3)).extract();
+
+        assertEquals(count, 10000);
+        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Callable.class));
+    }
 
     @Test
     public void testWithIndex() {
