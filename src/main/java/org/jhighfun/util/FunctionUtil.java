@@ -913,6 +913,56 @@ public final class FunctionUtil {
             throw new RuntimeException(exception.get(0));
     }
 
+    public static <T> void each(Iterable<T> inputList, final RecordWithContextProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
+        final Collection<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
+        final ParallelLoopExecutionContext context = new ParallelLoopExecutionContext();
+        final int noOfThread = taskList.size();
+
+        final Runnable[] threads = new Runnable[noOfThread];
+        final Future[] futures = new Future[noOfThread];
+
+        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+
+        int i = 0;
+        for (final Collection<T> list2 : taskList) {
+            threads[i++] = new Runnable() {
+                public void run() {
+                    for (T task : list2) {
+                        if (exception.size() == 0 && !context.isInterrupted()) {
+                            try {
+                                recordProcessor.process(task, context);
+                                context.incrementRecordExecutionCount();
+                            } catch (Throwable e) {
+                                exception.add(e);
+                                e.printStackTrace();
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            };
+        }
+
+        for (i = 1; i < noOfThread; i++) {
+            futures[i] = highPriorityTaskThreadPool.submit(threads[i]);
+        }
+
+        threads[0].run();
+
+        for (i = 1; i < noOfThread; i++) {
+            try {
+                futures[i].get();
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (exception.size() > 0)
+            throw new RuntimeException(exception.get(0));
+    }
+
     public static <I> CollectionFunctionChain<I> chain(Iterable<I> iterable) {
         return new CollectionFunctionChain<I>(iterable);
     }
