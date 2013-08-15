@@ -146,4 +146,24 @@ public class MultiThreadedFunctionExceptionSpec {
 
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testAnyFunction() {
+
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 10000; i++) {
+            list.add("Scala");
+            list.add("Java");
+        }
+
+        boolean bool = FunctionUtil.any(list, new Function<String, Boolean>() {
+
+            public Boolean apply(String string) {
+                if (1 == 1)
+                    throw new RuntimeException();
+                return string.contains("v");
+            }
+        }, FunctionUtil.parallel(3));
+
+    }
+
 }

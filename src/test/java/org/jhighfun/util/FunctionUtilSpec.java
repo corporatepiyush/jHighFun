@@ -682,7 +682,7 @@ public class FunctionUtilSpec {
     }
 
     @Test
-    public void testSomeFunction() {
+    public void testAnyFunction() {
 
         List<String> list = new LinkedList<String>();
         for (int i = 1; i <= 10; i++) {

@@ -633,9 +633,9 @@ public final class FunctionUtil {
         return true;
     }
 
-    public static <T> boolean every(Iterable<T> inputList, final Function<T, Boolean> predicate, WorkDivisionStrategy strategy) {
+    public static <T> boolean every(Iterable<T> inputList, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
 
-        Collection<Collection<T>> collections = strategy.divide(inputList);
+        Collection<Collection<T>> collections = workDivisionStrategy.divide(inputList);
 
         final Tuple2<Throwable, Boolean> exception = new Tuple2<Throwable, Boolean>(null, false);
 
@@ -693,6 +693,59 @@ public final class FunctionUtil {
                 return true;
         }
         return false;
+    }
+
+    public static <T> boolean any(Iterable<T> inputList, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
+
+        Collection<Collection<T>> collections = workDivisionStrategy.divide(inputList);
+
+        final Tuple2<Throwable, Boolean> exception = new Tuple2<Throwable, Boolean>(null, false);
+
+        Runnable[] workers = new Runnable[collections.size()];
+        Future[] futures = new Future[collections.size()];
+
+        int i = 0;
+        for (final Collection<T> collection : collections) {
+            workers[i++] = new Runnable() {
+                public void run() {
+                    try {
+                        for (T t : collection) {
+                            if (exception._1 != null) {
+                                break;
+                            }
+                            if (predicate.apply(t)) {
+                                exception._2 = true;
+                            }
+                        }
+
+                    } catch (Throwable e) {
+                        exception._1 = e;
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }
+
+        for (i = 1; i < futures.length; i++) {
+            futures[i] = highPriorityTaskThreadPool.submit(workers[i]);
+        }
+
+        workers[0].run();
+
+        for (i = 1; i < futures.length; i++) {
+            try {
+                futures[i].get();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (exception._1 != null) {
+            throw new RuntimeException(exception._1);
+        }
+
+        return exception._2;
     }
 
     public static <T> int count(Iterable<T> input, Function<T, Boolean> predicate) {

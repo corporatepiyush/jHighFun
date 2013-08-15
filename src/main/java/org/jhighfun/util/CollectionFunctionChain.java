@@ -135,6 +135,10 @@ public final class CollectionFunctionChain<I> {
         return new ObjectFunctionChain<Boolean>(FunctionUtil.any(this.collection, predicate));
     }
 
+    public ObjectFunctionChain<Boolean> any(Function<I, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
+        return new ObjectFunctionChain<Boolean>(FunctionUtil.any(this.collection, predicate, workDivisionStrategy));
+    }
+
     public ObjectFunctionChain<Integer> count(Function<I, Boolean> predicate) {
         return new ObjectFunctionChain<Integer>(FunctionUtil.count(this.collection, predicate));
     }
