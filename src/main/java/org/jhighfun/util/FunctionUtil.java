@@ -238,7 +238,8 @@ public final class FunctionUtil {
         filterParallel(collectionList, predicate, List.class);
         return chain(inputOutputs)
                 .filter(new Function<TaskInputOutput<T, Boolean>, Boolean>() {
-                    public Boolean apply(TaskInputOutput<T, Boolean> task) {return task.getOutput();
+                    public Boolean apply(TaskInputOutput<T, Boolean> task) {
+                        return task.getOutput();
                     }
                 })
                 .map(new Function<TaskInputOutput<T, Boolean>, T>() {
@@ -632,6 +633,59 @@ public final class FunctionUtil {
         return true;
     }
 
+    public static <T> boolean every(Iterable<T> inputList, final Function<T, Boolean> predicate, WorkDivisionStrategy strategy) {
+
+        Collection<Collection<T>> collections = strategy.divide(inputList);
+
+        final Tuple2<Throwable, Boolean> exception = new Tuple2<Throwable, Boolean>(null, false);
+
+        Runnable[] workers = new Runnable[collections.size()];
+        Future[] futures = new Future[collections.size()];
+
+        int i = 0;
+        for (final Collection<T> collection : collections) {
+            workers[i++] = new Runnable() {
+                public void run() {
+                    try {
+                        for (T t : collection) {
+                            if (exception._1 != null) {
+                                break;
+                            }
+                            if (!predicate.apply(t)) {
+                                exception._2 = true;
+                            }
+                        }
+
+                    } catch (Throwable e) {
+                        exception._1 = e;
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }
+
+        for (i = 1; i < futures.length; i++) {
+            futures[i] = highPriorityTaskThreadPool.submit(workers[i]);
+        }
+
+        workers[0].run();
+
+        for (i = 1; i < futures.length; i++) {
+            try {
+                futures[i].get();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (exception._1 != null) {
+            throw new RuntimeException(exception._1);
+        }
+
+        return !exception._2;
+    }
+
     public static <T> boolean any(Iterable<T> inputList, Function<T, Boolean> predicate) {
 
         for (T t : inputList) {
@@ -739,7 +793,7 @@ public final class FunctionUtil {
     }
 
     public static <I> CollectionFunctionChain<I> chain(Iterable<I> iterable) {
-            return new CollectionFunctionChain<I>(iterable);
+        return new CollectionFunctionChain<I>(iterable);
     }
 
     public static <I> ObjectFunctionChain<I> chain(I object) {
@@ -1198,6 +1252,7 @@ public final class FunctionUtil {
             }
         });
     }
+
 }
 
 final class Batch implements WorkDivisionStrategy {

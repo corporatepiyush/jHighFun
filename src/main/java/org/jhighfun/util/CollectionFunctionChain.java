@@ -23,7 +23,7 @@ public final class CollectionFunctionChain<I> {
     public CollectionFunctionChain(Iterable<I> iterable) {
         if (iterable instanceof List) {
             this.collection = (List<I>) iterable;
-        } else if(iterable instanceof Collection){
+        } else if (iterable instanceof Collection) {
             this.collection = new LinkedList<I>((Collection) iterable);
         } else {
             List<I> list = new LinkedList<I>();
@@ -125,6 +125,10 @@ public final class CollectionFunctionChain<I> {
 
     public ObjectFunctionChain<Boolean> every(Function<I, Boolean> predicate) {
         return new ObjectFunctionChain<Boolean>(FunctionUtil.every(this.collection, predicate));
+    }
+
+    public ObjectFunctionChain<Boolean> every(Function<I, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
+        return new ObjectFunctionChain<Boolean>(FunctionUtil.every(this.collection, predicate, workDivisionStrategy));
     }
 
     public ObjectFunctionChain<Boolean> any(Function<I, Boolean> predicate) {

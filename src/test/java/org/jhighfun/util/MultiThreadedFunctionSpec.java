@@ -229,4 +229,35 @@ public class MultiThreadedFunctionSpec {
 
     }
 
+
+    @Test
+    public void testEveryFunction() {
+
+        List<String> list = new LinkedList<String>();
+        for (int i = 1; i <= 10000; i++) {
+            list.add("Scala");
+            list.add("Java");
+        }
+
+        boolean bool = FunctionUtil.every(list, new Function<String, Boolean>() {
+
+            public Boolean apply(String string) {
+                return string.contains("v");
+            }
+        }, FunctionUtil.parallel(3));
+
+        assertTrue(!bool);
+
+        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Runnable.class));
+
+        bool = FunctionUtil.every(list, new Function<String, Boolean>() {
+
+            public Boolean apply(String string) {
+                return string.contains("a");
+            }
+        }, FunctionUtil.parallel(5));
+
+        assertTrue(bool);
+        verify(spyHighPriorityTaskThreadPool, times(2 + 4)).submit(any(Runnable.class));
+    }
 }
