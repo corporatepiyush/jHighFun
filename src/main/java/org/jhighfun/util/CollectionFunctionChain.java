@@ -23,8 +23,6 @@ public final class CollectionFunctionChain<I> {
     public CollectionFunctionChain(Iterable<I> iterable) {
         if (iterable instanceof List) {
             this.collection = (List<I>) iterable;
-        } else if (iterable instanceof Collection) {
-            this.collection = new LinkedList<I>((Collection) iterable);
         } else {
             List<I> list = new LinkedList<I>();
             for (I i : iterable) {
@@ -377,7 +375,6 @@ public final class CollectionFunctionChain<I> {
         }
 
         List<List<I>> batchCollection = new LinkedList<List<I>>();
-
         int batchCount = (this.collection.size() / batchSize) + ((this.collection.size() % batchSize) > 0 ? 1 : 0);
 
         for (int i = 0; i < batchCount; i++) {
@@ -399,9 +396,12 @@ public final class CollectionFunctionChain<I> {
         return new CollectionFunctionChain<List<I>>(batchCollection);
     }
 
-
     public <O> CollectionFunctionChain<O> flatMap(Function<I, Iterable<O>> function) {
         return new CollectionFunctionChain<O>(FunctionUtil.flatMap(this.collection, function));
+    }
+
+    public <O> CollectionFunctionChain<O> flatMap(Function<I, Iterable<O>> function, WorkDivisionStrategy workDivisionStrategy) {
+        return new CollectionFunctionChain<O>(FunctionUtil.flatMap(this.collection, function, workDivisionStrategy));
     }
 
     public ObjectFunctionChain<Tuple2<List<I>, List<I>>> partition(Function<I, Boolean> function) {

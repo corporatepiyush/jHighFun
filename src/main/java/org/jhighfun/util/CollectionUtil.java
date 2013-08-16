@@ -50,7 +50,7 @@ public final class CollectionUtil {
     }
 
     public static <T> Set<T> Set(T... args) {
-        final Set<T> set = new HashSet<T>();
+        final Set<T> set = new LinkedHashSet<T>();
         for (T arg : args) {
             set.add(arg);
         }
@@ -58,7 +58,7 @@ public final class CollectionUtil {
     }
 
     public static <T> Set<T> FlattenSet(Iterable<T>... setArgs) {
-        final Set<T> flattenSet = new HashSet<T>();
+        final Set<T> flattenSet = new LinkedHashSet<T>();
         for (Iterable<T> collection : setArgs) {
             for (T obj : collection) {
                 flattenSet.add(obj);

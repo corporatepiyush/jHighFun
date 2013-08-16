@@ -10,7 +10,7 @@ public abstract class Optional<T> {
     }
 
     public T get() {
-        if(this.object == null)
+        if (this.object == null)
             throw new NoSuchElementException();
         return this.object;
     }
