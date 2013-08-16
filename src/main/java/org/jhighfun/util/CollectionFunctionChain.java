@@ -32,7 +32,6 @@ public final class CollectionFunctionChain<I> {
         }
     }
 
-
     public <O> ObjectFunctionChain<O> toObject(Function<List<I>, O> converter) {
         return new ObjectFunctionChain<O>(converter.apply(this.collection));
     }
@@ -151,23 +150,15 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> plus(Iterable<I> iterable) {
-        if (iterable instanceof Collection) {
-            this.collection.addAll((Collection<I>) iterable);
-        } else {
-            for (I i : iterable) {
-                this.collection.add(i);
-            }
+        for (I i : iterable) {
+            this.collection.add(i);
         }
         return this;
     }
 
     public CollectionFunctionChain<I> minus(Iterable<I> iterable) {
-        if (iterable instanceof Collection) {
-            this.collection.removeAll((Collection<I>) iterable);
-        } else {
-            for (I i : iterable) {
-                this.collection.remove(i);
-            }
+        for (I i : iterable) {
+            this.collection.remove(i);
         }
         return this;
     }
