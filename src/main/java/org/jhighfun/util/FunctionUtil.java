@@ -64,6 +64,58 @@ public final class FunctionUtil {
         return outputList;
     }
 
+
+    public static <I, O> List<O> flatMap(List<I> inputList, Function<I, Iterable<O>> converter) {
+        final List<O> outputList = new LinkedList<O>();
+
+        for (I i : inputList) {
+            Iterable<O> iterable = converter.apply(i);
+            if (iterable instanceof Collection) {
+                outputList.addAll((Collection) iterable);
+            } else {
+                for (O o : iterable) {
+                    outputList.add(o);
+                }
+            }
+
+        }
+        return outputList;
+    }
+
+    public static <I, O> Collection<O> flatMap(Collection<I> inputList, Function<I, Iterable<O>> converter) {
+        final List<O> outputList = new LinkedList<O>();
+
+        for (I i : inputList) {
+            Iterable<O> iterable = converter.apply(i);
+            if (iterable instanceof Collection) {
+                outputList.addAll((Collection) iterable);
+            } else {
+                for (O o : iterable) {
+                    outputList.add(o);
+                }
+            }
+
+        }
+        return outputList;
+    }
+
+    public static <I, O> Iterable<O> flatMap(Iterable<I> inputList, Function<I, Iterable<O>> converter) {
+        final List<O> outputList = new LinkedList<O>();
+
+        for (I i : inputList) {
+            Iterable<O> iterable = converter.apply(i);
+            if (iterable instanceof Collection) {
+                outputList.addAll((Collection) iterable);
+            } else {
+                for (O o : iterable) {
+                    outputList.add(o);
+                }
+            }
+
+        }
+        return outputList;
+    }
+
     public static <I, O> List<O> map(List<I> inputList,
                                      final Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
 

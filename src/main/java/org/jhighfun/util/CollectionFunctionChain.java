@@ -401,16 +401,7 @@ public final class CollectionFunctionChain<I> {
 
 
     public <O> CollectionFunctionChain<O> flatMap(Function<I, Iterable<O>> function) {
-        List<O> expandedList = new LinkedList<O>();
-
-        for (I element : this.collection) {
-            Iterable<O> iterable = function.apply(element);
-            for (O input : iterable) {
-                expandedList.add(input);
-            }
-        }
-
-        return new CollectionFunctionChain<O>(expandedList);
+        return new CollectionFunctionChain<O>(FunctionUtil.flatMap(this.collection, function));
     }
 
     public ObjectFunctionChain<Tuple2<List<I>, List<I>>> partition(Function<I, Boolean> function) {

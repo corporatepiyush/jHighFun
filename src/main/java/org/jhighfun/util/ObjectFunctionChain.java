@@ -22,17 +22,29 @@ public final class ObjectFunctionChain<I> {
     }
 
     public <O> ObjectFunctionChain<O> transform(Function<I, O> converter) {
-        return new ObjectFunctionChain<O>(converter.apply(object));
+        return new ObjectFunctionChain<O>(converter.apply(this.object));
+    }
+
+    public <O> ObjectFunctionChain<O> map(Function<I, O> converter) {
+        return new ObjectFunctionChain<O>(converter.apply(this.object));
+    }
+
+    public <O> CollectionFunctionChain<O> flatMap(Function<I, Iterable<O>> converter) {
+        return new CollectionFunctionChain<O>(converter.apply(this.object));
+    }
+
+    public <O> ObjectFunctionChain<Optional<O>> filter(Function<I, Boolean> converter) {
+        return new ObjectFunctionChain<Optional<O>>(converter.apply(this.object) ? new Something(this.object) : new Nothing(this.object.getClass()));
     }
 
     public CollectionFunctionChain<I> asCollection() {
         final List<I> collection = new LinkedList<I>();
-        collection.add(object);
+        collection.add(this.object);
         return new CollectionFunctionChain<I>(collection);
     }
 
     public <O> CollectionFunctionChain<O> toCollection(Function<I, List<O>> converter) {
-        return new CollectionFunctionChain<O>(converter.apply(object));
+        return new CollectionFunctionChain<O>(converter.apply(this.object));
     }
 
     public ObjectForkAndJoin<I> fork() {
@@ -40,7 +52,7 @@ public final class ObjectFunctionChain<I> {
     }
 
     public ObjectFunctionChain<I> execute(final Task<I> task) {
-        task.execute(object);
+        task.execute(this.object);
         return this;
     }
 
@@ -118,7 +130,7 @@ public final class ObjectFunctionChain<I> {
     }
 
     public I extract() {
-        return object;
+        return this.object;
     }
 
     public <O> O extract(Function<I, O> extractor) {
@@ -127,6 +139,6 @@ public final class ObjectFunctionChain<I> {
 
     @Override
     public String toString() {
-        return object.toString();
+        return this.object.toString();
     }
 }
