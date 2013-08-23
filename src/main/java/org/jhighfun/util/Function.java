@@ -31,4 +31,8 @@ public abstract class Function<I, O> {
     public Function<I, O> proxy(FunctionInvocationHandler<I, O> handler) {
         return new FunctionProxy<I, O>(this, handler);
     }
+
+    public <T> Function<I, T> compose(Function<O, T> function) {
+        return new FunctionComposer<I, O, T>(this, function);
+    }
 }

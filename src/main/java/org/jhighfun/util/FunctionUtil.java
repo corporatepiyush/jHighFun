@@ -36,66 +36,66 @@ public final class FunctionUtil {
     private static final ConcurrentHashMap<Operation, Lock> operationLockMap = new ConcurrentHashMap<Operation, Lock>(15, 0.9f, 32);
     private static Map<ExecutionThrottler, ExecutorService> throttlerPoolMap = new ConcurrentHashMap<ExecutionThrottler, ExecutorService>(15, 0.9f, 32);
 
-    public static <I, O> List<O> map(List<I> inputList, Function<I, O> converter) {
+    public static <I, O> List<O> map(List<I> iterable, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
-        for (I i : inputList) {
+        for (I i : iterable) {
             outputList.add(converter.apply(i));
         }
         return outputList;
     }
 
-    public static <I, O> Collection<O> map(Collection<I> inputList, Function<I, O> converter) {
+    public static <I, O> Collection<O> map(Collection<I> iterable, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
-        for (I i : inputList) {
+        for (I i : iterable) {
             outputList.add(converter.apply(i));
         }
         return outputList;
     }
 
-    public static <I, O> Iterable<O> map(Iterable<I> inputList, Function<I, O> converter) {
+    public static <I, O> Iterable<O> map(Iterable<I> iterable, Function<I, O> converter) {
         final List<O> outputList = new LinkedList<O>();
-        for (I i : inputList) {
+        for (I i : iterable) {
             outputList.add(converter.apply(i));
         }
         return outputList;
     }
 
-    public static <I, O> List<O> flatMap(List<I> inputList, Function<I, Iterable<O>> converter) {
+    public static <I, O> List<O> flatMap(List<I> iterable, Function<I, Iterable<O>> converter) {
         final List<O> outputList = new LinkedList<O>();
-        for (I i : inputList) {
-            Iterable<O> iterable = converter.apply(i);
-            for (O o : iterable) {
+        for (I i : iterable) {
+            Iterable<O> iterable1 = converter.apply(i);
+            for (O o : iterable1) {
                 outputList.add(o);
             }
         }
         return outputList;
     }
 
-    public static <I, O> Collection<O> flatMap(Collection<I> inputList, Function<I, Iterable<O>> converter) {
+    public static <I, O> Collection<O> flatMap(Collection<I> iterable, Function<I, Iterable<O>> converter) {
         final List<O> outputList = new LinkedList<O>();
-        for (I i : inputList) {
-            Iterable<O> iterable = converter.apply(i);
-            for (O o : iterable) {
+        for (I i : iterable) {
+            Iterable<O> iterable1 = converter.apply(i);
+            for (O o : iterable1) {
                 outputList.add(o);
             }
         }
         return outputList;
     }
 
-    public static <I, O> Iterable<O> flatMap(Iterable<I> inputList, Function<I, Iterable<O>> converter) {
+    public static <I, O> Iterable<O> flatMap(Iterable<I> iterable, Function<I, Iterable<O>> converter) {
         final List<O> outputList = new LinkedList<O>();
-        for (I i : inputList) {
-            Iterable<O> iterable = converter.apply(i);
-            for (O o : iterable) {
+        for (I i : iterable) {
+            Iterable<O> iterable1 = converter.apply(i);
+            for (O o : iterable1) {
                 outputList.add(o);
             }
         }
         return outputList;
     }
 
-    public static <I, O> List<O> map(List<I> inputList,
+    public static <I, O> List<O> map(List<I> iterable,
                                      final Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
-        List<TaskInputOutput<I, O>> inputOutputs = map(inputList, new Function<I, TaskInputOutput<I, O>>() {
+        List<TaskInputOutput<I, O>> inputOutputs = map(iterable, new Function<I, TaskInputOutput<I, O>>() {
             public TaskInputOutput<I, O> apply(I arg) {
                 return new TaskInputOutput<I, O>(arg);
             }
@@ -103,7 +103,7 @@ public final class FunctionUtil {
         Collection<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
 
         if (dividedList.size() < 2)
-            return map(inputList, converter);
+            return map(iterable, converter);
 
         mapParallel(dividedList, converter);
         return map(inputOutputs, new Function<TaskInputOutput<I, O>, O>() {
@@ -113,9 +113,9 @@ public final class FunctionUtil {
         });
     }
 
-    public static <I, O> Collection<O> map(Collection<I> inputList,
+    public static <I, O> Collection<O> map(Collection<I> iterable,
                                            final Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
-        Collection<TaskInputOutput<I, O>> inputOutputs = map(inputList, new Function<I, TaskInputOutput<I, O>>() {
+        Collection<TaskInputOutput<I, O>> inputOutputs = map(iterable, new Function<I, TaskInputOutput<I, O>>() {
             public TaskInputOutput<I, O> apply(I arg) {
                 return new TaskInputOutput<I, O>(arg);
             }
@@ -123,7 +123,7 @@ public final class FunctionUtil {
         Collection<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
 
         if (dividedList.size() < 2)
-            return map(inputList, converter);
+            return map(iterable, converter);
 
         mapParallel(dividedList, converter);
         return map(inputOutputs, new Function<TaskInputOutput<I, O>, O>() {
@@ -133,8 +133,8 @@ public final class FunctionUtil {
         });
     }
 
-    public static <I, O> Iterable<O> map(Iterable<I> inputList, Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
-        Iterable<TaskInputOutput<I, O>> inputOutputs = map(inputList, new Function<I, TaskInputOutput<I, O>>() {
+    public static <I, O> Iterable<O> map(Iterable<I> iterable, Function<I, O> converter, WorkDivisionStrategy workDivisionStrategy) {
+        Iterable<TaskInputOutput<I, O>> inputOutputs = map(iterable, new Function<I, TaskInputOutput<I, O>>() {
             public TaskInputOutput<I, O> apply(I arg) {
                 return new TaskInputOutput<I, O>(arg);
             }
@@ -143,7 +143,7 @@ public final class FunctionUtil {
 
 
         if (dividedList.size() < 2)
-            return map(inputList, converter);
+            return map(iterable, converter);
 
         mapParallel(dividedList, converter);
         return map(inputOutputs, new Function<TaskInputOutput<I, O>, O>() {
@@ -200,33 +200,33 @@ public final class FunctionUtil {
 
     }
 
-    public static <I, O> List<O> flatMap(List<I> inputList, Function<I, Iterable<O>> converter, WorkDivisionStrategy workDivisionStrategy) {
-        List<Iterable<O>> iterables = map(inputList, converter, workDivisionStrategy);
+    public static <I, O> List<O> flatMap(List<I> iterable, Function<I, Iterable<O>> converter, WorkDivisionStrategy workDivisionStrategy) {
+        List<Iterable<O>> iterables = map(iterable, converter, workDivisionStrategy);
         List<O> outList = new LinkedList<O>();
-        for (Iterable<O> iterable : iterables) {
-            for (O o : iterable) {
+        for (Iterable<O> iterable1 : iterables) {
+            for (O o : iterable1) {
                 outList.add(o);
             }
         }
         return outList;
     }
 
-    public static <I, O> Collection<O> flatMap(Collection<I> inputList, Function<I, Iterable<O>> converter, WorkDivisionStrategy workDivisionStrategy) {
-        Collection<Iterable<O>> iterables = map(inputList, converter, workDivisionStrategy);
+    public static <I, O> Collection<O> flatMap(Collection<I> iterable, Function<I, Iterable<O>> converter, WorkDivisionStrategy workDivisionStrategy) {
+        Collection<Iterable<O>> iterables = map(iterable, converter, workDivisionStrategy);
         List<O> outList = new LinkedList<O>();
-        for (Iterable<O> iterable : iterables) {
-            for (O o : iterable) {
+        for (Iterable<O> iterable1 : iterables) {
+            for (O o : iterable1) {
                 outList.add(o);
             }
         }
         return outList;
     }
 
-    public static <I, O> Iterable<O> flatMap(Iterable<I> inputList, Function<I, Iterable<O>> converter, WorkDivisionStrategy workDivisionStrategy) {
-        Iterable<Iterable<O>> iterables = map(inputList, converter, workDivisionStrategy);
+    public static <I, O> Iterable<O> flatMap(Iterable<I> iterable, Function<I, Iterable<O>> converter, WorkDivisionStrategy workDivisionStrategy) {
+        Iterable<Iterable<O>> iterables = map(iterable, converter, workDivisionStrategy);
         List<O> outList = new LinkedList<O>();
-        for (Iterable<O> iterable : iterables) {
-            for (O o : iterable) {
+        for (Iterable<O> iterable1 : iterables) {
+            for (O o : iterable1) {
                 outList.add(o);
             }
         }
@@ -234,9 +234,9 @@ public final class FunctionUtil {
     }
 
 
-    public static <T> List<T> filter(List<T> inputList, Function<T, Boolean> predicate) {
+    public static <T> List<T> filter(List<T> iterable, Function<T, Boolean> predicate) {
         final List<T> outputList = new LinkedList<T>();
-        for (T i : inputList) {
+        for (T i : iterable) {
             if (predicate.apply(i))
                 outputList.add(i);
         }
@@ -252,28 +252,28 @@ public final class FunctionUtil {
         return outputSet;
     }
 
-    public static <T> Collection<T> filter(Collection<T> inputList, Function<T, Boolean> predicate) {
+    public static <T> Collection<T> filter(Collection<T> iterable, Function<T, Boolean> predicate) {
         final List<T> outputList = new LinkedList<T>();
-        for (T i : inputList) {
+        for (T i : iterable) {
             if (predicate.apply(i))
                 outputList.add(i);
         }
         return outputList;
     }
 
-    public static <T> Iterable<T> filter(Iterable<T> inputList, Function<T, Boolean> predicate) {
+    public static <T> Iterable<T> filter(Iterable<T> iterable, Function<T, Boolean> predicate) {
         final List<T> outputList = new LinkedList<T>();
-        for (T i : inputList) {
+        for (T i : iterable) {
             if (predicate.apply(i))
                 outputList.add(i);
         }
         return outputList;
     }
 
-    public static <T> List<T> filter(List<T> inputList, Function<T, Boolean> predicate,
+    public static <T> List<T> filter(List<T> iterable, Function<T, Boolean> predicate,
                                      WorkDivisionStrategy workDivisionStrategy) {
 
-        List<TaskInputOutput<T, Boolean>> inputOutputs = map(inputList, new Function<T, TaskInputOutput<T, Boolean>>() {
+        List<TaskInputOutput<T, Boolean>> inputOutputs = map(iterable, new Function<T, TaskInputOutput<T, Boolean>>() {
             public TaskInputOutput<T, Boolean> apply(T arg) {
                 return new TaskInputOutput<T, Boolean>(arg);
             }
@@ -281,7 +281,7 @@ public final class FunctionUtil {
         Collection<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
 
         if (collectionList.size() < 2)
-            return filter(inputList, predicate);
+            return filter(iterable, predicate);
 
         filterParallel(collectionList, predicate, List.class);
         return chain(inputOutputs)
@@ -327,10 +327,10 @@ public final class FunctionUtil {
 
     }
 
-    public static <T> Collection<T> filter(Collection<T> inputList, Function<T, Boolean> predicate,
+    public static <T> Collection<T> filter(Collection<T> iterable, Function<T, Boolean> predicate,
                                            WorkDivisionStrategy workDivisionStrategy) {
 
-        List<TaskInputOutput<T, Boolean>> inputOutputs = (List<TaskInputOutput<T, Boolean>>) map(inputList, new Function<T, TaskInputOutput<T, Boolean>>() {
+        List<TaskInputOutput<T, Boolean>> inputOutputs = (List<TaskInputOutput<T, Boolean>>) map(iterable, new Function<T, TaskInputOutput<T, Boolean>>() {
             public TaskInputOutput<T, Boolean> apply(T arg) {
                 return new TaskInputOutput<T, Boolean>(arg);
             }
@@ -338,7 +338,7 @@ public final class FunctionUtil {
         Collection<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
 
         if (collectionList.size() < 2)
-            return filter(inputList, predicate);
+            return filter(iterable, predicate);
 
         filterParallel(collectionList, predicate, List.class);
         return chain(inputOutputs)
@@ -354,10 +354,10 @@ public final class FunctionUtil {
 
     }
 
-    public static <T> Iterable<T> filter(Iterable<T> inputList, Function<T, Boolean> predicate,
+    public static <T> Iterable<T> filter(Iterable<T> iterable, Function<T, Boolean> predicate,
                                          WorkDivisionStrategy workDivisionStrategy) {
 
-        Iterable<TaskInputOutput<T, Boolean>> inputOutputs = map(inputList, new Function<T, TaskInputOutput<T, Boolean>>() {
+        Iterable<TaskInputOutput<T, Boolean>> inputOutputs = map(iterable, new Function<T, TaskInputOutput<T, Boolean>>() {
             public TaskInputOutput<T, Boolean> apply(T arg) {
                 return new TaskInputOutput<T, Boolean>(arg);
             }
@@ -365,7 +365,7 @@ public final class FunctionUtil {
         Collection<Collection<TaskInputOutput<T, Boolean>>> collectionList = workDivisionStrategy.divide(inputOutputs);
 
         if (collectionList.size() < 2)
-            return filter(inputList, predicate);
+            return filter(iterable, predicate);
 
         filterParallel(collectionList, predicate, List.class);
         Iterable<TaskInputOutput<T, Boolean>> filter = filter(inputOutputs, new Function<TaskInputOutput<T, Boolean>, Boolean>() {
@@ -462,9 +462,9 @@ public final class FunctionUtil {
     }
 
 
-    public static <T> T reduce(Iterable<T> inputList, final Accumulator<T, T> accumulator, WorkDivisionStrategy workDivisionStrategy) {
+    public static <T> T reduce(Iterable<T> iterable, final Accumulator<T, T> accumulator, WorkDivisionStrategy workDivisionStrategy) {
 
-        final Collection<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
+        final Collection<Collection<T>> taskList = workDivisionStrategy.divide(iterable);
         final List<T> outList = new CopyOnWriteArrayList<T>();
         int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
@@ -518,25 +518,25 @@ public final class FunctionUtil {
         return reduce(outList, accumulator);
     }
 
-    public static <T> List<T> sortWith(Iterable<T> inputList, final Comparator<T> comparator) {
+    public static <T> List<T> sortWith(Iterable<T> iterable, final Comparator<T> comparator) {
 
         final List<T> outList = new ArrayList<T>();
-        for (T element : inputList) {
+        for (T element : iterable) {
             outList.add(element);
         }
         Collections.sort(outList, comparator);
         return outList;
     }
 
-    public static <T> List<T> sort(Iterable<T> inputList) {
-        return sortWith(inputList, new Comparator<T>() {
+    public static <T> List<T> sort(Iterable<T> iterable) {
+        return sortWith(iterable, new Comparator<T>() {
             public int compare(T o1, T o2) {
                 return ((Comparable) o1).compareTo(o2);
             }
         });
     }
 
-    public static <T> List<T> sortBy(Iterable<T> inputList, String member, String... members) {
+    public static <T> List<T> sortBy(Iterable<T> iterable, String member, String... members) {
 
         final List<String> memberVars = new LinkedList<String>();
         memberVars.add(member);
@@ -544,7 +544,7 @@ public final class FunctionUtil {
             memberVars.add(memberVar);
         }
 
-        final Iterator<T> iterator = inputList.iterator();
+        final Iterator<T> iterator = iterable.iterator();
         final List<Function<T, Object>> fieldList = new ArrayList<Function<T, Object>>();
         final List<T> list = new LinkedList<T>();
 
@@ -642,16 +642,21 @@ public final class FunctionUtil {
         return list;
     }
 
-    public static <T> boolean every(Iterable<T> inputList, Function<T, Boolean> predicate) {
-        for (T t : inputList) {
+    public static <T> boolean every(Iterable<T> iterable, Function<T, Boolean> predicate) {
+        for (T t : iterable) {
             if (!predicate.apply(t))
                 return false;
         }
         return true;
     }
 
-    public static <T> boolean every(Iterable<T> inputList, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
-        Collection<Collection<T>> collections = workDivisionStrategy.divide(inputList);
+    public static <T> boolean every(Iterable<T> iterable, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
+        Collection<Collection<T>> collections = workDivisionStrategy.divide(iterable);
+
+        if(collections.size() < 2) {
+            return every(iterable, predicate);
+        }
+
         final Tuple2<Throwable, Boolean> exception = new Tuple2<Throwable, Boolean>(null, false);
         Runnable[] workers = new Runnable[collections.size()];
         Future[] futures = new Future[collections.size()];
@@ -696,16 +701,21 @@ public final class FunctionUtil {
         return !exception._2;
     }
 
-    public static <T> boolean any(Iterable<T> inputList, Function<T, Boolean> predicate) {
-        for (T t : inputList) {
+    public static <T> boolean any(Iterable<T> iterable, Function<T, Boolean> predicate) {
+        for (T t : iterable) {
             if (predicate.apply(t))
                 return true;
         }
         return false;
     }
 
-    public static <T> boolean any(Iterable<T> inputList, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
-        Collection<Collection<T>> collections = workDivisionStrategy.divide(inputList);
+    public static <T> boolean any(Iterable<T> iterable, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
+        Collection<Collection<T>> collections = workDivisionStrategy.divide(iterable);
+
+        if(collections.size() < 2) {
+            return any(iterable, predicate);
+        }
+
         final Tuple2<Throwable, Boolean> exception = new Tuple2<Throwable, Boolean>(null, false);
         Runnable[] workers = new Runnable[collections.size()];
         Future[] futures = new Future[collections.size()];
@@ -761,9 +771,14 @@ public final class FunctionUtil {
     }
 
 
-    public static <T> int count(Iterable<T> inputList, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
+    public static <T> int count(Iterable<T> iterable, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
 
-        Collection<Collection<T>> collections = workDivisionStrategy.divide(inputList);
+        Collection<Collection<T>> collections = workDivisionStrategy.divide(iterable);
+
+        if(collections.size() < 2) {
+            return count(iterable, predicate);
+        }
+
         final Tuple2<Throwable, Boolean> exception = new Tuple2<Throwable, Boolean>(null, false);
         Callable<Integer>[] workers = new Callable[collections.size()];
         Future<Integer>[] futures = new Future[collections.size()];
@@ -857,8 +872,14 @@ public final class FunctionUtil {
         }
     }
 
-    public static <T> void each(Iterable<T> inputList, final RecordProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
-        final Collection<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
+    public static <T> void each(Iterable<T> iterable, final RecordProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
+        final Collection<Collection<T>> taskList = workDivisionStrategy.divide(iterable);
+
+        if(taskList.size() < 2) {
+            each(iterable, recordProcessor);
+            return;
+        }
+
         final int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
@@ -902,8 +923,8 @@ public final class FunctionUtil {
             throw new RuntimeException(exception.get(0));
     }
 
-    public static <T> void each(Iterable<T> inputList, final RecordWithContextProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
-        final Collection<Collection<T>> taskList = workDivisionStrategy.divide(inputList);
+    public static <T> void each(Iterable<T> iterable, final RecordWithContextProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
+        final Collection<Collection<T>> taskList = workDivisionStrategy.divide(iterable);
         final ParallelLoopExecutionContext context = new ParallelLoopExecutionContext();
         final int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
@@ -1450,6 +1471,10 @@ final class Parallel implements WorkDivisionStrategy {
             for (T t : work) {
                 size++;
             }
+        }
+
+        if(size == 0) {
+            return workDivisor;
         }
 
         int counter = this.threads > size ? size : this.threads;
