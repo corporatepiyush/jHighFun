@@ -27,13 +27,13 @@ public class ExecutorServiceProxy implements ExecutorService {
         this.workQueue = workQueue;
     }
 
-    private void initializeExecutorService() {
-        if (executorService == null) {
-            executorService = new ThreadPoolExecutor(corePoolSize,
-                    maximumPoolSize,
-                    keepAliveTime,
-                    unit,
-                    workQueue);
+    private final ExecutorService getExecutorService() {
+        if (this.executorService == null) {
+            this.executorService = new ThreadPoolExecutor(this.corePoolSize,
+                    this.maximumPoolSize,
+                    this.keepAliveTime,
+                    this.unit,
+                    this.workQueue);
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
@@ -41,70 +41,58 @@ public class ExecutorServiceProxy implements ExecutorService {
                 }
             });
         }
+        return executorService;
     }
 
     public void shutdown() {
-        initializeExecutorService();
-        executorService.shutdown();
+        getExecutorService().shutdown();
     }
 
     public List<Runnable> shutdownNow() {
-        initializeExecutorService();
-        return executorService.shutdownNow();
+        return getExecutorService().shutdownNow();
     }
 
     public boolean isShutdown() {
-        initializeExecutorService();
-        return executorService.isShutdown();
+        return getExecutorService().isShutdown();
     }
 
     public boolean isTerminated() {
-        initializeExecutorService();
-        return executorService.isTerminated();
+        return getExecutorService().isTerminated();
     }
 
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-        initializeExecutorService();
-        return executorService.awaitTermination(timeout, unit);
+        return getExecutorService().awaitTermination(timeout, unit);
     }
 
     public <T> Future<T> submit(Callable<T> task) {
-        initializeExecutorService();
-        return executorService.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public <T> Future<T> submit(Runnable task, T result) {
-        initializeExecutorService();
-        return executorService.submit(task, result);
+        return getExecutorService().submit(task, result);
     }
 
     public Future<?> submit(Runnable task) {
-        initializeExecutorService();
-        return executorService.submit(task);
+        return getExecutorService().submit(task);
     }
 
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
-        initializeExecutorService();
-        return executorService.invokeAll(tasks);
+        return getExecutorService().invokeAll(tasks);
     }
 
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
-        initializeExecutorService();
-        return executorService.invokeAll(tasks, timeout, unit);
+        return getExecutorService().invokeAll(tasks, timeout, unit);
     }
 
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
-        initializeExecutorService();
-        return executorService.invokeAny(tasks);
+        return getExecutorService().invokeAny(tasks);
     }
 
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        initializeExecutorService();
-        return executorService.invokeAny(tasks, timeout, unit);
+        return getExecutorService().invokeAny(tasks, timeout, unit);
     }
 
     public void execute(Runnable command) {
-        initializeExecutorService();
-        executorService.execute(command);
+        getExecutorService().execute(command);
     }
 }

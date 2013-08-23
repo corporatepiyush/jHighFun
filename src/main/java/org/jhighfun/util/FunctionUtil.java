@@ -141,7 +141,6 @@ public final class FunctionUtil {
         });
         Collection<Collection<TaskInputOutput<I, O>>> dividedList = workDivisionStrategy.divide(inputOutputs);
 
-
         if (dividedList.size() < 2)
             return map(iterable, converter);
 
@@ -465,6 +464,11 @@ public final class FunctionUtil {
     public static <T> T reduce(Iterable<T> iterable, final Accumulator<T, T> accumulator, WorkDivisionStrategy workDivisionStrategy) {
 
         final Collection<Collection<T>> taskList = workDivisionStrategy.divide(iterable);
+
+        if(taskList.size() < 2) {
+            return reduce(iterable, accumulator);
+        }
+
         final List<T> outList = new CopyOnWriteArrayList<T>();
         int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
@@ -1267,14 +1271,6 @@ public final class FunctionUtil {
 
     public static ExecutionThrottler throttler(String identity) {
         return new ExecutionThrottler(identity);
-    }
-
-    private static <I> Collection<I> getCollection(Collection<I> collection) {
-        if (collection instanceof Set) {
-            return new LinkedHashSet<I>();
-        } else {
-            return new LinkedList<I>();
-        }
     }
 
     public static <T> ForkAndJoin<T> fork(T object) {
