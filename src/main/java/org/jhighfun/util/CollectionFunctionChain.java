@@ -266,12 +266,12 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> execute(Task<List<I>> task) {
-        task.execute(new LinkedList<I>(this.collection));
+        task.execute(getCollectionCopy());
         return this;
     }
 
     public CollectionFunctionChain<I> executeAsync(final Task<List<I>> task) {
-        final LinkedList<I> list = new LinkedList<I>(this.collection);
+        final List<I> list = getCollectionCopy();
         FunctionUtil.executeAsync(new Runnable() {
             public void run() {
                 task.execute(list);
@@ -281,7 +281,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> executeLater(final Task<List<I>> task) {
-        final LinkedList<I> list = new LinkedList<I>(this.collection);
+        final List<I> list = getCollectionCopy();
         FunctionUtil.executeLater(new Runnable() {
             public void run() {
                 task.execute(list);
@@ -291,43 +291,47 @@ public final class CollectionFunctionChain<I> {
     }
 
     public CollectionFunctionChain<I> executeWithGlobalLock(final Task<List<I>> task) {
+        final List<I> list = getCollectionCopy();
         FunctionUtil.executeWithGlobalLock(new Block() {
             public void execute() {
-                task.execute(collection);
+                task.execute(list);
             }
         });
         return this;
     }
 
     public CollectionFunctionChain<I> executeWithLock(Operation operation, final Task<List<I>> task) {
+        final List<I> list = getCollectionCopy();
         FunctionUtil.executeWithLock(operation, new Block() {
             public void execute() {
-                task.execute(collection);
+                task.execute(list);
             }
         });
         return this;
     }
 
     public CollectionFunctionChain<I> executeWithThrottle(ExecutionThrottler executionThrottler, final Task<List<I>> task) {
+        final List<I> list = getCollectionCopy();
         FunctionUtil.executeWithThrottle(executionThrottler, new Runnable() {
             public void run() {
-                task.execute(collection);
+                task.execute(list);
             }
         });
         return this;
     }
 
     public CollectionFunctionChain<I> executeAwait(final Task<List<I>> task, Integer time, TimeUnit timeUnit) {
+        final List<I> list = getCollectionCopy();
         FunctionUtil.executeAwait(new Runnable() {
             public void run() {
-                task.execute(collection);
+                task.execute(list);
             }
         }, time, timeUnit);
         return this;
     }
 
     public CollectionFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Task<List<I>> task) {
-        final LinkedList<I> list = new LinkedList<I>(this.collection);
+        final List<I> list = getCollectionCopy();
         FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Runnable() {
             public void run() {
                 task.execute(list);
@@ -337,7 +341,7 @@ public final class CollectionFunctionChain<I> {
     }
 
     public <O> CollectionFunctionChain<I> executeAsyncWithThrottle(ExecutionThrottler executionThrottler, final Function<List<I>, O> asyncTask, final CallbackTask<O> callbackTask) {
-        final LinkedList<I> list = new LinkedList<I>(this.collection);
+        final List<I> list = getCollectionCopy();
         FunctionUtil.executeAsyncWithThrottle(executionThrottler, new Callable<O>() {
             public O call() {
                 return asyncTask.apply(list);
@@ -405,6 +409,14 @@ public final class CollectionFunctionChain<I> {
 
     public <O> CollectionFunctionChain<O> selfProduct(Function<Tuple2<I, I>, O> function) {
         return new CollectionFunctionChain<O>(FunctionUtil.crossProduct(this.collection, this.collection, function));
+    }
+
+    private List<I> getCollectionCopy() {
+        List<I> copy = new LinkedList<I>();
+        for (I i : this.collection) {
+            copy.add(i);
+        }
+        return copy;
     }
 
     @Override

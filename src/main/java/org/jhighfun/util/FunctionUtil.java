@@ -6,6 +6,7 @@ import org.jhighfun.internal.ThreadPoolFactory;
 import org.jhighfun.util.matcher.WhenChecker;
 import org.jhighfun.util.memoize.*;
 import org.jhighfun.util.stream.AbstractStreamIterator;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -281,19 +282,12 @@ public final class FunctionUtil {
             return filter(iterable, predicate);
 
         filterParallel(collectionList, predicate, List.class);
-        return chain(inputOutputs)
-                .filter(new Function<TaskInputOutput<T, Boolean>, Boolean>() {
-                    public Boolean apply(TaskInputOutput<T, Boolean> task) {
-                        return task.getOutput();
-                    }
-                })
-                .map(new Function<TaskInputOutput<T, Boolean>, T>() {
-                    public T apply(TaskInputOutput<T, Boolean> arg) {
-                        return arg.getInput();
-                    }
-                })
-                .extract();
-
+        List<T> outList = new LinkedList<T>();
+        for (TaskInputOutput<T, Boolean> taskInputOutput : inputOutputs) {
+            if (taskInputOutput.getOutput())
+                outList.add(taskInputOutput.getInput());
+        }
+        return outList;
     }
 
     public static <T> Set<T> filter(Set<T> inputSet, Function<T, Boolean> predicate,
@@ -310,17 +304,12 @@ public final class FunctionUtil {
             return filter(inputSet, predicate);
 
         filterParallel(collectionList, predicate, List.class);
-        return chain(inputOutputs)
-                .filter(new Function<TaskInputOutput<T, Boolean>, Boolean>() {
-                    public Boolean apply(TaskInputOutput<T, Boolean> task) {
-                        return task.getOutput();
-                    }
-                }).foldLeft((Set<T>) CollectionUtil.Set(), new Accumulator<Set<T>, TaskInputOutput<T, Boolean>>() {
-                    public Set<T> accumulate(Set<T> accumulator, TaskInputOutput<T, Boolean> task) {
-                        accumulator.add(task.getInput());
-                        return accumulator;
-                    }
-                }).extract();
+        Set<T> set = new LinkedHashSet<T>();
+        for (TaskInputOutput<T, Boolean> taskInputOutput : inputOutputs) {
+            if (taskInputOutput.getOutput())
+                set.add(taskInputOutput.getInput());
+        }
+        return set;
 
     }
 
@@ -338,17 +327,13 @@ public final class FunctionUtil {
             return filter(iterable, predicate);
 
         filterParallel(collectionList, predicate, List.class);
-        return chain(inputOutputs)
-                .filter(new Function<TaskInputOutput<T, Boolean>, Boolean>() {
-                    public Boolean apply(TaskInputOutput<T, Boolean> task) {
-                        return task.getOutput();
-                    }
-                }).map(new Function<TaskInputOutput<T, Boolean>, T>() {
-                    public T apply(TaskInputOutput<T, Boolean> arg) {
-                        return arg.getInput();
-                    }
-                }).extract();
 
+        List<T> outList = new LinkedList<T>();
+        for (TaskInputOutput<T, Boolean> taskInputOutput : inputOutputs) {
+            if (taskInputOutput.getOutput())
+                outList.add(taskInputOutput.getInput());
+        }
+        return outList;
     }
 
     public static <T> Iterable<T> filter(Iterable<T> iterable, Function<T, Boolean> predicate,
@@ -365,17 +350,12 @@ public final class FunctionUtil {
             return filter(iterable, predicate);
 
         filterParallel(collectionList, predicate, List.class);
-        Iterable<TaskInputOutput<T, Boolean>> filter = filter(inputOutputs, new Function<TaskInputOutput<T, Boolean>, Boolean>() {
-            public Boolean apply(TaskInputOutput<T, Boolean> task) {
-                return task.getOutput();
-            }
-        });
-
-        return map(filter, new Function<TaskInputOutput<T, Boolean>, T>() {
-            public T apply(TaskInputOutput<T, Boolean> arg) {
-                return arg.getInput();
-            }
-        });
+        List<T> outList = new LinkedList<T>();
+        for (TaskInputOutput<T, Boolean> taskInputOutput : inputOutputs) {
+            if (taskInputOutput.getOutput())
+                outList.add(taskInputOutput.getInput());
+        }
+        return outList;
 
     }
 
@@ -462,7 +442,7 @@ public final class FunctionUtil {
 
         final Collection<Collection<T>> taskList = workDivisionStrategy.divide(iterable);
 
-        if(taskList.size() < 2) {
+        if (taskList.size() < 2) {
             return reduce(iterable, accumulator);
         }
 
@@ -653,7 +633,7 @@ public final class FunctionUtil {
     public static <T> boolean every(Iterable<T> iterable, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
         Collection<Collection<T>> collections = workDivisionStrategy.divide(iterable);
 
-        if(collections.size() < 2) {
+        if (collections.size() < 2) {
             return every(iterable, predicate);
         }
 
@@ -712,7 +692,7 @@ public final class FunctionUtil {
     public static <T> boolean any(Iterable<T> iterable, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
         Collection<Collection<T>> collections = workDivisionStrategy.divide(iterable);
 
-        if(collections.size() < 2) {
+        if (collections.size() < 2) {
             return any(iterable, predicate);
         }
 
@@ -775,7 +755,7 @@ public final class FunctionUtil {
 
         Collection<Collection<T>> collections = workDivisionStrategy.divide(iterable);
 
-        if(collections.size() < 2) {
+        if (collections.size() < 2) {
             return count(iterable, predicate);
         }
 
@@ -875,7 +855,7 @@ public final class FunctionUtil {
     public static <T> void each(Iterable<T> iterable, final RecordProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
         final Collection<Collection<T>> taskList = workDivisionStrategy.divide(iterable);
 
-        if(taskList.size() < 2) {
+        if (taskList.size() < 2) {
             each(iterable, recordProcessor);
             return;
         }
@@ -1465,7 +1445,7 @@ final class Parallel implements WorkDivisionStrategy {
             }
         }
 
-        if(size == 0) {
+        if (size == 0) {
             return workDivisor;
         }
 
