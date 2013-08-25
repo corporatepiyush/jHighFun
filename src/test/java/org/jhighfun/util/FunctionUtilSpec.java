@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 public class FunctionUtilSpec {
 
     @Spy
-    ExecutorService spyMediumPriorityAsyncTaskThreadPool = new ThreadPoolExecutor(0, 100, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+    ExecutorService spyHighPriorityAsyncTaskThreadPool = new ThreadPoolExecutor(0, 100, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
     @Spy
     ExecutorService spyLowPriorityAsyncTaskThreadPool = new ThreadPoolExecutor(0, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
@@ -32,9 +32,9 @@ public class FunctionUtilSpec {
     public void before() {
         try {
 
-            Field globalPool = FunctionUtil.class.getDeclaredField("mediumPriorityAsyncTaskThreadPool");
+            Field globalPool = FunctionUtil.class.getDeclaredField("highPriorityTaskThreadPool");
             globalPool.setAccessible(true);
-            globalPool.set(null, spyMediumPriorityAsyncTaskThreadPool);
+            globalPool.set(null, spyHighPriorityAsyncTaskThreadPool);
 
             globalPool = FunctionUtil.class.getDeclaredField("lowPriorityAsyncTaskThreadPool");
             globalPool.setAccessible(true);
@@ -105,7 +105,7 @@ public class FunctionUtilSpec {
         future.get();
 
         verify(mockBlock, times(1)).run();
-        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+        verify(spyHighPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
     }
 
 
@@ -123,7 +123,7 @@ public class FunctionUtilSpec {
         future.get().equals("Completed");
 
         verify(asyncTaskSpy, times(1)).call();
-        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Callable.class));
+        verify(spyHighPriorityAsyncTaskThreadPool, times(1)).submit(any(Callable.class));
     }
 
 
@@ -151,7 +151,7 @@ public class FunctionUtilSpec {
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
         assertEquals(argument.getValue().getOutput(), "output");
         assertEquals(argument.getValue().getException(), null);
-        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+        verify(spyHighPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
 
     }
 
@@ -181,7 +181,7 @@ public class FunctionUtilSpec {
         assertEquals(argument.getValue().getAsyncTask(), asyncTaskSpy);
         assertEquals(argument.getValue().getOutput(), null);
         assertEquals(argument.getValue().getException().getClass(), RuntimeException.class);
-        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
+        verify(spyHighPriorityAsyncTaskThreadPool, times(1)).submit(any(Runnable.class));
 
     }
 

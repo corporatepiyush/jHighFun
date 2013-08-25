@@ -9,9 +9,7 @@ import java.util.concurrent.*;
  * jHighFun library uses three global ThreadPoolExecutors
  * <p/>
  * 1. HighPriorityTask thread pool - used for all multi-threaded/concurrent operations supported by framework
- * 2. MediumPriorityTask thread pool - used for executing medium priority business task execution in async fashion
- * which does not help generate the output which is necessary to be sent out as response
- * 3. LowPriorityTask thread pool - used for low priority tasks such as event logging etc. which are not part of business logic and
+ * 2. LowPriorityTask thread pool - used for low priority tasks such as event logging etc. which are not part of business logic and
  * hence not important to be executed in synchronous fashion.
  *
  * @author Piyush Katariya
@@ -20,7 +18,6 @@ import java.util.concurrent.*;
 public class ThreadPoolFactory {
 
     private static String HIGH_PRIORITY = "hp";
-    private static String MEDIUM_PRIORITY = "mp";
     private static String LOW_PRIORITY = "lp";
 
     public static ExecutorService getHighPriorityTaskThreadPool() {
@@ -46,33 +43,6 @@ public class ThreadPoolFactory {
 
         } else {
             return getDefaultThreadPool(HIGH_PRIORITY);
-        }
-
-    }
-
-    public static ExecutorService getMediumPriorityAsyncTaskThreadPool() {
-        Context context = null;
-        try {
-            context = new InitialContext();
-        } catch (NamingException e) {
-            //System.err.println("Error while looking up for 'org.jhighfun.mpthreadpool' system property, falling back to default AsyncMediumPriorityThreadPool.");
-        }
-
-        if (context != null) {
-            ExecutorService managedThreadPool = null;
-            try {
-                managedThreadPool = (ExecutorService) context.lookup("java:/comp/env/" + System.getProperty("org.jhighfun.mpthreadpool"));
-            } catch (Exception e) {
-                //System.err.println("Error while looking up for 'org.jhighfun.mpthreadpool' system property, falling back to default AsyncMediumPriorityThreadPool.");
-            } finally {
-                if (managedThreadPool != null)
-                    return managedThreadPool;
-                else
-                    return getDefaultThreadPool(MEDIUM_PRIORITY);
-            }
-
-        } else {
-            return getDefaultThreadPool(MEDIUM_PRIORITY);
         }
 
     }
@@ -110,8 +80,6 @@ public class ThreadPoolFactory {
 
         if (priority.equals(HIGH_PRIORITY)) {
             executor = getThreadPoolExecutor(0, Integer.MAX_VALUE, 5, TimeUnit.MINUTES, new SynchronousQueue<Runnable>());
-        } else if (priority.equals(MEDIUM_PRIORITY)) {
-            executor = getThreadPoolExecutor(32, 32, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         } else if (priority.equals(LOW_PRIORITY)) {
             executor = getThreadPoolExecutor(4, 4, 5, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         }

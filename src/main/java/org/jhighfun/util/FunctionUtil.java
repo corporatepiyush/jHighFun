@@ -28,7 +28,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class FunctionUtil {
 
     private static ExecutorService highPriorityTaskThreadPool = ThreadPoolFactory.getHighPriorityTaskThreadPool();
-    private static ExecutorService mediumPriorityAsyncTaskThreadPool = ThreadPoolFactory.getMediumPriorityAsyncTaskThreadPool();
     private static ExecutorService lowPriorityAsyncTaskThreadPool = ThreadPoolFactory.getLowPriorityAsyncTaskThreadPool();
 
     private static final Lock globalLock = new ReentrantLock(true);
@@ -448,14 +447,13 @@ public final class FunctionUtil {
 
     public static <T> T reduce(Iterable<T> list,
                                Accumulator<T, T> accumulator) {
-        T current, accum = null;
+        T accum = null;
         final Iterator<T> iterator = list.iterator();
         if (iterator.hasNext()) {
             accum = iterator.next();
         }
         while (iterator.hasNext()) {
-            current = iterator.next();
-            accum = accumulator.accumulate(accum, current);
+            accum = accumulator.accumulate(accum, iterator.next());
         }
         return accum;
     }
@@ -478,7 +476,7 @@ public final class FunctionUtil {
         for (final Collection<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-                    T current, accum = null;
+                    T accum = null;
                     Iterator<T> iterator = list2.iterator();
 
                     if (iterator.hasNext()) {
@@ -486,10 +484,9 @@ public final class FunctionUtil {
                     }
 
                     while (iterator.hasNext()) {
-                        current = iterator.next();
                         if (exception.size() == 0) {
                             try {
-                                accum = accumulator.accumulate(accum, current);
+                                accum = accumulator.accumulate(accum, iterator.next());
                             } catch (Throwable e) {
                                 exception.add(e);
                                 e.printStackTrace();
@@ -1006,7 +1003,7 @@ public final class FunctionUtil {
     }
 
     public static Future executeAsync(final Runnable runnable) {
-        return mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
+        return highPriorityTaskThreadPool.submit(new Runnable() {
             public void run() {
                 runnable.run();
             }
@@ -1014,7 +1011,7 @@ public final class FunctionUtil {
     }
 
     public static <T> void executeAsync(final Callable<T> callable, final CallbackTask callbackTask) {
-        mediumPriorityAsyncTaskThreadPool.submit(new Runnable() {
+        highPriorityTaskThreadPool.submit(new Runnable() {
             public void run() {
                 AsyncTaskHandle<T> asyncTaskHandle = null;
                 try {
@@ -1400,7 +1397,7 @@ public final class FunctionUtil {
     }
 
     public static <T> Future<T> executeAsync(final Callable<T> callable) {
-        return mediumPriorityAsyncTaskThreadPool.submit(new Callable<T>() {
+        return highPriorityTaskThreadPool.submit(new Callable<T>() {
             public T call() throws Exception {
                 return callable.call();
             }

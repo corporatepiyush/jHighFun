@@ -26,9 +26,6 @@ public class ObjectFunctionChainSpec {
     ExecutorService spyHighPriorityTaskThreadPool = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     @Spy
-    ExecutorService spyMediumPriorityAsyncTaskThreadPool = new ThreadPoolExecutor(0, 100, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-
-    @Spy
     ExecutorService spyLowPriorityAsyncTaskThreadPool = new ThreadPoolExecutor(0, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
 
@@ -38,10 +35,6 @@ public class ObjectFunctionChainSpec {
             Field globalPool = FunctionUtil.class.getDeclaredField("highPriorityTaskThreadPool");
             globalPool.setAccessible(true);
             globalPool.set(null, spyHighPriorityTaskThreadPool);
-
-            globalPool = FunctionUtil.class.getDeclaredField("mediumPriorityAsyncTaskThreadPool");
-            globalPool.setAccessible(true);
-            globalPool.set(null, spyMediumPriorityAsyncTaskThreadPool);
 
             globalPool = FunctionUtil.class.getDeclaredField("lowPriorityAsyncTaskThreadPool");
             globalPool.setAccessible(true);
@@ -127,7 +120,7 @@ public class ObjectFunctionChainSpec {
         }
 
         verify(mockTask, times(1)).execute("Scala");
-        verify(spyMediumPriorityAsyncTaskThreadPool, times(1)).submit(any((Runnable.class)));
+        verify(spyHighPriorityTaskThreadPool, times(1)).submit(any((Runnable.class)));
     }
 
     @Test
