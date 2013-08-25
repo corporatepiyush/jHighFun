@@ -1,8 +1,9 @@
 package org.jhighfun.util;
 
+import java.io.Serializable;
 import java.util.NoSuchElementException;
 
-public abstract class Optional<T> {
+public abstract class Optional<T> implements Serializable {
     protected T object;
 
     protected void set(T object) {
