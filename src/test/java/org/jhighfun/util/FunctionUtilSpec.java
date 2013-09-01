@@ -955,7 +955,7 @@ public class FunctionUtilSpec {
 
     }
 
-    @Test(expected = TimeoutException.class)
+    @Test
     public void testExecuteWithTimeoutForMoreExecutionTime() throws TimeoutException {
 
         Runnable codeBlockSpy = spy(new Runnable() {

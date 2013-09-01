@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -156,18 +157,18 @@ public final class FunctionUtil {
         final int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
-        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
 
         int i = 0;
         for (final Collection<TaskInputOutput<I, O>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
                     for (TaskInputOutput<I, O> taskInputOutput : list2) {
-                        if (exception.size() == 0) {
+                        if (exception.get() == null) {
                             try {
                                 taskInputOutput.setOutput(converter.apply(taskInputOutput.getInput()));
                             } catch (Throwable e) {
-                                exception.add(e);
+                                exception.set(e);
                                 e.printStackTrace();
                             }
                         } else {
@@ -192,8 +193,8 @@ public final class FunctionUtil {
             }
         }
 
-        if (exception.size() > 0) {
-            throw new RuntimeException(exception.get(0));
+        if (exception.get() != null) {
+            throw new RuntimeException(exception.get());
         }
 
     }
@@ -364,18 +365,18 @@ public final class FunctionUtil {
         final int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
-        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
 
         int i = 0;
         for (final Collection<TaskInputOutput<T, Boolean>> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
                     for (TaskInputOutput<T, Boolean> taskInputOutput : list2) {
-                        if (exception.size() == 0) {
+                        if (exception.get() == null) {
                             try {
                                 taskInputOutput.setOutput(predicate.apply(taskInputOutput.getInput()));
                             } catch (Throwable e) {
-                                exception.add(e);
+                                exception.set(e);
                                 e.printStackTrace();
                             }
                         } else {
@@ -402,8 +403,8 @@ public final class FunctionUtil {
         }
 
 
-        if (exception.size() > 0) {
-            throw new RuntimeException(exception.get(0));
+        if (exception.get() != null) {
+            throw new RuntimeException(exception.get());
         }
     }
 
@@ -450,7 +451,7 @@ public final class FunctionUtil {
         int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
-        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
         int i = 0;
         for (final Collection<T> list2 : taskList) {
             threads[i++] = new Runnable() {
@@ -463,11 +464,11 @@ public final class FunctionUtil {
                     }
 
                     while (iterator.hasNext()) {
-                        if (exception.size() == 0) {
+                        if (exception.get() == null) {
                             try {
                                 accum = accumulator.accumulate(accum, iterator.next());
                             } catch (Throwable e) {
-                                exception.add(e);
+                                exception.set(e);
                                 e.printStackTrace();
                             }
                         } else {
@@ -492,8 +493,8 @@ public final class FunctionUtil {
                 throw new RuntimeException(e);
             }
         }
-        if (exception.size() > 0)
-            throw new RuntimeException(exception.get(0));
+        if (exception.get() != null)
+            throw new RuntimeException(exception.get());
 
         return reduce(outList, accumulator);
     }
@@ -863,18 +864,18 @@ public final class FunctionUtil {
         final int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
-        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
 
         int i = 0;
         for (final Collection<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
                     for (T task : list2) {
-                        if (exception.size() == 0) {
+                        if (exception.get() == null) {
                             try {
                                 recordProcessor.process(task);
                             } catch (Throwable e) {
-                                exception.add(e);
+                                exception.set(e);
                                 e.printStackTrace();
                             }
                         } else {
@@ -899,8 +900,8 @@ public final class FunctionUtil {
             }
         }
 
-        if (exception.size() > 0)
-            throw new RuntimeException(exception.get(0));
+        if (exception.get() != null)
+            throw new RuntimeException(exception.get());
     }
 
     public static <T> void each(Iterable<T> iterable, final RecordWithContextProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
@@ -909,19 +910,19 @@ public final class FunctionUtil {
         final int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
-        final List<Throwable> exception = new CopyOnWriteArrayList<Throwable>();
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
 
         int i = 0;
         for (final Collection<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
                     for (T task : list2) {
-                        if (exception.size() == 0 && !context.isInterrupted()) {
+                        if (exception.get() == null && !context.isInterrupted()) {
                             try {
                                 recordProcessor.process(task, context);
                                 context.incrementRecordExecutionCount();
                             } catch (Throwable e) {
-                                exception.add(e);
+                                exception.set(e);
                                 e.printStackTrace();
                             }
                         } else {
@@ -945,8 +946,8 @@ public final class FunctionUtil {
                 throw new RuntimeException(e);
             }
         }
-        if (exception.size() > 0)
-            throw new RuntimeException(exception.get(0));
+        if (exception.get() != null)
+            throw new RuntimeException(exception.get());
     }
 
     public static <I> CollectionFunctionChain<I> chain(Iterable<I> iterable) {
@@ -1066,14 +1067,14 @@ public final class FunctionUtil {
 
     public static void executeWithThrottle(ExecutionThrottler executionThrottler, final Runnable runnable) {
         ExecutorService executorService = getThrottler(executionThrottler);
-        final Tuple2<String, Throwable> exception = new Tuple2<String, Throwable>("Exception", null);
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
         try {
             executorService.submit(new Runnable() {
                 public void run() {
                     try {
                         runnable.run();
                     } catch (Throwable e) {
-                        exception._2 = e;
+                        exception.set(e);
                         e.printStackTrace();
                     }
                 }
@@ -1083,8 +1084,8 @@ public final class FunctionUtil {
             throw new RuntimeException(e);
         }
 
-        if (exception._2 != null) {
-            throw new RuntimeException(exception._2);
+        if (exception.get() != null) {
+            throw new RuntimeException(exception.get());
         }
     }
 
@@ -1164,34 +1165,36 @@ public final class FunctionUtil {
     }
 
     public static void executeWithTimeout(final Runnable codeBlock, Integer time, TimeUnit timeUnit) throws TimeoutException {
-        final LinkedList<Throwable> exceptions = new LinkedList<Throwable>();
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
+        Future<?> future = null;
         try {
-            highPriorityTaskThreadPool.submit(new Runnable() {
+            future = highPriorityTaskThreadPool.submit(new Runnable() {
                 public void run() {
                     try {
                         codeBlock.run();
                     } catch (Throwable e) {
-                        exceptions.add(e);
+                        exception.set(e);
                         e.printStackTrace();
                     }
                 }
-            }).get(time, timeUnit);
+            });
+            future.get(time, timeUnit);
         } catch (TimeoutException e) {
             e.printStackTrace();
-            throw e;
+            future.cancel(true);
         } catch (Throwable e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            if (exceptions.size() > 0) {
-                throw new RuntimeException(exceptions.get(0));
+            if (exception.get() != null) {
+                throw new RuntimeException(exception.get());
             }
         }
 
     }
 
     public static void executeAwait(final Runnable codeBlock, Integer time, TimeUnit timeUnit) {
-        final List<Throwable> exception = new LinkedList<Throwable>();
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
         try {
             highPriorityTaskThreadPool.submit(new Runnable() {
                 public void run() {
@@ -1199,7 +1202,7 @@ public final class FunctionUtil {
                         codeBlock.run();
                     } catch (Throwable e) {
                         e.printStackTrace();
-                        exception.add(e);
+                        exception.set(e);
                     }
                 }
             }).get(time, timeUnit);
@@ -1208,8 +1211,8 @@ public final class FunctionUtil {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            if (exception.size() > 0)
-                throw new RuntimeException(exception.get(0));
+            if (exception.get() != null)
+                throw new RuntimeException(exception.get());
         }
     }
 
