@@ -181,4 +181,18 @@ public class CollectionUtilSpec {
 
     }
 
+    @Test
+    public void testIterify() {
+
+        String[] array = { "0", "1", "2", "3" };
+        Iterable<String> iterable = Iterify(array);
+
+        int index = 0;
+        for(String el : iterable) {
+           assertEquals(String.valueOf(index++), el);
+        }
+
+    }
+
+
 }

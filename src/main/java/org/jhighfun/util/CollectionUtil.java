@@ -287,4 +287,27 @@ public final class CollectionUtil {
     public static Iterable<Integer> LazyIntRange(int from, int to) {
         return LazyIntRange(from, to, 1);
     }
+
+    public static <T> Iterable<T> Iterify(final T[] array) {
+        return new Iterable<T>() {
+            public Iterator<T> iterator() {
+                return new Iterator<T>() {
+                    int index = 0;
+                    final int length = array.length;
+
+                    public boolean hasNext() {
+                        return this.index < this.length;
+                    }
+
+                    public T next() {
+                        return array[this.index++];
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
+    }
 }
