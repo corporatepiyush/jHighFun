@@ -1256,8 +1256,8 @@ public final class FunctionUtil {
         return new ForkAndJoin<T>(object);
     }
 
-    public static <T> void divideAndConquer(Iterable<T> collection, final Task<Collection<T>> task, WorkDivisionStrategy partition) {
-        final Collection<Collection<T>> collections = partition.divide(collection);
+    public static <T> void divideAndConquer(Iterable<T> iterable, final Task<Collection<T>> task, WorkDivisionStrategy partition) {
+        final Collection<Collection<T>> collections = partition.divide(iterable);
         each(collections, new RecordProcessor<Collection<T>>() {
             public void process(Collection<T> items) {
                 task.execute(items);
@@ -1265,8 +1265,8 @@ public final class FunctionUtil {
         }, parallel(collections.size()));
     }
 
-    public static <IN, OUT> Collection<OUT> divideAndConquer(Iterable<IN> collection, final Function<Collection<IN>, Collection<OUT>> function, WorkDivisionStrategy workDivisionStrategy) {
-        Collection<Collection<IN>> collections = workDivisionStrategy.divide(collection);
+    public static <IN, OUT> Collection<OUT> divideAndConquer(Iterable<IN> iterable, final Function<Collection<IN>, Collection<OUT>> function, WorkDivisionStrategy workDivisionStrategy) {
+        Collection<Collection<IN>> collections = workDivisionStrategy.divide(iterable);
         return chain(collections)
                 .map(function, parallel(collections.size()))
                 .flatMap(new Function<Collection<OUT>, Iterable<OUT>>() {
@@ -1276,6 +1276,68 @@ public final class FunctionUtil {
                     }
                 })
                 .extract();
+    }
+
+    public static <IN, OUT> Collection<OUT> divideAndConquer(Iterable<IN> iterable, final FunctionWithContext<Collection<IN>, Collection<OUT>> function, WorkDivisionStrategy workDivisionStrategy) {
+        final Collection<Collection<IN>> taskList = workDivisionStrategy.divide(iterable);
+        final ParallelLoopExecutionContext context = new ParallelLoopExecutionContext();
+        final int noOfThread = taskList.size();
+        final Callable[] threads = new Callable[noOfThread];
+        final Future[] futures = new Future[noOfThread];
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
+
+        int i = 0;
+        for (final Collection<IN> list2 : taskList) {
+            threads[i++] = new Callable<Collection<OUT>>() {
+                public Collection<OUT> call() {
+                    Tuple2<Collection<IN>, ParallelLoopExecutionContext> tuple2 = new Tuple2<Collection<IN>, ParallelLoopExecutionContext>(list2, context);
+                    Collection<OUT> outCollection = null;
+                    if (exception.get() == null && !context.isInterrupted()) {
+                        try {
+                            outCollection = function.apply(tuple2);
+                            context.incrementRecordExecutionCountBy(list2.size());
+                        } catch (Throwable e) {
+                            exception.set(e);
+                            e.printStackTrace();
+                        }
+                    }
+                    return outCollection;
+                }
+            };
+        }
+
+        List<OUT> outList = new LinkedList<OUT>();
+        Collection<OUT> out = null;
+
+        for (i = 1; i < noOfThread; i++) {
+            futures[i] = highPriorityTaskThreadPool.submit(threads[i]);
+        }
+
+        try {
+            out = (Collection<OUT>) threads[0].call();
+            for (OUT el : out) {
+                outList.add(el);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        for (i = 1; i < noOfThread; i++) {
+            try {
+                out = (Collection<OUT>) futures[i].get();
+                for (OUT el : out) {
+                    outList.add(el);
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+        if (exception.get() != null)
+            throw new RuntimeException(exception.get());
+
+        return outList;
     }
 
     public static <T> List<T> filterWithIndex(List<T> list, Function<Integer, Boolean> predicate) {

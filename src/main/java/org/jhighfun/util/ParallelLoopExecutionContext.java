@@ -23,6 +23,10 @@ public class ParallelLoopExecutionContext {
         recordCount.getAndIncrement();
     }
 
+    void incrementRecordExecutionCountBy(int newCount) {
+        recordCount.getAndSet(newCount);
+    }
+
     public int currentRecordExecutionCount() {
         return recordCount.get();
     }
