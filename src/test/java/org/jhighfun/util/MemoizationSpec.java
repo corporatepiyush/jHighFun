@@ -26,7 +26,7 @@ public class MemoizationSpec {
                 spyInjection.add(input);
                 return input.equals("today") ? true : false;
             }
-        });
+        }, false);
 
         assertEquals(spyInjection.size(), 0);
         assertEquals(memoizedFunction.apply(inputCheckValue), true);
@@ -53,7 +53,7 @@ public class MemoizationSpec {
                 }
                 return builder.toString();
             }
-        });
+        }, false);
 
         assertEquals(spyInjection.size(), 0);
         assertEquals(memoizedFunction.apply(CollectionUtil.List("I", "am", "the", "Almighty")), "IamtheAlmighty");
@@ -180,7 +180,7 @@ public class MemoizationSpec {
             }
         });
 
-        final Function<List<String>, String> memoizedFunction = FunctionUtil.memoize(spyFunction);
+        final Function<List<String>, String> memoizedFunction = FunctionUtil.memoize(spyFunction, true);
 
         List<Integer> loadList = new LinkedList<Integer>();
 

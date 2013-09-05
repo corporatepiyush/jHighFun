@@ -40,8 +40,8 @@ public class ThrottlerPoolInitializerSpec {
 
         Map poolMap = (Map) throttlerPoolMapField.get(null);
 
-        for(Map.Entry entry  : (Set<Map.Entry>) poolMap.entrySet()) {
-             assertTrue(throttlersExpected.get(entry.getKey()) != null);
+        for (Map.Entry entry : (Set<Map.Entry>) poolMap.entrySet()) {
+            assertTrue(throttlersExpected.get(entry.getKey()) != null);
             assertTrue(throttlersExpected.get(entry.getKey()) == entry.getValue());
         }
     }

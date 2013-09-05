@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class GlobalPoolInitializerSpec {
 
     @Test
-    public void shouldInitializeGlobalPool () throws NoSuchFieldException, IllegalAccessException {
+    public void shouldInitializeGlobalPool() throws NoSuchFieldException, IllegalAccessException {
 
         ExecutorService HPPool = Executors.newFixedThreadPool(1);
         ExecutorService LPPool = Executors.newFixedThreadPool(1);

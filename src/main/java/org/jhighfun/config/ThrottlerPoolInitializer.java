@@ -19,8 +19,8 @@ public class ThrottlerPoolInitializer {
         throttlerPoolMapField.setAccessible(true);
 
         Map throttlerPoolMap = (Map) throttlerPoolMapField.get(null);
-        Set<Map.Entry<String,ExecutorService>> entrySet = throttlers.entrySet();
-        for(Map.Entry<String,ExecutorService> entry : entrySet) {
+        Set<Map.Entry<String, ExecutorService>> entrySet = throttlers.entrySet();
+        for (Map.Entry<String, ExecutorService> entry : entrySet) {
             throttlerPoolMap.put(FunctionUtil.throttler(entry.getKey()), entry.getValue());
         }
     }

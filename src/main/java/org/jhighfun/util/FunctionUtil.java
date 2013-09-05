@@ -1216,8 +1216,8 @@ public final class FunctionUtil {
         }
     }
 
-    public static <I, O> Function<I, O> memoize(final Function<I, O> function) {
-        return new BasicFunctionMemoizer<I, O>(function);
+    public static <I, O> Function<I, O> memoize(final Function<I, O> function, boolean concurrent) {
+        return concurrent ? new ConcurrentFunctionMemoizer<I, O>(function) : new BasicFunctionMemoizer<I, O>(function);
     }
 
     public static <I, O> Function<I, O> memoize(final Function<I, O> function, final MemoizeConfig config) {

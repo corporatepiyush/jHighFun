@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 
 public class GlobalPoolInitializer {
 
-    public GlobalPoolInitializer (ExecutorService highPriorityTaskThreadPool, ExecutorService lowPriorityAsyncTaskThreadPool) throws NoSuchFieldException, IllegalAccessException {
+    public GlobalPoolInitializer(ExecutorService highPriorityTaskThreadPool, ExecutorService lowPriorityAsyncTaskThreadPool) throws NoSuchFieldException, IllegalAccessException {
         initialize(highPriorityTaskThreadPool, lowPriorityAsyncTaskThreadPool);
     }
 

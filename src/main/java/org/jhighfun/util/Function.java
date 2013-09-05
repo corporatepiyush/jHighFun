@@ -1,9 +1,6 @@
 package org.jhighfun.util;
 
-import org.jhighfun.util.memoize.BasicFunctionMemoizer;
-import org.jhighfun.util.memoize.ConfigurableFunctionMemoizer;
-import org.jhighfun.util.memoize.ManagedCacheFunctionMemoizer;
-import org.jhighfun.util.memoize.MemoizeConfig;
+import org.jhighfun.util.memoize.*;
 
 /**
  * A function is a relation between a set of inputs and a set of permissible outputs
@@ -17,7 +14,11 @@ public abstract class Function<I, O> {
     public abstract O apply(I arg);
 
     public Function<I, O> memoize() {
-        return new BasicFunctionMemoizer<I, O>(this);
+        return memoize(false);
+    }
+
+    public Function<I, O> memoize(boolean concurrent) {
+        return concurrent ? new ConcurrentFunctionMemoizer<I, O>(this) : new BasicFunctionMemoizer<I, O>(this);
     }
 
     public Function<I, O> memoize(ManagedCache managedCache) {
