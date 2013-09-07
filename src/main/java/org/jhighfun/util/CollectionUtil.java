@@ -1,5 +1,7 @@
 package org.jhighfun.util;
 
+import org.jhighfun.util.stream.AbstractStreamIterator;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -309,5 +311,9 @@ public final class CollectionUtil {
                 };
             }
         };
+    }
+
+    public static <T> Iterable<T> Iterify(final AbstractStreamIterator<T> streamIterator) {
+        return new IterableAdapter<T>(streamIterator);
     }
 }

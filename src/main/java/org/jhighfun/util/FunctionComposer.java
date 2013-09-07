@@ -12,6 +12,6 @@ public class FunctionComposer<I, T, O> extends Function<I, O> {
 
     @Override
     public O apply(I input) {
-        return function2.apply(function1.apply(input));
+        return this.function2.apply(this.function1.apply(input));
     }
 }

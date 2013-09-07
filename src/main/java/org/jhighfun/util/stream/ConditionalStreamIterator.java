@@ -36,14 +36,14 @@ public final class ConditionalStreamIterator<T> extends AbstractStreamIterator<T
         }
 
         boolean hasNext = false;
-        while (conditionalIterator.hasNext()) {
-            T current = conditionalIterator.next();
-            if (predicate.apply(current)) {
+        while (this.conditionalIterator.hasNext()) {
+            T current = this.conditionalIterator.next();
+            if (this.predicate.apply(current)) {
                 hasNext = true;
                 this.current = current;
                 break;
-            } else if (task != null) {
-                task.execute(current);
+            } else if (this.task != null) {
+                this.task.execute(current);
             }
         }
         return hasNext;
