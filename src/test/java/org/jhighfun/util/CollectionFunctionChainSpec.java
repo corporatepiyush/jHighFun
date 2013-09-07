@@ -582,7 +582,7 @@ public class CollectionFunctionChainSpec {
 
         assertTrue(foldLeft == 10);
 
-        verify(spyHighPriorityTaskThreadPool, times(1)).submit(any(Runnable.class));
+        verify(spyHighPriorityTaskThreadPool, times(1)).submit(any(Callable.class));
 
     }
 

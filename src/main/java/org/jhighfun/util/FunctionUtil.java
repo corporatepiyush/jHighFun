@@ -447,15 +447,15 @@ public final class FunctionUtil {
             return reduce(iterable, accumulator);
         }
 
-        final List<T> outList = new CopyOnWriteArrayList<T>();
+        final List<T> outList = new LinkedList<T>();
         int noOfThread = taskList.size();
-        final Runnable[] threads = new Runnable[noOfThread];
+        final Callable[] threads = new Callable[noOfThread];
         final Future[] futures = new Future[noOfThread];
         final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
         int i = 0;
         for (final Collection<T> list2 : taskList) {
-            threads[i++] = new Runnable() {
-                public void run() {
+            threads[i++] = new Callable<T>() {
+                public T call() {
                     T accum = null;
                     Iterator<T> iterator = list2.iterator();
 
@@ -475,7 +475,7 @@ public final class FunctionUtil {
                             break;
                         }
                     }
-                    outList.add(accum);
+                    return accum;
                 }
             };
         }
@@ -483,11 +483,16 @@ public final class FunctionUtil {
         for (i = 1; i < noOfThread; i++) {
             futures[i] = highPriorityTaskThreadPool.submit(threads[i]);
         }
-        threads[0].run();
+        try {
+            outList.add((T)threads[0].call());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
 
         for (i = 1; i < noOfThread; i++) {
             try {
-                futures[i].get();
+                outList.add((T)futures[i].get());
             } catch (Throwable e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);

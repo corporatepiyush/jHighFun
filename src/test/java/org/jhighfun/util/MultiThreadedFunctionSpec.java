@@ -163,7 +163,7 @@ public class MultiThreadedFunctionSpec {
         }, FunctionUtil.parallel(3));
 
         assertTrue(reduceOutput == 10);
-        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Runnable.class));
+        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Callable.class));
 
     }
 
