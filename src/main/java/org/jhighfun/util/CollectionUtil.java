@@ -2,6 +2,7 @@ package org.jhighfun.util;
 
 import org.jhighfun.util.stream.AbstractStreamIterator;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -315,5 +316,16 @@ public final class CollectionUtil {
 
     public static <T> Iterable<T> Iterify(final AbstractStreamIterator<T> streamIterator) {
         return new IterableAdapter<T>(streamIterator);
+    }
+
+    public static <T> T[] MergeArrays(T[]... arrs) {
+        ArrayList<T> list = new ArrayList<T>();
+        for (T[] arr : arrs) {
+            for (T t : arr) {
+                list.add(t);
+            }
+        }
+        list.trimToSize();
+        return list.toArray(arrs[0]);
     }
 }
