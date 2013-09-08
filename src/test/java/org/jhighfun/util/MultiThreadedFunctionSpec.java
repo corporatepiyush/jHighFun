@@ -145,6 +145,29 @@ public class MultiThreadedFunctionSpec {
     }
 
     @Test
+    public void testEachWithContextFunctionWithThreads() {
+
+        List<Integer> list = new LinkedList<Integer>();
+        for (int i = 0; i < 1000; i++) {
+            list.add(i);
+        }
+
+        final List<Integer> temp = new CopyOnWriteArrayList<Integer>();
+
+        FunctionUtil.each(list, new RecordWithContextProcessor<Integer>() {
+            public void process(Integer item, ParallelLoopExecutionContext context) {
+                temp.add(item);
+            }
+        }, FunctionUtil.parallel(5));
+
+        for (int i = 0; i < 1000; i++) {
+            assertTrue(temp.contains(i));
+        }
+
+        verify(spyHighPriorityTaskThreadPool, times(4)).submit(any(Runnable.class));
+    }
+
+    @Test
     public void testReduceWithNoOfThreads() {
 
         List<Integer> list = new LinkedList<Integer>();

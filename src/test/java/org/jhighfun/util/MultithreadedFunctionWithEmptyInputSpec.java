@@ -12,7 +12,11 @@ import java.util.concurrent.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -94,6 +98,21 @@ public class MultithreadedFunctionWithEmptyInputSpec {
 
         FunctionUtil.each(list, new RecordProcessor<Integer>() {
             public void process(Integer item) {
+                temp.add(item);
+            }
+        }, FunctionUtil.parallel(5));
+
+    }
+
+    @Test
+    public void testEachWithContextFunctionWithThreads() {
+
+        List<Integer> list = new LinkedList<Integer>();
+
+        final List<Integer> temp = new CopyOnWriteArrayList<Integer>();
+
+        FunctionUtil.each(list, new RecordWithContextProcessor<Integer>() {
+            public void process(Integer item, ParallelLoopExecutionContext context) {
                 temp.add(item);
             }
         }, FunctionUtil.parallel(5));

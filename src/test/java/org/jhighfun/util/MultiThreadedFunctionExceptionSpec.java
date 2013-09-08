@@ -105,6 +105,26 @@ public class MultiThreadedFunctionExceptionSpec {
     }
 
     @Test(expected = RuntimeException.class)
+    public void testEachWithContextFunctionWithThreads() {
+
+        List<Integer> list = new LinkedList<Integer>();
+        for (int i = 0; i < 1000; i++) {
+            list.add(i);
+        }
+
+        final List<Integer> temp = new CopyOnWriteArrayList<Integer>();
+
+        FunctionUtil.each(list, new RecordWithContextProcessor<Integer>() {
+            public void process(Integer item, ParallelLoopExecutionContext context) {
+                if (item.equals(50)) throw new RuntimeException();
+                temp.add(item);
+            }
+        }, FunctionUtil.parallel(5));
+
+    }
+
+
+    @Test(expected = RuntimeException.class)
     public void testReduceWithNoOfThreads() {
 
         List<Integer> list = new LinkedList<Integer>();

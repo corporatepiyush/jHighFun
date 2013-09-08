@@ -921,6 +921,19 @@ public final class FunctionUtil {
     public static <T> void each(Iterable<T> iterable, final RecordWithContextProcessor<T> recordProcessor, WorkDivisionStrategy workDivisionStrategy) {
         final Collection<Collection<T>> taskList = workDivisionStrategy.divide(iterable);
         final ParallelLoopExecutionContext context = new ParallelLoopExecutionContext();
+
+        if (taskList.size() < 2) {
+            if (taskList.isEmpty()) {
+                return;
+            } else {
+                Collection<T> collection = taskList.iterator().next();
+                for (T taskInput : collection) {
+                    recordProcessor.process(taskInput, context);
+                }
+                return;
+            }
+        }
+
         final int noOfThread = taskList.size();
         final Runnable[] threads = new Runnable[noOfThread];
         final Future[] futures = new Future[noOfThread];
@@ -930,10 +943,10 @@ public final class FunctionUtil {
         for (final Collection<T> list2 : taskList) {
             threads[i++] = new Runnable() {
                 public void run() {
-                    for (T task : list2) {
+                    for (T taskInput : list2) {
                         if (exception.get() == null && !context.isInterrupted()) {
                             try {
-                                recordProcessor.process(task, context);
+                                recordProcessor.process(taskInput, context);
                                 context.incrementRecordExecutionCount();
                             } catch (Throwable e) {
                                 exception.set(e);
