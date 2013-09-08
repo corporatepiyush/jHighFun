@@ -484,7 +484,7 @@ public final class FunctionUtil {
             futures[i] = highPriorityTaskThreadPool.submit(threads[i]);
         }
         try {
-            outList.add((T)threads[0].call());
+            outList.add((T) threads[0].call());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -492,7 +492,7 @@ public final class FunctionUtil {
 
         for (i = 1; i < noOfThread; i++) {
             try {
-                outList.add((T)futures[i].get());
+                outList.add((T) futures[i].get());
             } catch (Throwable e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
@@ -629,11 +629,20 @@ public final class FunctionUtil {
     }
 
     public static <T> boolean every(Iterable<T> iterable, Function<T, Boolean> predicate) {
-        for (T t : iterable) {
-            if (!predicate.apply(t))
-                return false;
+        boolean every = false;
+        Iterator<T> iterator = iterable.iterator();
+        if (iterator.hasNext()) {
+            every = true;
+            if (!predicate.apply(iterator.next()))
+                every = false;
         }
-        return true;
+        if (every) {
+            while (iterator.hasNext()) {
+                if (!predicate.apply(iterator.next()))
+                    every = false;
+            }
+        }
+        return every;
     }
 
     public static <T> boolean every(Iterable<T> iterable, final Function<T, Boolean> predicate, WorkDivisionStrategy workDivisionStrategy) {
@@ -1261,32 +1270,62 @@ public final class FunctionUtil {
         return new ForkAndJoin<T>(object);
     }
 
-    public static <T> void divideAndConquer(Iterable<T> iterable, final Task<Collection<T>> task, WorkDivisionStrategy partition) {
-        final Collection<Collection<T>> collections = partition.divide(iterable);
-        each(collections, new RecordProcessor<Collection<T>>() {
-            public void process(Collection<T> items) {
-                task.execute(items);
-            }
-        }, parallel(collections.size()));
+    public static <T> void divideAndConquer(Iterable<T> iterable, final Task<Collection<T>> task, WorkDivisionStrategy workDivisionStrategy) {
+        final Collection<Collection<T>> collections = workDivisionStrategy.divide(iterable);
+        if (collections.size() < 2) {
+            each(collections, new RecordProcessor<Collection<T>>() {
+                public void process(Collection<T> items) {
+                    task.execute(items);
+                }
+            });
+        } else {
+            each(collections, new RecordProcessor<Collection<T>>() {
+                public void process(Collection<T> items) {
+                    task.execute(items);
+                }
+            }, parallel(collections.size()));
+        }
     }
 
     public static <IN, OUT> Collection<OUT> divideAndConquer(Iterable<IN> iterable, final Function<Collection<IN>, Collection<OUT>> function, WorkDivisionStrategy workDivisionStrategy) {
         Collection<Collection<IN>> collections = workDivisionStrategy.divide(iterable);
-        return chain(collections)
-                .map(function, parallel(collections.size()))
-                .flatMap(new Function<Collection<OUT>, Iterable<OUT>>() {
-                    @Override
-                    public Iterable<OUT> apply(Collection<OUT> collection1) {
-                        return collection1;
-                    }
-                })
-                .extract();
+        if (collections.size() < 2) {
+            return chain(collections)
+                    .map(function)
+                    .flatMap(new Function<Collection<OUT>, Iterable<OUT>>() {
+                        @Override
+                        public Iterable<OUT> apply(Collection<OUT> collection1) {
+                            return collection1;
+                        }
+                    })
+                    .extract();
+        } else {
+            return chain(collections)
+                    .map(function, parallel(collections.size()))
+                    .flatMap(new Function<Collection<OUT>, Iterable<OUT>>() {
+                        @Override
+                        public Iterable<OUT> apply(Collection<OUT> collection1) {
+                            return collection1;
+                        }
+                    })
+                    .extract();
+        }
     }
 
     public static <IN, OUT> Collection<OUT> divideAndConquer(Iterable<IN> iterable, final FunctionWithContext<Collection<IN>, Collection<OUT>> function, WorkDivisionStrategy workDivisionStrategy) {
         final Collection<Collection<IN>> taskList = workDivisionStrategy.divide(iterable);
         final ParallelLoopExecutionContext context = new ParallelLoopExecutionContext();
         final int noOfThread = taskList.size();
+
+        if (noOfThread < 2) {
+            if (taskList.isEmpty()) {
+                return new LinkedList<OUT>();
+            } else {
+                Iterator<Collection<IN>> iterator = taskList.iterator();
+                return function.apply(new Tuple2<Collection<IN>, ParallelLoopExecutionContext>(iterator.next(), context));
+            }
+        }
+
         final Callable[] threads = new Callable[noOfThread];
         final Future[] futures = new Future[noOfThread];
         final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
