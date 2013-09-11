@@ -997,6 +997,10 @@ public final class FunctionUtil {
         return new TaskStream<I>(iterator);
     }
 
+    public static <I> TaskStream<I> taskStream(I[] arr) {
+        return new TaskStream<I>(CollectionUtil.Iterify(arr));
+    }
+
     public static <INIT, IN> TaskStream<IN> lazyTaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
         return new TaskStream<IN>(initialInput, function, predicate);
     }
@@ -1147,6 +1151,14 @@ public final class FunctionUtil {
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
+            }
+        });
+    }
+
+    public static <T> Future<T> executeAsync(final Callable<T> callable) {
+        return highPriorityTaskThreadPool.submit(new Callable<T>() {
+            public T call() throws Exception {
+                return callable.call();
             }
         });
     }
@@ -1495,14 +1507,6 @@ public final class FunctionUtil {
             list.add(i);
         }
         return map;
-    }
-
-    public static <T> Future<T> executeAsync(final Callable<T> callable) {
-        return highPriorityTaskThreadPool.submit(new Callable<T>() {
-            public T call() throws Exception {
-                return callable.call();
-            }
-        });
     }
 
 }

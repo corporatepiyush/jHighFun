@@ -1,5 +1,7 @@
 package org.jhighfun.util;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -7,8 +9,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ParallelLoopExecutionContext {
 
-    private volatile AtomicBoolean interrupted = new AtomicBoolean(false);
-    private volatile AtomicInteger recordCount = new AtomicInteger(0);
+    private AtomicBoolean interrupted = new AtomicBoolean(false);
+    private volatile Map<Long, Integer> recordCountMap = new HashMap<Long, Integer>();
     private final Lock lock = new ReentrantLock(true);
 
     public void endLoop() {
@@ -20,23 +22,29 @@ public class ParallelLoopExecutionContext {
     }
 
     void incrementRecordExecutionCount() {
-        recordCount.getAndIncrement();
+        incrementRecordExecutionCountBy(1);
     }
 
     void incrementRecordExecutionCountBy(int newCount) {
-        recordCount.getAndSet(newCount);
+        long threadId = Thread.currentThread().getId();
+        Integer currentCount = this.recordCountMap.get(threadId);
+        this.recordCountMap.put(threadId, currentCount == null ? 1 : currentCount + newCount);
     }
 
     public int currentRecordExecutionCount() {
-        return recordCount.get();
+        int count = 0;
+        for (Map.Entry<Long, Integer> entry : this.recordCountMap.entrySet()) {
+            count += entry.getValue();
+        }
+        return count;
     }
 
     public void executeAtomic(Block block) {
-        lock.lock();
+        this.lock.lock();
         try {
             block.execute();
         } finally {
-            lock.unlock();
+            this.lock.unlock();
         }
     }
 

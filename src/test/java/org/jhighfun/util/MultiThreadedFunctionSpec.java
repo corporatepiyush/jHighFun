@@ -252,6 +252,28 @@ public class MultiThreadedFunctionSpec {
 
     }
 
+    @Test
+    public void testDivideAndConquerWithFunctionContext() {
+        List<Integer> list = new LinkedList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+
+        Collection<Integer> integers = FunctionUtil.divideAndConquer(list, new FunctionWithContext<Collection<Integer>, Collection<Integer>>() {
+
+            @Override
+            public Collection<Integer> apply(Tuple2<Collection<Integer>, ParallelLoopExecutionContext> tuple2) {
+                return tuple2._1;
+            }
+        }, FunctionUtil.parallel(3));
+
+        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Callable.class));
+        assertEquals(integers, list);
+
+    }
+
 
     @Test
     public void testEveryFunction() {

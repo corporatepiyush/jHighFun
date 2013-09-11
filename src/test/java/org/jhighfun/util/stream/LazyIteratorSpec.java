@@ -15,7 +15,7 @@ public class LazyIteratorSpec {
     @Test
     public void test() {
 
-        final int load = 99999999;
+        final int load = 10000;
         LazyStreamIterator<Integer, Integer> lazyIterator = new LazyStreamIterator<Integer, Integer>(1,
                 new Function<Integer, Tuple2<Integer, Integer>>() {
                     public Tuple2<Integer, Integer> apply(Integer arg) {

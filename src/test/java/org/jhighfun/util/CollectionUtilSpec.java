@@ -197,7 +197,7 @@ public class CollectionUtilSpec {
     @Test
     public void testMergeArrays() {
         String[] strings = MergeArrays(new String[]{"1", "2"}, new String[]{"3", "4"});
-        assertEquals(new String[] {"1", "2", "3", "4"}, strings);
+        assertEquals(new String[]{"1", "2", "3", "4"}, strings);
     }
 
 }
