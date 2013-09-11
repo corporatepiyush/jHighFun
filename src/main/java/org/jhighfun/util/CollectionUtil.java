@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class CollectionUtil {
     public static <T> List<T> List(T... args) {
-        final List<T> argsList = new LinkedList<T>();
+        final List<T> argsList = new ArrayList<T>();
         for (T arg : args) {
             argsList.add(arg);
         }
@@ -53,7 +53,7 @@ public final class CollectionUtil {
     }
 
     public static <T> Set<T> Set(T... args) {
-        final Set<T> set = new LinkedHashSet<T>();
+        final Set<T> set = new HashSet<T>();
         for (T arg : args) {
             set.add(arg);
         }
