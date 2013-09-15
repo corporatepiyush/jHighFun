@@ -130,6 +130,8 @@ public class TaskStream<IN> {
             throw new RuntimeException(e);
         }
 
+        this.iterator.closeResources();
+
         if (exception._2 != null) {
             throw new RuntimeException(exception._2);
         }
@@ -147,14 +149,24 @@ public class TaskStream<IN> {
 
     public List<IN> extract() {
         final List<IN> list = new LinkedList<IN>();
-        while (this.iterator.hasNext()) {
-            list.add(this.iterator.next());
+        try {
+            while (this.iterator.hasNext()) {
+                list.add(this.iterator.next());
+            }
+        } finally {
+            this.iterator.closeResources();
         }
         return list;
     }
 
     public <O> O extract(Function<AbstractStreamIterator<IN>, O> extractor) {
-        return extractor.apply(this.iterator);
+        O result;
+        try {
+            result = extractor.apply(this.iterator);
+        } finally {
+            this.iterator.closeResources();
+        }
+        return result;
     }
 
 }

@@ -6,7 +6,7 @@ import org.jhighfun.util.Task;
 public class ExecutorStreamIterator<T> extends AbstractStreamIterator<T> {
 
     private final AbstractStreamIterator<T> executorIterator;
-    private final Task<T> task;
+    private Task<T> task;
 
     public ExecutorStreamIterator(AbstractStreamIterator<T> iterator, Task<T> task) {
         this.executorIterator = iterator;
@@ -22,4 +22,11 @@ public class ExecutorStreamIterator<T> extends AbstractStreamIterator<T> {
         task.execute(next);
         return next;
     }
+
+    @Override
+    public void closeResources() {
+        this.task = null;
+        this.executorIterator.closeResources();
+    }
+
 }

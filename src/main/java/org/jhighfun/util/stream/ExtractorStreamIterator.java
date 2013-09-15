@@ -9,7 +9,7 @@ import java.util.List;
 public class ExtractorStreamIterator<T> extends AbstractStreamIterator<List<T>> {
 
     private final AbstractStreamIterator<T> iterator;
-    private final Function<List<T>, Boolean> function;
+    private Function<List<T>, Boolean> function;
 
     private List<T> current;
 
@@ -44,5 +44,13 @@ public class ExtractorStreamIterator<T> extends AbstractStreamIterator<List<T>> 
 
     public List<T> next() {
         return this.current;
+    }
+
+    @Override
+    public void closeResources() {
+        this.function = null;
+        if (this.current != null)
+            this.current.clear();
+        this.iterator.closeResources();
     }
 }

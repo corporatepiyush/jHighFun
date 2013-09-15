@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 public final class ConditionalStreamIterator<T> extends AbstractStreamIterator<T> {
 
     private final AbstractStreamIterator<T> conditionalIterator;
-    private final Function<T, Boolean> predicate;
+    private Function<T, Boolean> predicate;
     private T current;
     private Task<T> task;
 
@@ -61,6 +61,14 @@ public final class ConditionalStreamIterator<T> extends AbstractStreamIterator<T
             this.current = null;
             return current;
         }
+    }
+
+    @Override
+    public void closeResources() {
+        this.predicate = null;
+        this.task = null;
+        this.current = null;
+        this.conditionalIterator.closeResources();
     }
 
 }

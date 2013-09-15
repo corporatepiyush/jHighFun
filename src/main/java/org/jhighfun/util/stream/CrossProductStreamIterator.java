@@ -12,7 +12,6 @@ public class CrossProductStreamIterator<T, O> extends AbstractStreamIterator<Tup
     private boolean secondIteratorListInitialized = false;
     private boolean secondIteratorInProgress = false;
     private List<O> secondIteratorList = new LinkedList<O>();
-
     private Tuple2<T, O> tuple2 = new Tuple2<T, O>(null, null);
 
     public CrossProductStreamIterator(AbstractStreamIterator<T> iterator, AbstractStreamIterator<O> secondIterator) {
@@ -56,5 +55,13 @@ public class CrossProductStreamIterator<T, O> extends AbstractStreamIterator<Tup
     @Override
     public Tuple2<T, O> next() {
         return tuple2;
+    }
+
+    @Override
+    public void closeResources() {
+        this.tuple2 = null;
+        this.secondIteratorList.clear();
+        this.iterator.closeResources();
+        this.secondIterator.closeResources();
     }
 }

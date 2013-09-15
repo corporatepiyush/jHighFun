@@ -8,8 +8,7 @@ import java.util.Iterator;
 public class ExpansionStreamIterator<IN, OUT> extends AbstractStreamIterator<OUT> {
 
     private final AbstractStreamIterator<IN> expansionIterator;
-    private final Function<IN, Iterable<OUT>> function;
-
+    private Function<IN, Iterable<OUT>> function;
     private Iterator<OUT> currentIterator;
     private Boolean innerIteratorExhausted = true;
 
@@ -34,6 +33,13 @@ public class ExpansionStreamIterator<IN, OUT> extends AbstractStreamIterator<OUT
 
     public final OUT next() {
         return this.currentIterator.next();
+    }
+
+    @Override
+    public void closeResources() {
+        this.function = null;
+        this.currentIterator = null;
+        this.expansionIterator.closeResources();
     }
 
 }

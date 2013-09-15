@@ -42,4 +42,9 @@ public class ConcurrentStreamIterator<T> extends AbstractStreamIterator<T> {
         }
     }
 
+    @Override
+    public void closeResources() {
+        this.iterator.closeResources();
+    }
+
 }

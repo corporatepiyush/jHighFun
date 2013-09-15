@@ -33,4 +33,10 @@ public class BufferStreamIterator<T> extends AbstractStreamIterator<T> {
         return this.buffer.remove(0);
     }
 
+    @Override
+    public void closeResources() {
+        this.buffer.clear();
+        this.iterator.closeResources();
+    }
+
 }

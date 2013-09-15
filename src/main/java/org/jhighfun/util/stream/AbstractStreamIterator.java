@@ -14,4 +14,11 @@ public abstract class AbstractStreamIterator<T> {
         else
             throw new NoSuchElementException();
     }
+
+    public abstract void closeResources();
+
+    @Override
+    public void finalize() {
+        closeResources();
+    }
 }

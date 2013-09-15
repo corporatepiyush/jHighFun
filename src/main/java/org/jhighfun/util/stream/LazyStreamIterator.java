@@ -12,8 +12,8 @@ import org.jhighfun.util.Tuple2;
 public class LazyStreamIterator<INIT, OBJ> extends AbstractStreamIterator<OBJ> {
 
     protected INIT initialInput;
-    protected final Function<INIT, Tuple2<INIT, OBJ>> function;
-    protected final Function<INIT, Boolean> predicate;
+    protected Function<INIT, Tuple2<INIT, OBJ>> function;
+    protected Function<INIT, Boolean> predicate;
 
     private boolean iterationInProgress = false;
     private boolean hasNext;
@@ -35,6 +35,13 @@ public class LazyStreamIterator<INIT, OBJ> extends AbstractStreamIterator<OBJ> {
         this.initialInput = tuple2._1;
         this.iterationInProgress = false;
         return tuple2._2;
+    }
+
+    @Override
+    public void closeResources() {
+        this.initialInput = null;
+        this.predicate = null;
+        this.function = null;
     }
 
     private void checkIfIterationInProgress() {

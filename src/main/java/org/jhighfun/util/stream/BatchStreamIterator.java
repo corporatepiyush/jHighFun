@@ -35,4 +35,9 @@ public class BatchStreamIterator<T> extends AbstractStreamIterator<List<T>> {
         return batch;
     }
 
+    @Override
+    public void closeResources() {
+        this.batchIterator.closeResources();
+    }
+
 }

@@ -5,10 +5,8 @@ import org.jhighfun.util.Tuple2;
 
 public class MapperWithCarryOverStreamIterator<IN, OUT, CARRY> extends AbstractStreamIterator<OUT> {
 
-
     private final AbstractStreamIterator<IN> mapperWithCarryOverIterator;
-    private final Function<Tuple2<CARRY, IN>, Tuple2<CARRY, OUT>> function;
-
+    private Function<Tuple2<CARRY, IN>, Tuple2<CARRY, OUT>> function;
     private CARRY carryOver;
     private Tuple2<CARRY, IN> input = new Tuple2<CARRY, IN>(null, null);
 
@@ -28,5 +26,13 @@ public class MapperWithCarryOverStreamIterator<IN, OUT, CARRY> extends AbstractS
         Tuple2<CARRY, OUT> result = this.function.apply(this.input);
         this.carryOver = result._1;
         return result._2;
+    }
+
+    @Override
+    public void closeResources() {
+        this.input = null;
+        this.carryOver = null;
+        this.function = null;
+        this.mapperWithCarryOverIterator.closeResources();
     }
 }

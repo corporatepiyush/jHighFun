@@ -23,4 +23,8 @@ public class AbstractStreamIteratorAdapter<T> extends AbstractStreamIterator<T> 
     public T next() {
         return this.iterator.next();
     }
+
+    public void closeResources() {
+
+    }
 }
