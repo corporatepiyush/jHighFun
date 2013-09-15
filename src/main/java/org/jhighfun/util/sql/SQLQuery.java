@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 
 public final class SQLQuery {
 
@@ -48,6 +49,64 @@ public final class SQLQuery {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Exception while executing sql prepared statement", e);
+        }
+    }
+
+    public <T> int executeUpdate() {
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+            return statement.executeUpdate(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Exception while executing sql prepared statement", e);
+        } finally {
+            SqlDataStore.closeStatement(statement);
+            SqlDataStore.closeConnection(connection);
+        }
+    }
+
+    public <T> int executeUpdate(Object[] dynamicArgs) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(sql);
+            for (int i = 0; i < dynamicArgs.length; i++) {
+                statement.setObject(i + 1, dynamicArgs[i]);
+            }
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Exception while executing sql prepared statement", e);
+        } finally {
+            SqlDataStore.closeStatement(statement);
+            SqlDataStore.closeConnection(connection);
+        }
+    }
+
+
+    public <T> int executeBatchUpdate(List<Object[]> dynamicArgsList) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(sql);
+            for (Object[] dynamicArgs : dynamicArgsList) {
+                for (int i = 0; i < dynamicArgs.length; i++) {
+                    statement.setObject(i + 1, dynamicArgs[i]);
+                }
+                statement.addBatch();
+            }
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Exception while executing sql prepared statement", e);
+        } finally {
+            SqlDataStore.closeStatement(statement);
+            SqlDataStore.closeConnection(connection);
         }
     }
 
