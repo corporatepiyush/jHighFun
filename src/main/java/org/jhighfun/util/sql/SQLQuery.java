@@ -52,7 +52,7 @@ public final class SQLQuery {
         }
     }
 
-    public <T> int executeUpdate() {
+    public int executeUpdate() {
         Connection connection = null;
         Statement statement = null;
         try {
@@ -68,7 +68,7 @@ public final class SQLQuery {
         }
     }
 
-    public <T> int executeUpdate(Object[] dynamicArgs) {
+    public int executeUpdate(Object[] dynamicArgs) {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
@@ -88,7 +88,7 @@ public final class SQLQuery {
     }
 
 
-    public <T> int executeBatchUpdate(List<Object[]> dynamicArgsList) {
+    public int executeBatchUpdate(List<Object[]> dynamicArgsList) {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
