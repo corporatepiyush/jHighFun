@@ -16,7 +16,7 @@ public class LazyIteratorSpec {
     public void test() {
 
         final int load = 10000;
-        LazyStreamIterator<Integer, Integer> lazyIterator = new LazyStreamIterator<Integer, Integer>(1,
+        DynamicStreamIterator<Integer, Integer> lazyIterator = new DynamicStreamIterator<Integer, Integer>(1,
                 new Function<Integer, Tuple2<Integer, Integer>>() {
                     public Tuple2<Integer, Integer> apply(Integer arg) {
                         return tuple(arg + 1, arg);

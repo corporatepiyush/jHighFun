@@ -14,55 +14,55 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 
 public final class CollectionUtil {
-    public static <T> List<T> List(T... args) {
-        final List<T> argsList = new ArrayList<T>();
-        for (T arg : args) {
+    public static List List(Object... args) {
+        final List argsList = new ArrayList();
+        for (Object arg : args) {
             argsList.add(arg);
         }
         return argsList;
     }
 
-    public static <T> List<T> SafeList(T... args) {
-        final List<T> argsList = new CopyOnWriteArrayList<T>();
-        for (T arg : args) {
+    public static List SafeList(Object... args) {
+        final List argsList = new CopyOnWriteArrayList();
+        for (Object arg : args) {
             argsList.add(arg);
         }
         return argsList;
     }
 
-    public static <T> List<T> FlattenList(Iterable<T>... listArgs) {
-        final List<T> flattenList = new LinkedList<T>();
-        for (Iterable<T> collection : listArgs) {
-            for (T t : collection) {
-                flattenList.add(t);
+    public static List FlattenList(Iterable... listArgs) {
+        final List flattenList = new LinkedList();
+        for (Iterable collection : listArgs) {
+            for (Object object : collection) {
+                flattenList.add(object);
             }
         }
         return flattenList;
     }
 
 
-    public static <T> List<T> FlattenSafeList(Iterable<T>... listArgs) {
-        final List<T> flattenList = new CopyOnWriteArrayList<T>();
-        for (Iterable<T> collection : listArgs) {
-            for (T obj : collection) {
+    public static List FlattenSafeList(Iterable... listArgs) {
+        final List flattenList = new CopyOnWriteArrayList();
+        for (Iterable collection : listArgs) {
+            for (Object obj : collection) {
                 flattenList.add(obj);
             }
         }
         return flattenList;
     }
 
-    public static <T> Set<T> Set(T... args) {
-        final Set<T> set = new HashSet<T>();
-        for (T arg : args) {
+    public static Set Set(Object... args) {
+        final Set set = new HashSet();
+        for (Object arg : args) {
             set.add(arg);
         }
         return set;
     }
 
-    public static <T> Set<T> FlattenSet(Iterable<T>... setArgs) {
-        final Set<T> flattenSet = new LinkedHashSet<T>();
-        for (Iterable<T> collection : setArgs) {
-            for (T obj : collection) {
+    public static Set FlattenSet(Iterable... setArgs) {
+        final Set flattenSet = new LinkedHashSet();
+        for (Iterable collection : setArgs) {
+            for (Object obj : collection) {
                 flattenSet.add(obj);
             }
         }

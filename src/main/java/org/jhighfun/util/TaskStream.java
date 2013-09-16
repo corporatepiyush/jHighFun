@@ -27,7 +27,11 @@ public class TaskStream<IN> {
     }
 
     public <INIT> TaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
-        this.iterator = new LazyStreamIterator<INIT, IN>(initialInput, function, predicate);
+        this.iterator = new DynamicStreamIterator<INIT, IN>(initialInput, function, predicate);
+    }
+
+    public <OUT> TaskStream<OUT> map(Function<IN, OUT> function) {
+        return new TaskStream<OUT>(new MapperStreamIterator<IN, OUT>(this.iterator, function));
     }
 
     public <OUT> TaskStream<OUT> flatMap(Function<IN, Iterable<OUT>> function) {
@@ -42,12 +46,20 @@ public class TaskStream<IN> {
         return new TaskStream<IN>(new BufferedStreamIterator<IN>(this.iterator, bufferSize));
     }
 
-    public <OUT> TaskStream<OUT> map(Function<IN, OUT> function) {
-        return new TaskStream<OUT>(new MapperStreamIterator<IN, OUT>(this.iterator, function));
-    }
-
     public <OUT, CARRY> TaskStream<OUT> collectWithCarryOver(CARRY initialValue, Function<Tuple2<CARRY, IN>, Tuple2<CARRY, OUT>> function) {
         return new TaskStream<OUT>(new MapperWithCarryOverStreamIterator<IN, OUT, CARRY>(this.iterator, initialValue, function));
+    }
+
+    public <ACCUM> ObjectFunctionChain<ACCUM> reduce(ACCUM initialValue, Accumulator<ACCUM, IN> accumulator) {
+        ACCUM accumulationResult = initialValue;
+        try {
+            while (this.iterator.hasNext()) {
+                accumulationResult = accumulator.accumulate(accumulationResult, this.iterator.next());
+            }
+        } finally {
+            this.iterator.closeResources();
+        }
+        return new ObjectFunctionChain<ACCUM>(accumulationResult);
     }
 
     public TaskStream<IN> filter(Function<IN, Boolean> function) {

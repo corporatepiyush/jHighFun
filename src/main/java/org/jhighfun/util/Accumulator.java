@@ -3,7 +3,7 @@ package org.jhighfun.util;
 import org.jhighfun.util.memoize.BasicAccumulatorMemoizer;
 
 /**
- * A monoid function which accepts carry over as first and current element of Iterable structure
+ * A SAM which accepts carry over as first and current element of Iterable structure
  * as second input element and returns carry over
  *
  * @author Piyush Katariya

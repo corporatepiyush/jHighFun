@@ -9,7 +9,7 @@ import org.jhighfun.util.Tuple2;
  *
  * @author Piyush Katariya
  */
-public class LazyStreamIterator<INIT, OBJ> extends AbstractStreamIterator<OBJ> {
+public class DynamicStreamIterator<INIT, OBJ> extends AbstractStreamIterator<OBJ> {
 
     protected INIT initialInput;
     protected Function<INIT, Tuple2<INIT, OBJ>> function;
@@ -18,7 +18,7 @@ public class LazyStreamIterator<INIT, OBJ> extends AbstractStreamIterator<OBJ> {
     private boolean iterationInProgress = false;
     private boolean hasNext;
 
-    public LazyStreamIterator(INIT initialInput, Function<INIT, Tuple2<INIT, OBJ>> function, Function<INIT, Boolean> predicate) {
+    public DynamicStreamIterator(INIT initialInput, Function<INIT, Tuple2<INIT, OBJ>> function, Function<INIT, Boolean> predicate) {
         this.initialInput = initialInput;
         this.function = function;
         this.predicate = predicate;

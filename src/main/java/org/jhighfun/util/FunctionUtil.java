@@ -1017,7 +1017,7 @@ public final class FunctionUtil {
         return new TaskStream<Character>(new ReaderStreamIterator(inputStream));
     }
 
-    public static <INIT, IN> TaskStream<IN> lazyTaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
+    public static <INIT, IN> TaskStream<IN> dynamicTaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
         return new TaskStream<IN>(initialInput, function, predicate);
     }
 
