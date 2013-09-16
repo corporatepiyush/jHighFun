@@ -1,5 +1,7 @@
 package org.jhighfun.util.sql;
 
+import org.jhighfun.util.FileIOUtil;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,57 +29,22 @@ public final class ResultSetRow {
     }
 
     public byte[] getBlob(String columnName) {
-        InputStream binaryStream = null;
         try {
             Blob blob = this.resultSet.getBlob(columnName);
-            binaryStream = blob.getBinaryStream();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = binaryStream.read()) > 0) {
-                byteArrayOutputStream.write(buffer, 0, bytesRead);
-            }
-            binaryStream.close();
-            return byteArrayOutputStream.toByteArray();
+            return FileIOUtil.getBytesAndClose(blob.getBinaryStream());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Exception while accessing result row set invalid column index", e);
-        } finally {
-            try {
-                binaryStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Exception while closing blob input stream", e);
-            }
+            throw new RuntimeException("Exception while reading Blob from database.", e);
         }
     }
 
     public char[] getClob(String columnName) {
-        Reader charStream = null;
         try {
             Clob clob = this.resultSet.getClob(columnName);
-            charStream = clob.getCharacterStream();
-
-            StringBuilder charStore = new StringBuilder();
-            char[] buffer = new char[1024];
-            int charsRead;
-            while ((charsRead = charStream.read()) > 0) {
-                charStore.append(buffer, 0, charsRead);
-            }
-            charStream.close();
-            char[] extract = new char[charStore.length()];
-            charStore.getChars(0, charStore.length(), extract, 0);
-            return extract;
+            return FileIOUtil.getCharsAndClose(clob.getCharacterStream());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Exception while accessing result row set invalid column index", e);
-        } finally {
-            try {
-                charStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.err.println("Exception while closing clob input stream." + e.getMessage());
-            }
+            throw new RuntimeException("Exception while reading Clob from database.", e);
         }
     }
 }
