@@ -11,6 +11,14 @@ public final class WhenChecker<T> {
         this.input = input;
     }
 
+    public ThenExecutor<T> ifNull() {
+        return new ThenExecutor<T>(input, new Function<T, Boolean>() {
+            public Boolean apply(T arg) {
+                return input == null;
+            }
+        });
+    }
+
     public ThenExecutor<T> ifEquals(final T matchingInput) {
         return new ThenExecutor<T>(input, new Function<T, Boolean>() {
             public Boolean apply(T arg) {

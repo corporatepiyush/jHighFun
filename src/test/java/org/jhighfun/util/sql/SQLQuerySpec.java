@@ -101,7 +101,7 @@ public class SQLQuerySpec {
         when(mockStatement.getConnection()).thenReturn(mockConnection);
         when(mockResultSet.getStatement()).thenReturn(mockStatement);
 
-        TaskStream<String> taskStream = sqlQuery.executeDynamicQuery(new Object[]{20, 'M'},mockRowMapper);
+        TaskStream<String> taskStream = sqlQuery.executeDynamicQuery(new Object[]{20, 'M'}, mockRowMapper);
 
         verify(mockStatement, times(1)).setObject(1, 20);
         verify(mockStatement, times(1)).setObject(2, 'M');

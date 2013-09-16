@@ -1,8 +1,8 @@
 package org.jhighfun.util.stream;
 
 import org.jhighfun.util.Function;
+import org.jhighfun.util.SQLUtil;
 import org.jhighfun.util.sql.ResultSetRow;
-import org.jhighfun.util.sql.SqlDataStore;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -61,8 +61,8 @@ public class SqlResultSetStreamIterator<T> extends AbstractStreamIterator<T> {
     }
 
     public void closeResources() {
-        SqlDataStore.closeStatement(this.statement);
-        SqlDataStore.closeConnection(this.connection);
+        SQLUtil.closeStatement(this.statement);
+        SQLUtil.closeConnection(this.connection);
     }
 
 

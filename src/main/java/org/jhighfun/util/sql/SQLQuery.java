@@ -1,14 +1,12 @@
 package org.jhighfun.util.sql;
 
 import org.jhighfun.util.Function;
+import org.jhighfun.util.SQLUtil;
 import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.stream.SqlResultSetStreamIterator;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 public final class SQLQuery {
@@ -37,14 +35,14 @@ public final class SQLQuery {
 
     public <T> TaskStream<T> executeDynamicQuery(Object[] dynamicArgs, Function<ResultSetRow, T> rowMapper) {
         Connection connection = null;
-        PreparedStatement statement = null;
+        PreparedStatement preparedStatement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement(sql);
+            preparedStatement = connection.prepareStatement(sql);
             for (int i = 0; i < dynamicArgs.length; i++) {
-                statement.setObject(i + 1, dynamicArgs[i]);
+                preparedStatement.setObject(i + 1, dynamicArgs[i]);
             }
-            ResultSet resultSet = statement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
             return new TaskStream<T>(new SqlResultSetStreamIterator(resultSet, rowMapper));
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,50 +61,59 @@ public final class SQLQuery {
             e.printStackTrace();
             throw new RuntimeException("Exception while executing sql prepared statement", e);
         } finally {
-            SqlDataStore.closeStatement(statement);
-            SqlDataStore.closeConnection(connection);
+            SQLUtil.closeStatement(statement);
+            SQLUtil.closeConnection(connection);
         }
     }
 
     public int executeUpdate(Object[] dynamicArgs) {
         Connection connection = null;
-        PreparedStatement statement = null;
+        PreparedStatement preparedStatement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement(sql);
+            preparedStatement = connection.prepareStatement(sql);
             for (int i = 0; i < dynamicArgs.length; i++) {
-                statement.setObject(i + 1, dynamicArgs[i]);
+                preparedStatement.setObject(i + 1, dynamicArgs[i]);
             }
-            return statement.executeUpdate();
+            return preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Exception while executing sql prepared statement", e);
         } finally {
-            SqlDataStore.closeStatement(statement);
-            SqlDataStore.closeConnection(connection);
+            SQLUtil.closeStatement(preparedStatement);
+            SQLUtil.closeConnection(connection);
         }
     }
 
 
-    public int executeBatchUpdate(List<Object[]> dynamicArgsList) {
+    public int[] executeBatchUpdate(List<Object[]> dynamicArgsList) {
         Connection connection = null;
-        PreparedStatement statement = null;
+        PreparedStatement preparedStatement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement(sql);
+            preparedStatement = connection.prepareStatement(sql);
+            connection.setAutoCommit(false);
             for (Object[] dynamicArgs : dynamicArgsList) {
                 for (int i = 0; i < dynamicArgs.length; i++) {
-                    statement.setObject(i + 1, dynamicArgs[i]);
+                    preparedStatement.setObject(i + 1, dynamicArgs[i]);
                 }
-                statement.addBatch();
+                preparedStatement.addBatch();
             }
-            return statement.executeUpdate();
+            int[] rowsUpdated = preparedStatement.executeBatch();
+            connection.commit();
+            connection.setAutoCommit(true);
+            return rowsUpdated;
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Exception while executing sql prepared statement", e);
         } finally {
-            SqlDataStore.closeStatement(statement);
-            SqlDataStore.closeConnection(connection);
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            SQLUtil.closeStatement(preparedStatement);
+            SQLUtil.closeConnection(connection);
         }
     }
 
