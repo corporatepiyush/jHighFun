@@ -39,7 +39,7 @@ public class TaskStream<IN> {
     }
 
     public TaskStream<IN> _buffer(int bufferSize) {
-        return new TaskStream<IN>(new BufferStreamIterator<IN>(this.iterator, bufferSize));
+        return new TaskStream<IN>(new BufferedStreamIterator<IN>(this.iterator, bufferSize));
     }
 
     public <OUT> TaskStream<OUT> map(Function<IN, OUT> function) {

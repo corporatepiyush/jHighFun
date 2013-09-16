@@ -6,7 +6,11 @@ import org.jhighfun.internal.ThreadPoolFactory;
 import org.jhighfun.util.matcher.WhenChecker;
 import org.jhighfun.util.memoize.*;
 import org.jhighfun.util.stream.AbstractStreamIterator;
+import org.jhighfun.util.stream.InputStreamIterator;
+import org.jhighfun.util.stream.ReaderStreamIterator;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -999,6 +1003,18 @@ public final class FunctionUtil {
 
     public static <I> TaskStream<I> taskStream(I[] arr) {
         return new TaskStream<I>(CollectionUtil.Iterify(arr));
+    }
+
+    public static TaskStream<Byte> taskByteStream(InputStream inputStream) {
+        return new TaskStream<Byte>(new InputStreamIterator(inputStream));
+    }
+
+    public static TaskStream<Character> taskCharacterStream(Reader reader) {
+        return new TaskStream<Character>(new ReaderStreamIterator(reader));
+    }
+
+    public static TaskStream<Character> taskCharacterStream(InputStream inputStream) {
+        return new TaskStream<Character>(new ReaderStreamIterator(inputStream));
     }
 
     public static <INIT, IN> TaskStream<IN> lazyTaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {

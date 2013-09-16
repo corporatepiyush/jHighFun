@@ -17,7 +17,7 @@ public class BufferIteratorSpec {
             list.add(i);
         }
 
-        BufferStreamIterator<Integer> iterator = new BufferStreamIterator<Integer>(new AbstractStreamIteratorAdapter<Integer>(list.iterator()), 512);
+        BufferedStreamIterator<Integer> iterator = new BufferedStreamIterator<Integer>(new AbstractStreamIteratorAdapter<Integer>(list.iterator()), 512);
 
         Integer i = 0;
         while (iterator.hasNext()) {

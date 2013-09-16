@@ -4,13 +4,13 @@ package org.jhighfun.util.stream;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BufferStreamIterator<T> extends AbstractStreamIterator<T> {
+public class BufferedStreamIterator<T> extends AbstractStreamIterator<T> {
 
     private final AbstractStreamIterator<T> iterator;
     private final int bufferSize;
     private List<T> buffer = new LinkedList<T>();
 
-    public BufferStreamIterator(AbstractStreamIterator<T> iterator, int bufferSize) {
+    public BufferedStreamIterator(AbstractStreamIterator<T> iterator, int bufferSize) {
         this.iterator = iterator;
         this.bufferSize = bufferSize;
     }

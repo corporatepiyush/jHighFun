@@ -76,7 +76,7 @@ public final class ResultSetRow {
                 charStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new RuntimeException("Exception while closing clob input stream", e);
+                System.err.println("Exception while closing clob input stream." + e.getMessage());
             }
         }
     }
