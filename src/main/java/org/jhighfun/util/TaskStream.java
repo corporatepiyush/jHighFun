@@ -50,7 +50,7 @@ public class TaskStream<IN> {
         return new TaskStream<OUT>(new MapperWithCarryOverStreamIterator<IN, OUT, CARRY>(this.iterator, initialValue, function));
     }
 
-    public <ACCUM> ObjectFunctionChain<ACCUM> reduce(ACCUM initialValue, Accumulator<ACCUM, IN> accumulator) {
+    public <ACCUM> ObjectFunctionChain<ACCUM> foldLeft(ACCUM initialValue, Accumulator<ACCUM, IN> accumulator) {
         ACCUM accumulationResult = initialValue;
         try {
             while (this.iterator.hasNext()) {
@@ -60,6 +60,21 @@ public class TaskStream<IN> {
             this.iterator.closeResources();
         }
         return new ObjectFunctionChain<ACCUM>(accumulationResult);
+    }
+
+    public ObjectFunctionChain<IN> reduce(Accumulator<IN, IN> accumulator) {
+        IN accumulationResult = null;
+        try {
+            if (this.iterator.hasNext()) {
+                accumulationResult = this.iterator.next();
+            }
+            while (this.iterator.hasNext()) {
+                accumulationResult = accumulator.accumulate(accumulationResult, this.iterator.next());
+            }
+        } finally {
+            this.iterator.closeResources();
+        }
+        return new ObjectFunctionChain<IN>(accumulationResult);
     }
 
     public TaskStream<IN> filter(Function<IN, Boolean> function) {
