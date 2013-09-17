@@ -92,7 +92,7 @@ public class ThreadPoolFactory {
                                                          long keepAliveTime,
                                                          TimeUnit unit,
                                                          BlockingQueue<Runnable> workQueue) {
-        return new ExecutorServiceProxy(corePoolSize,
+        return new ExecutorServiceDelayedInstanceProxy(corePoolSize,
                 maximumPoolSize,
                 keepAliveTime,
                 unit,

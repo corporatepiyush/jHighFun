@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class ExecutorServiceProxy implements ExecutorService {
+public class ExecutorServiceDelayedInstanceProxy implements ExecutorService {
 
     private int corePoolSize;
     private int maximumPoolSize;
@@ -14,11 +14,11 @@ public class ExecutorServiceProxy implements ExecutorService {
 
     private ExecutorService executorService;
 
-    public ExecutorServiceProxy(int corePoolSize,
-                                int maximumPoolSize,
-                                long keepAliveTime,
-                                TimeUnit unit,
-                                BlockingQueue<Runnable> workQueue) {
+    public ExecutorServiceDelayedInstanceProxy(int corePoolSize,
+                                               int maximumPoolSize,
+                                               long keepAliveTime,
+                                               TimeUnit unit,
+                                               BlockingQueue<Runnable> workQueue) {
 
         this.corePoolSize = corePoolSize;
         this.maximumPoolSize = maximumPoolSize;
