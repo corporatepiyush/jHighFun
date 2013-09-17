@@ -2,10 +2,6 @@ package org.jhighfun.util.sql;
 
 import org.jhighfun.util.FileIOUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.ResultSet;

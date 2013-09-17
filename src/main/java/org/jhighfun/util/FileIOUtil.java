@@ -27,7 +27,7 @@ public class FileIOUtil {
         }
     }
 
-    public static byte[] getBytesAndClose(InputStream inputStream){
+    public static byte[] getBytesAndClose(InputStream inputStream) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[8192];
         int bytesRead;
@@ -38,7 +38,7 @@ public class FileIOUtil {
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 inputStream.close();
             } catch (IOException e) {
@@ -49,7 +49,7 @@ public class FileIOUtil {
     }
 
 
-    public static char[] getCharsAndClose(Reader reader){
+    public static char[] getCharsAndClose(Reader reader) {
         try {
             StringBuilder charStore = new StringBuilder();
             char[] buffer = new char[8192];

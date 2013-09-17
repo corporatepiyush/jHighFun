@@ -1005,15 +1005,15 @@ public final class FunctionUtil {
         return new TaskStream<I>(CollectionUtil.Iterify(arr));
     }
 
-    public static TaskStream<Byte> taskByteStream(InputStream inputStream) {
+    public static TaskStream<Byte> byteTaskStream(InputStream inputStream) {
         return new TaskStream<Byte>(new InputStreamIterator(inputStream));
     }
 
-    public static TaskStream<Character> taskCharacterStream(Reader reader) {
+    public static TaskStream<Character> characterTaskStream(Reader reader) {
         return new TaskStream<Character>(new ReaderStreamIterator(reader));
     }
 
-    public static TaskStream<Character> taskCharacterStream(InputStream inputStream) {
+    public static TaskStream<Character> characterTaskStream(InputStream inputStream) {
         return new TaskStream<Character>(new ReaderStreamIterator(inputStream));
     }
 
