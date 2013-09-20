@@ -5,12 +5,7 @@ import org.jhighfun.internal.TaskInputOutput;
 import org.jhighfun.internal.ThreadPoolFactory;
 import org.jhighfun.util.matcher.WhenChecker;
 import org.jhighfun.util.memoize.*;
-import org.jhighfun.util.stream.AbstractStreamIterator;
-import org.jhighfun.util.stream.InputStreamIterator;
-import org.jhighfun.util.stream.ReaderStreamIterator;
 
-import java.io.InputStream;
-import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -987,38 +982,6 @@ public final class FunctionUtil {
 
     public static <I> ObjectFunctionChain<I> chain(I object) {
         return new ObjectFunctionChain<I>(object);
-    }
-
-    public static <I> TaskStream<I> taskStream(Iterable<I> iterable) {
-        return new TaskStream<I>(iterable);
-    }
-
-    public static <I> TaskStream<I> taskStream(Iterator<I> iterator) {
-        return new TaskStream<I>(iterator);
-    }
-
-    public static <I> TaskStream<I> taskStream(AbstractStreamIterator<I> iterator) {
-        return new TaskStream<I>(iterator);
-    }
-
-    public static <I> TaskStream<I> taskStream(I[] arr) {
-        return new TaskStream<I>(CollectionUtil.Iterify(arr));
-    }
-
-    public static TaskStream<Byte> byteTaskStream(InputStream inputStream) {
-        return new TaskStream<Byte>(new InputStreamIterator(inputStream));
-    }
-
-    public static TaskStream<Character> characterTaskStream(Reader reader) {
-        return new TaskStream<Character>(new ReaderStreamIterator(reader));
-    }
-
-    public static TaskStream<Character> characterTaskStream(InputStream inputStream) {
-        return new TaskStream<Character>(new ReaderStreamIterator(inputStream));
-    }
-
-    public static <INIT, IN> TaskStream<IN> dynamicTaskStream(INIT initialInput, Function<INIT, Tuple2<INIT, IN>> function, Function<INIT, Boolean> predicate) {
-        return new TaskStream<IN>(initialInput, function, predicate);
     }
 
     public static <I, O> CurriedFunction<I, O> curry(Function<List<I>, O> function, List<I> fixedInputs) {

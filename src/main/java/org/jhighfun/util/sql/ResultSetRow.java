@@ -1,6 +1,6 @@
 package org.jhighfun.util.sql;
 
-import org.jhighfun.util.FileIOUtil;
+import org.jhighfun.util.StreamUtil;
 
 import java.sql.Blob;
 import java.sql.Clob;
@@ -27,7 +27,7 @@ public final class ResultSetRow {
     public byte[] getBlob(String columnName) {
         try {
             Blob blob = this.resultSet.getBlob(columnName);
-            return FileIOUtil.getBytesAndClose(blob.getBinaryStream());
+            return StreamUtil.readBytesAndClose(blob.getBinaryStream());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Exception while reading Blob from database.", e);
@@ -37,7 +37,7 @@ public final class ResultSetRow {
     public char[] getClob(String columnName) {
         try {
             Clob clob = this.resultSet.getClob(columnName);
-            return FileIOUtil.getCharsAndClose(clob.getCharacterStream());
+            return StreamUtil.readCharsAndClose(clob.getCharacterStream());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Exception while reading Clob from database.", e);
