@@ -1,10 +1,10 @@
 package org.jhighfun.util.matcher;
 
-import org.jhighfun.util.Function;
-import org.jhighfun.util.Task;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import org.jhighfun.util.Function;
+import org.jhighfun.util.Task;
 
 public final class WhenThenCheckerWithTask<IN> implements WhenCheckerWithTask<IN>, ThenTaskExecutor<IN> {
 

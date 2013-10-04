@@ -1,10 +1,10 @@
 package org.jhighfun.util.matcher;
 
 
-import org.jhighfun.util.Function;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import org.jhighfun.util.Function;
 
 public final class WhenThenCheckerWithOutput<IN, OUT> implements WhenFunctionExecutor<IN, OUT>, ThenFunctionExecutor<IN, OUT> {
 

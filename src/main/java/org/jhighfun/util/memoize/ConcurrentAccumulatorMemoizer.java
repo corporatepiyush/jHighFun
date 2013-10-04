@@ -1,14 +1,14 @@
 package org.jhighfun.util.memoize;
 
-import org.jhighfun.internal.CacheObject;
-import org.jhighfun.util.Accumulator;
-import org.jhighfun.util.Pair;
-
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+
+import org.jhighfun.internal.CacheObject;
+import org.jhighfun.util.Accumulator;
+import org.jhighfun.util.Pair;
 
 public class ConcurrentAccumulatorMemoizer<ACCUM, EL> extends Accumulator<ACCUM, EL> {
 

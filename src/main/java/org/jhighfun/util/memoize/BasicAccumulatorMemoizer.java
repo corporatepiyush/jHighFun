@@ -1,11 +1,11 @@
 package org.jhighfun.util.memoize;
 
 
-import org.jhighfun.util.Accumulator;
-import org.jhighfun.util.Pair;
-
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import org.jhighfun.util.Accumulator;
+import org.jhighfun.util.Pair;
 
 public class BasicAccumulatorMemoizer<ACCUM, EL> extends Accumulator<ACCUM, EL> {
 

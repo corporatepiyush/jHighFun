@@ -1,10 +1,10 @@
 package org.jhighfun.util.stream;
 
 
+import java.util.NoSuchElementException;
+
 import org.jhighfun.util.Function;
 import org.jhighfun.util.Task;
-
-import java.util.NoSuchElementException;
 
 /**
  * Condition aware proxy for existing Iterator

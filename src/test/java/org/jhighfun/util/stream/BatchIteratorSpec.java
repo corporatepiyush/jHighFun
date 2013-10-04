@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jhighfun.util.CollectionUtil.IntRange;
@@ -39,7 +40,7 @@ public class BatchIteratorSpec {
         List<String> stringList = List("India", "Singapore");
         BatchStreamIterator<String> integerBatchIterator = new BatchStreamIterator<String>(new AbstractStreamIteratorAdapter<String>(stringList.iterator()), batchSize);
 
-        List<List<String>> list = new TaskStream<List<String>>(integerBatchIterator)
+        List<ArrayList<String>> list = new TaskStream<ArrayList<String>>(integerBatchIterator)
                 .extract();
 
         assertEquals(List(stringList), list);

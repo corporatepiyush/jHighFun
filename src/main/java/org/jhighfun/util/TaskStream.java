@@ -1,11 +1,25 @@
 package org.jhighfun.util;
 
-import org.jhighfun.util.stream.*;
-
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.jhighfun.util.stream.AbstractStreamIterator;
+import org.jhighfun.util.stream.AbstractStreamIteratorAdapter;
+import org.jhighfun.util.stream.BatchStreamIterator;
+import org.jhighfun.util.stream.BufferedStreamIterator;
+import org.jhighfun.util.stream.ConcurrentStreamIterator;
+import org.jhighfun.util.stream.ConditionalStreamIterator;
+import org.jhighfun.util.stream.CustomizedStreamIterator;
+import org.jhighfun.util.stream.DynamicStreamIterator;
+import org.jhighfun.util.stream.ExecutorStreamIterator;
+import org.jhighfun.util.stream.ExpansionStreamIterator;
+import org.jhighfun.util.stream.ExtractorStreamIterator;
+import org.jhighfun.util.stream.MapperStreamIterator;
+import org.jhighfun.util.stream.MapperWithCarryOverStreamIterator;
+import org.jhighfun.util.stream.SorterStreamIterator;
 
 /**
  * @author Piyush Katariya
@@ -38,8 +52,8 @@ public class TaskStream<IN> {
         return new TaskStream<OUT>(new ExpansionStreamIterator<IN, OUT>(this.iterator, function));
     }
 
-    public TaskStream<List<IN>> _batch(int batchSize) {
-        return new TaskStream<List<IN>>(new BatchStreamIterator<IN>(this.iterator, batchSize));
+    public TaskStream<ArrayList<IN>> _batch(int batchSize) {
+        return new TaskStream<ArrayList<IN>>(new BatchStreamIterator<IN>(this.iterator, batchSize));
     }
 
     public TaskStream<IN> _buffer(int bufferSize) {

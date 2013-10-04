@@ -1,17 +1,17 @@
 package org.jhighfun.util.memoize;
 
-import org.jhighfun.internal.CacheObject;
-import org.jhighfun.util.Accumulator;
-import org.jhighfun.util.Function;
-import org.jhighfun.util.FunctionUtil;
-import org.jhighfun.util.Tuple3;
-
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.jhighfun.internal.CacheObject;
+import org.jhighfun.util.Accumulator;
+import org.jhighfun.util.Function;
+import org.jhighfun.util.FunctionUtil;
+import org.jhighfun.util.Tuple3;
 
 public class ConfigurableFunctionMemoizer<I, O> extends Function<I, O> {
 

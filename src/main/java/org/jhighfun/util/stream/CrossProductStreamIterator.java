@@ -1,9 +1,9 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.Tuple2;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import org.jhighfun.util.Tuple2;
 
 public class CrossProductStreamIterator<T, O> extends AbstractStreamIterator<Tuple2<T, O>> {
 

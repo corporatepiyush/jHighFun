@@ -1,9 +1,14 @@
 package org.jhighfun.internal;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.concurrent.*;
 
 /**
  * jHighFun library uses three global ThreadPoolExecutors

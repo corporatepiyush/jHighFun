@@ -3,6 +3,7 @@ package org.jhighfun.util;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,15 +23,15 @@ public class DynamicIterableSpec {
                 })
                 ._process()
                 ._batch(2)
-                .flatMap(new Function<List<String>, Iterable<String>>() {
-                    public Iterable<String> apply(List<String> arg) {
+                .flatMap(new Function<ArrayList<String>, Iterable<String>>() {
+                    public Iterable<String> apply(ArrayList<String> arg) {
                         return arg;
                     }
                 })
                 ._processExclusively()
                 ._batch(2)
-                .flatMap(new Function<List<String>, Iterable<String>>() {
-                    public Iterable<String> apply(List<String> arg) {
+                .flatMap(new Function<ArrayList<String>, Iterable<String>>() {
+                    public Iterable<String> apply(ArrayList<String> arg) {
                         return arg;
                     }
                 })

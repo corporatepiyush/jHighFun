@@ -1,10 +1,10 @@
 package org.jhighfun.config;
 
-import org.jhighfun.internal.Constants;
-import org.jhighfun.util.FunctionUtil;
-
 import java.lang.reflect.Field;
 import java.util.concurrent.ExecutorService;
+
+import org.jhighfun.internal.Constants;
+import org.jhighfun.util.FunctionUtil;
 
 public class GlobalPoolInitializer {
 

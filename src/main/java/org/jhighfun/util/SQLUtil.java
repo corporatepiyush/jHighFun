@@ -1,13 +1,14 @@
 package org.jhighfun.util;
 
-import org.jhighfun.internal.SqlDataStore;
-import org.jhighfun.util.sql.SQLQuery;
-
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import javax.sql.DataSource;
+
+import org.jhighfun.internal.SqlDataStore;
+import org.jhighfun.util.sql.SQLQuery;
 
 public class SQLUtil {
 

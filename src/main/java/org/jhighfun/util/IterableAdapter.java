@@ -1,8 +1,8 @@
 package org.jhighfun.util;
 
-import org.jhighfun.util.stream.AbstractStreamIterator;
-
 import java.util.Iterator;
+
+import org.jhighfun.util.stream.AbstractStreamIterator;
 
 public class IterableAdapter<T> implements Iterable<T> {
 

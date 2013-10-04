@@ -1,10 +1,10 @@
 package org.jhighfun.util.stream;
 
 
-import org.jhighfun.util.Function;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import org.jhighfun.util.Function;
 
 public class ExtractorStreamIterator<T> extends AbstractStreamIterator<List<T>> {
 

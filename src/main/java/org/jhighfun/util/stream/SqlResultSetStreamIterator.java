@@ -1,13 +1,13 @@
 package org.jhighfun.util.stream;
 
-import org.jhighfun.util.Function;
-import org.jhighfun.util.SQLUtil;
-import org.jhighfun.util.sql.ResultSetRow;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import org.jhighfun.util.Function;
+import org.jhighfun.util.SQLUtil;
+import org.jhighfun.util.sql.ResultSetRow;
 
 public class SqlResultSetStreamIterator<T> extends AbstractStreamIterator<T> {
 

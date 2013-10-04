@@ -1,13 +1,18 @@
 package org.jhighfun.util.sql;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.jhighfun.util.Function;
 import org.jhighfun.util.SQLUtil;
 import org.jhighfun.util.TaskStream;
 import org.jhighfun.util.stream.SqlResultSetStreamIterator;
-
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.List;
 
 public final class SQLQuery {
 

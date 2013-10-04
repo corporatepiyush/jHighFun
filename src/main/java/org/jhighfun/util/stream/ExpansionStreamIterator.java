@@ -1,9 +1,9 @@
 package org.jhighfun.util.stream;
 
 
-import org.jhighfun.util.Function;
-
 import java.util.Iterator;
+
+import org.jhighfun.util.Function;
 
 public class ExpansionStreamIterator<IN, OUT> extends AbstractStreamIterator<OUT> {
 

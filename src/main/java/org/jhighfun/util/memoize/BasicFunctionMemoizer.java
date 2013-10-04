@@ -1,10 +1,10 @@
 package org.jhighfun.util.memoize;
 
 
-import org.jhighfun.util.Function;
-
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import org.jhighfun.util.Function;
 
 public class BasicFunctionMemoizer<I, O> extends Function<I, O> {
 

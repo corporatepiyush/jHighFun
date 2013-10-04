@@ -1,10 +1,20 @@
 package org.jhighfun.util;
 
-import org.jhighfun.util.stream.AbstractStreamIterator;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.jhighfun.util.stream.AbstractStreamIterator;
 
 /**
  * Reusable factory methods to generate, merge, flatten various useful data structures

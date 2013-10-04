@@ -1,6 +1,10 @@
 package org.jhighfun.util;
 
-import org.jhighfun.util.memoize.*;
+import org.jhighfun.util.memoize.BasicFunctionMemoizer;
+import org.jhighfun.util.memoize.ConcurrentFunctionMemoizer;
+import org.jhighfun.util.memoize.ConfigurableFunctionMemoizer;
+import org.jhighfun.util.memoize.ManagedCacheFunctionMemoizer;
+import org.jhighfun.util.memoize.MemoizeConfig;
 
 /**
  * A function is a relation between a set of inputs and a set of permissible outputs

@@ -1,8 +1,8 @@
 package org.jhighfun.util.sql;
 
-import org.jhighfun.util.stream.SqlResultSetStreamIterator;
-
 import java.sql.Connection;
+
+import org.jhighfun.util.stream.SqlResultSetStreamIterator;
 
 public interface SqlQueryExecutor<T> {
 

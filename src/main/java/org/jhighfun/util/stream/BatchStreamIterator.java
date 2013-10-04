@@ -1,8 +1,7 @@
 package org.jhighfun.util.stream;
 
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Bulk fetch proxy for existing Iterator
@@ -10,7 +9,7 @@ import java.util.List;
  * @author Piyush Katariya
  */
 
-public class BatchStreamIterator<T> extends AbstractStreamIterator<List<T>> {
+public class BatchStreamIterator<T> extends AbstractStreamIterator<ArrayList<T>> {
 
     private final AbstractStreamIterator<T> batchIterator;
     private final int batchSize;
@@ -24,8 +23,8 @@ public class BatchStreamIterator<T> extends AbstractStreamIterator<List<T>> {
         return this.batchIterator.hasNext();
     }
 
-    public List<T> next() {
-        final List<T> batch = new LinkedList<T>();
+    public ArrayList<T> next() {
+        final ArrayList<T> batch = new ArrayList<T>();
         int i = 0;
         while (this.batchIterator.hasNext() && i < this.batchSize) {
             batch.add(this.batchIterator.next());
