@@ -267,9 +267,9 @@ public class MultiThreadedFunctionSpec {
             public Collection<Integer> apply(Tuple2<Collection<Integer>, ParallelLoopExecutionContext> tuple2) {
                 return tuple2._1;
             }
-        }, FunctionUtil.parallel(3));
+        }, FunctionUtil.batch(3));
 
-        verify(spyHighPriorityTaskThreadPool, times(2)).submit(any(Callable.class));
+        verify(spyHighPriorityTaskThreadPool, times(1)).submit(any(Callable.class));
         assertEquals(integers, list);
 
     }
