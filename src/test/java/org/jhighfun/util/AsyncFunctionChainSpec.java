@@ -1,6 +1,7 @@
 package org.jhighfun.util;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
@@ -18,11 +19,11 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
-
+@Ignore
 public class AsyncFunctionChainSpec {
 
 	@SuppressWarnings("unchecked")
-	@Test
+	@Test @Ignore
 	public void testAsynchonicityForSingleTask() {
 
 		FunctionUtil.registerPool(FunctionUtil.throttler("t1"), 1);
@@ -97,7 +98,7 @@ public class AsyncFunctionChainSpec {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Test
+	@Test 
 	public void testAsynchonicityForMoreThanTwoTask() {
 
 		FunctionUtil.registerPool(FunctionUtil.throttler("t1"), 1);

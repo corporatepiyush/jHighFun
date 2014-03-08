@@ -210,4 +210,8 @@ public class TaskStream<IN> {
         return result;
     }
 
+	public AbstractStreamIterator<IN> getIterator() {
+		return iterator;
+	}
+
 }
