@@ -3,7 +3,7 @@ jHighFun
 
 ***Multithreaded Higher Order Function Library for Java***
 
-##Overview
+## Overview
 This library is implememted to make concurrent programming as easy as possible by following best practices exists
 and abstracting out the finer interfaces to hide lots of boiler plate code needed in general.
 
@@ -46,3 +46,24 @@ Just do static import for FunctionUtil.* into your java file start using them, b
 OR
 
 If you are interested in chaining the functions use "chain" function.
+
+
+Gradle
+=====
+
+```
+
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+	
+	
+	
+dependencies {
+        compile 'com.github.corporatepiyush:jhighfun:1.4'
+}
+
+```
